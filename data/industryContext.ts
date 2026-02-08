@@ -1,7 +1,7 @@
 
 import { KPI } from "../types";
 
-export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'produce' | 'other';
+export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'mining' | 'oil_gas_services' | 'produce' | 'other';
 
 export interface Lexicon {
   customer: string;
@@ -27,6 +27,8 @@ export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   livestock: ['mortality', 'feed conversion', 'disease outbreaks', 'growth stunting'],
   aquaculture: ['oxygen debt', 'feed black hole', 'density overdraft', 'silent mortality'],
   agro_processing: ['yield bleed', 'downtime drain', 'moisture drift', 'rework loop'],
+  mining: ['recovery leak', 'pit-to-scale blindspot', 'buyer price trap', 'chain-of-custody hole'],
+  oil_gas_services: ['rig-time bleed', 'permit-to-work delay', 'variation order leakage', 'hse shutdown risk'],
   transport: ['breakdowns', 'fuel theft', 'idle fleet', 'delivery delays'],
   manufacturing: ['scrap rate', 'downtime', 'batch defects', 'supply delays'],
   services: ['unbilled hours', 'scope creep', 'client churn', 'proposal delays'],
@@ -93,6 +95,26 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     quality: 'spec compliance',
     cash_risk: 'spoilage/rejects',
     staff: 'operators'
+  },
+  mining: {
+    customer: 'buyer/offtaker',
+    order: 'shipment/lot',
+    delivery: 'dispatch/hand-off',
+    stock: 'ore stockpile/lot',
+    lead: 'buyer channel',
+    quality: 'grade/recovery',
+    cash_risk: 'theft/deductions',
+    staff: 'crew'
+  },
+  oil_gas_services: {
+    customer: 'client/operator',
+    order: 'job/work order',
+    delivery: 'site execution/close-out',
+    stock: 'tools/spares/rentals',
+    lead: 'tender/prequal opportunity',
+    quality: 'SLA/QA evidence',
+    cash_risk: 'backcharge/penalty',
+    staff: 'field crew'
   },
   hospitality: {
     customer: 'guest/diner',
@@ -248,10 +270,24 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     id: 'mining',
     label: 'Mining, Quarrying & Natural Resources',
     iconName: 'Pickaxe',
-    lexiconKey: 'construction',
+    lexiconKey: 'mining',
     subIndustries: [
-      'Artisanal mining', 'Mining services & supplies', 'Quarry / aggregates / stone',
-      'Sand mining', 'Oil & gas services'
+      'Artisanal Gold',
+      'Gemstones',
+      '3Ts (Tin/Tantalum/Coltan)',
+      'Quarrying (stone/sand/aggregates)'
+    ]
+  },
+  {
+    id: 'oil_gas_services',
+    label: 'Oil & Gas Services',
+    iconName: 'Wrench',
+    lexiconKey: 'oil_gas_services',
+    subIndustries: [
+      'Maintenance & Shutdown Services',
+      'Logistics & Transport Services',
+      'Inspection, Testing & QA Services',
+      'Civil Works / Fabrication / Welding Services'
     ]
   },
   {
@@ -260,10 +296,43 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Factory',
     lexiconKey: 'manufacturing',
     subIndustries: [
-      'Food & beverage manufacturing', 'Textile & garment manufacturing', 'Furniture & carpentry production',
-      'Metal works / fabrication', 'Plastics & packaging manufacturing', 'Soap / detergents / cosmetics production',
-      'Bricks / blocks / cement products', 'Bottled water / ice production', 'Pharmaceuticals / medical supplies manufacturing',
-      'Chemical/light industrial production', 'Assembly / OEM'
+      'Food & beverage manufacturing', 'Bakery / Flour / Grain-based processing', 'Dairy processing (milk, yoghurt, cheese)',
+      'Beverages (juice, soda, water)', 'Meat processing', 'Snacks & packaged foods',
+      'Edible oils (sunflower, palm, groundnut, etc.)', 'Textile & garment manufacturing',
+      'CMT Factory (Cut-Make-Trim for buyers)', 'Uniforms & Workwear Manufacturing',
+      'Fashion / Retail Brand (own brand)', 'Knitwear / T-shirts / Casualwear (high volume)',
+      'Tailoring / Bespoke / Small Batch (custom)', 'Furniture & carpentry production',
+      'Custom Residential Furniture (beds, wardrobes, kitchens)', 'Commercial Fit-Out & Office Furniture',
+      'Doors, Windows & Building Joinery', 'Mass/Batch Production (standard designs)',
+      'Upholstered Furniture (sofas, chairs)',
+      'Metal works / fabrication', 'Structural Steel & Construction Fabrication (frames, beams, gates, stairs)',
+      'Doors, Windows, Grills & Security Products', 'Industrial Fabrication (tanks, platforms, racks, hoppers)',
+      'Automotive Fabrication (trailers, bodies, repairs/mods)', 'Aluminum Fabrication (doors, partitions, glazing frames)',
+      'Stainless Steel Works (kitchen, hospital, food-grade)',
+      'Plastics & packaging manufacturing', 'Film & Bag Manufacturing (poly bags, shrink film, liners)',
+      'Rigid Packaging (bottles, jerrycans, containers)', 'Injection Molding (caps, parts, household items)',
+      'Printing & Lamination (labels, flexible packs, pouches)', 'Recycled Plastics (regrind, washing, pelletizing)',
+      'Industrial Packaging (drums, crates, bulk packaging accessories)', 'Soap / detergents / cosmetics production',
+      'Laundry Detergent & Multipurpose Cleaners (powder/liquid)', 'Bar Soap & Bath Soap (beauty/medicated)',
+      'Personal Care & Cosmetics (lotions, creams, oils, hair products)', 'Institutional / Bulk Supply (hotels, hospitals, schools)',
+      'Natural/Organic & Sensitive-Skin Brands', 'Distributors / Private Label Manufacturing',
+      'Bricks / blocks / cement products', 'Manual Yard Bricks (small-scale clay bricks / hand-mold)',
+      'Concrete Blocks (hollow/solid blocks, machine-vibro)', 'Pavers / Kerbs / Precast (high mix + high QC demand)',
+      'Cement Tiles / Terrazzo / Floor Tiles', 'Roofing Tiles (concrete tiles, decorative roofing pieces)',
+      'Multi-Product Yard (blocks + pavers + tiles + custom orders)',
+      'Bottled water / ice production', 'Small Plant Bottled Water (manual/semi-automatic)',
+      'Automated Bottling Line (higher volume)', 'Sachet Water (high volume, price-sensitive)',
+      'Ice Blocks / Ice Cubes (standalone)', 'Bottled Water + Ice (combined plant)',
+      'Institutional Supply (schools, hospitals, offices, events)', 'Distributor / Private Label Bottling',
+      'Pharmaceuticals / medical supplies manufacturing',
+      'Chemical/light industrial production', 'Assembly / OEM', 'Assembly / OEM (electronics, components)',
+      'EMS Contract Manufacturer (PCBA + Box Build)',
+      'PCBA-Only (SMT + Reflow + AOI + Test)',
+      'Cable / Harness / Connector Assembly',
+      'High-Mix Low-Volume Custom Builds (Industrial, Lab, Prototypes)',
+      'White-Label / Multi-Variant OEM (Many clients, similar products)',
+      'Repair / Refurb / Rework Center (Reverse Logistics)',
+      'Precision Electronics / Medical / High-Compliance Assembly'
     ]
   },
   {
@@ -273,6 +342,12 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     lexiconKey: 'retail',
     subIndustries: [
       'Supermarket / mini-mart', 'Kiosk / market vendor', 'FMCG wholesale & distribution',
+      'Cash & Carry Wholesaler (walk-in shop, bulk buying)',
+      'Route-to-Market Distributor (van sales to retailers)',
+      'Sub-Distributor / Agent Network (many small resellers)',
+      'Modern Trade / Key Accounts (supermarkets, chains)',
+      'Importer + Regional Distributor (cross-border + bulk)',
+      'Cold-Chain / Perishables Distributor (dairy, frozen, chilled)',
       'Pharmacy / drug shop', 'Electronics & phone shop', 'Hardware & building materials shop',
       'Fashion & boutique', 'Cosmetics / beauty supplies', 'Stationery & bookstore',
       'Spare parts & accessories shop', 'Import/export trading', 'E-commerce store / online retail'
@@ -513,6 +588,472 @@ export const AGRO_PROCESSING_QUIZ_COPY = {
   Innovation: { detection: "stagnant SKU list + slow innovation", cost: "market share loss to faster competitors", cliffhanger: "Deep Scan will identify Tail SKUs to cut and new winners to launch." },
   Risk: { detection: "food safety via 'carefulness' instead of systems", cost: "recall risk that could bankrupt the brand", cliffhanger: "Deep Scan will install the Compliance Lock." },
   People: { detection: "hero dependence + undefined roles", cost: "factory stops/slows when you aren't there", cliffhanger: "Deep Scan will build Role Cards to decentralize execution." }
+};
+
+export const MINING_HOOKS = {
+  Operations: 'Recovery Leak',
+  Money: 'Cash-Leak Culture',
+  Market: 'Middleman Margin Capture',
+  Leadership: 'Firefighting Management',
+  Innovation: 'Low-Tech Trap',
+  Risk: 'Safety Time Bomb',
+  People: 'Skill Gap Drag'
+};
+
+export const MINING_QUIZ_COPY = {
+  Operations: {
+    detection: 'pit-to-scale blindspot + grade drift',
+    cost: 'you are mining volume but not recovering full value',
+    cliffhanger: 'Deep Scan will map your pit-to-stockpile flow and reveal the exact recovery leak.'
+  },
+  Money: {
+    detection: 'ghost costs + buyer-controlled deductions',
+    cost: 'margin collapse hidden behind strong cash movement',
+    cliffhanger: 'Deep Scan will build cost-per-ton controls and isolate where cash leakage starts.'
+  },
+  Market: {
+    detection: 'single-buyer danger + weak shipment proof',
+    cost: 'pricing power shifts to middlemen and disputes increase',
+    cliffhanger: 'Deep Scan will install your trust premium system (proof packs + terms discipline).'
+  },
+  Leadership: {
+    detection: 'no owner syndrome + decision by shouting',
+    cost: 'repeat mistakes, unstable output, and firefighting management',
+    cliffhanger: 'Deep Scan will assign owners and install weekly KPI control cadence.'
+  },
+  Innovation: {
+    detection: 'processing gap + low-tech trap',
+    cost: 'more digging without higher value per ton',
+    cliffhanger: 'Deep Scan will prioritize one recovery upgrade with measurable 30-day ROI.'
+  },
+  Risk: {
+    detection: 'compliance trap + chain-of-custody hole',
+    cost: 'one incident or dispute can shut operations and destroy trust',
+    cliffhanger: 'Deep Scan will set safety routines and custody traceability that survive audits.'
+  },
+  People: {
+    detection: 'incentive misfire + silent error problem',
+    cost: 'speed is rewarded while recovery quality and discipline decay',
+    cliffhanger: 'Deep Scan will redesign training and incentives around recovery and loss prevention.'
+  }
+};
+
+export const OIL_GAS_QUIZ_COPY = {
+  Operations: {
+    detection: 'PTW bottlenecks + work pack chaos',
+    cost: 'paid crews waiting instead of producing',
+    cliffhanger: 'Deep Scan will map your readiness and dispatch flow to cut idle-time leakage.'
+  },
+  Money: {
+    detection: 'variation order leakage + unbilled work drift',
+    cost: 'high workload with thin or disappearing margin',
+    cliffhanger: 'Deep Scan will enforce VO and invoice triggers that convert delivery into collected cash.'
+  },
+  Market: {
+    detection: 'single-client dependency + weak performance proof',
+    cost: 'pricing pressure, renewal risk, and tender vulnerability',
+    cliffhanger: 'Deep Scan will build your trust-premium proof system for stronger repeat work.'
+  },
+  Leadership: {
+    detection: 'supervisor lottery + weak action closure',
+    cost: 'inconsistent site execution and recurring delay causes',
+    cliffhanger: 'Deep Scan will install owner accountability and weekly control rhythms.'
+  },
+  Innovation: {
+    detection: 'template void + field data blindspot',
+    cost: 'manual planning overhead and repeated rework loops',
+    cliffhanger: 'Deep Scan will standardize templates and convert field lessons into process upgrades.'
+  },
+  Risk: {
+    detection: 'HSE/PTW inconsistency + contract exposure',
+    cost: 'incident shutdown risk, penalties, and vendor-status damage',
+    cliffhanger: 'Deep Scan will harden compliance, audit trails, and subcontractor controls.'
+  },
+  People: {
+    detection: 'fatigue drift + competency gaps',
+    cost: 'quality erosion, incidents, and avoidable turnover',
+    cliffhanger: 'Deep Scan will align incentives to first-time-right quality and safety discipline.'
+  }
+};
+
+export const FNB_QUIZ_COPY = {
+  Operations: {
+    detection: 'yield leak + downtime/changeover loss',
+    cost: 'raw material waste and lost line capacity are silently compressing output',
+    cliffhanger: 'Deep Scan will map your top loss drivers and lock in first-pass controls.'
+  },
+  Money: {
+    detection: 'COGS blindness + shrinkage/promo leakage',
+    cost: 'volume is moving while SKU-level margin is being diluted',
+    cliffhanger: 'Deep Scan will build unit-cost and margin guardrails tied to waste drivers.'
+  },
+  Market: {
+    detection: 'shelf-trust drift + stockout pressure',
+    cost: 'repeat buying and shelf space decline when consistency and fill-rate slip',
+    cliffhanger: 'Deep Scan will install service-level and complaint-closure routines to protect demand.'
+  },
+  Leadership: {
+    detection: 'firefighting cadence + weak ownership closure',
+    cost: 'the same production issues recur and consume labor and management time',
+    cliffhanger: 'Deep Scan will assign line owners and enforce weekly closure on repeat losses.'
+  },
+  Innovation: {
+    detection: 'product/process stagnation + weak testing rhythm',
+    cost: 'low-margin mix persists while value-add opportunities are missed',
+    cliffhanger: 'Deep Scan will prioritize a 30-day product/pack/process sprint tied to margin ROI.'
+  },
+  Risk: {
+    detection: 'traceability and hygiene control gaps',
+    cost: 'one incident can trigger recalls, contract loss, and brand damage',
+    cliffhanger: 'Deep Scan will harden traceability, supplier controls, and recall readiness.'
+  },
+  People: {
+    detection: 'skill variance + weak handover discipline',
+    cost: 'quality swings by shift, creating rework and avoidable waste',
+    cliffhanger: 'Deep Scan will set competency and handover standards for consistent output.'
+  }
+};
+
+export const TEXTILE_QUIZ_COPY = {
+  Operations: {
+    detection: 'late defect capture + line flow bottlenecks',
+    cost: 'rework, idle capacity, and missed output targets are bleeding payroll value',
+    cliffhanger: 'Deep Scan will map line bottlenecks and lock in in-line quality controls.'
+  },
+  Money: {
+    detection: 'style-level costing fog + overtime leakage',
+    cost: 'orders look busy but margin is diluted by hidden style costs and rush behavior',
+    cliffhanger: 'Deep Scan will build style-cost and overtime controls to protect margin per order.'
+  },
+  Market: {
+    detection: 'buyer dependency + spec confusion risk',
+    cost: 'chargebacks, disputes, and low pricing leverage reduce repeat profitability',
+    cliffhanger: 'Deep Scan will install spec-lock and delivery-proof systems to strengthen buyer trust.'
+  },
+  Leadership: {
+    detection: 'supervisor dependency + weak closure cadence',
+    cost: 'daily firefighting keeps recurring defects and delays alive',
+    cliffhanger: 'Deep Scan will enforce ownership and weekly root-cause closure on repeat issues.'
+  },
+  Innovation: {
+    detection: 'pattern/SMV optimization gaps + slow process evolution',
+    cost: 'capacity and cost-down gains are left on the table while faster competitors compound',
+    cliffhanger: 'Deep Scan will launch a measurable 30-day productivity and method improvement sprint.'
+  },
+  Risk: {
+    detection: 'audit compliance fragility + supplier and contract exposure',
+    cost: 'penalties, nonconformities, and contract loss risk can erase hard-won margin quickly',
+    cliffhanger: 'Deep Scan will harden compliance, supplier quality gates, and penalty prevention controls.'
+  },
+  People: {
+    detection: 'skill variance + fatigue and absenteeism shocks',
+    cost: 'quality swings by shift and output stability depends on a few operators',
+    cliffhanger: 'Deep Scan will install training ladders, backup staffing, and handover discipline.'
+  }
+};
+
+export const FURNITURE_QUIZ_COPY = {
+  Operations: {
+    detection: 'measurement and finishing flow breakdown',
+    cost: 'rework, material waste, and late-stage bottlenecks are stretching cycle time and delivery promises',
+    cliffhanger: 'Deep Scan will lock measurement discipline and finishing flow to stop deadline collapse.'
+  },
+  Money: {
+    detection: 'underpricing + hidden scope/cost leakage',
+    cost: 'good-looking jobs are losing margin through unpaid extras and weak cost visibility',
+    cliffhanger: 'Deep Scan will install job costing and change-order pricing so extra work becomes paid margin.'
+  },
+  Market: {
+    detection: 'spec confusion + weak referral reliability',
+    cost: 'trust declines when expectations drift and delivery communication is inconsistent',
+    cliffhanger: 'Deep Scan will deploy spec-pack and customer update routines to recover referrals and repeat demand.'
+  },
+  Leadership: {
+    detection: 'founder bottleneck + weak ownership cadence',
+    cost: 'approval drag and recurring mistakes are slowing workshop throughput',
+    cliffhanger: 'Deep Scan will assign stage owners and enforce root-cause closure on repeat failures.'
+  },
+  Innovation: {
+    detection: 'from-scratch dependency + weak modular design leverage',
+    cost: 'speed, consistency, and scalable margin are lost when standard components are absent',
+    cliffhanger: 'Deep Scan will create a modular core + premium upgrade model to raise speed and margin.'
+  },
+  Risk: {
+    detection: 'contract/documentation gaps + delivery damage exposure',
+    cost: 'disputes, remakes, and delayed payments are creating preventable cash shocks',
+    cliffhanger: 'Deep Scan will harden contract/change-order controls and delivery sign-off standards.'
+  },
+  People: {
+    detection: 'skill variance + informal apprenticeship handovers',
+    cost: 'quality depends on a few individuals and errors multiply during busy periods',
+    cliffhanger: 'Deep Scan will install training ladders, checklists, and handover discipline for stable output.'
+  }
+};
+
+export const METAL_QUIZ_COPY = {
+  Operations: {
+    detection: 'drawing/fit-up instability + late defect capture',
+    cost: 'scrap, refabrication, and schedule slippage are consuming paid labor and steel',
+    cliffhanger: 'Deep Scan will enforce drawing lock, fit-up standards, and stage QC to cut rework fast.'
+  },
+  Money: {
+    detection: 'underquote pressure + hidden consumables leakage',
+    cost: 'jobs are won but margin is diluted by unpriced hours, consumables, and scope changes',
+    cliffhanger: 'Deep Scan will install job-costing and change-order controls so delivery stays profitable.'
+  },
+  Market: {
+    detection: 'spec drift + weak proof portfolio',
+    cost: 'disputes and trust erosion are reducing repeat contracts and pricing leverage',
+    cliffhanger: 'Deep Scan will build a proof-driven client communication and spec-signoff system.'
+  },
+  Leadership: {
+    detection: 'founder bottleneck + weak action closure',
+    cost: 'reactive planning and unclear ownership keep recurring delays and defects alive',
+    cliffhanger: 'Deep Scan will assign stage owners and enforce closure on repeat failure patterns.'
+  },
+  Innovation: {
+    detection: 'jig/template gap + low process improvement cadence',
+    cost: 'repeat work is rebuilt from scratch, driving avoidable cycle-time and scrap losses',
+    cliffhanger: 'Deep Scan will launch a 30-day jigs, layout, and method-improvement sprint.'
+  },
+  Risk: {
+    detection: 'safety/control fragility + contract exposure',
+    cost: 'incidents, penalties, and disputes can wipe out monthly profit quickly',
+    cliffhanger: 'Deep Scan will harden safety audits, scope controls, and documentation discipline.'
+  },
+  People: {
+    detection: 'skill variance + informal onboarding',
+    cost: 'quality depends on a few operators while apprentices create repeat defects',
+    cliffhanger: 'Deep Scan will set skill certification and training ladders for consistent output.'
+  }
+};
+
+export const PLASTICS_QUIZ_COPY = {
+  Operations: {
+    detection: 'scrap/changeover instability + weak in-process control',
+    cost: 'usable output is leaking through rejects, reruns, and avoidable downtime',
+    cliffhanger: 'Deep Scan will map loss drivers and lock standard settings plus first-pass QC gates.'
+  },
+  Money: {
+    detection: 'yield/costing blindness + resin and energy volatility exposure',
+    cost: 'volume is moving while SKU margins are being silently compressed',
+    cliffhanger: 'Deep Scan will build true unit-cost controls and pricing buffers tied to yield behavior.'
+  },
+  Market: {
+    detection: 'spec-lock weakness + commodity pricing pressure',
+    cost: 'disputes and weak proof reduce repeat orders and force discounting',
+    cliffhanger: 'Deep Scan will install signed-spec and proof-pack routines to strengthen buyer trust.'
+  },
+  Leadership: {
+    detection: 'firefighting cadence + cross-functional blame loops',
+    cost: 'recurring defects survive because planning and closure discipline are inconsistent',
+    cliffhanger: 'Deep Scan will enforce ownership cadence, structured handovers, and root-cause closure.'
+  },
+  Innovation: {
+    detection: 'SKU complexity sprawl + delayed tooling/process upgrades',
+    cost: 'setup friction rises while high-margin product evolution stalls',
+    cliffhanger: 'Deep Scan will prioritize SKU rationalization and targeted tooling upgrades with ROI tracking.'
+  },
+  Risk: {
+    detection: 'traceability/compliance fragility + contamination/safety exposure',
+    cost: 'one incident can trigger recalls, penalties, and account loss',
+    cliffhanger: 'Deep Scan will harden traceability, safety routines, and audit-ready compliance evidence.'
+  },
+  People: {
+    detection: 'shift variance + training discipline gaps',
+    cost: 'quality depends on operator memory, causing bad-batch recurrence and wasted capacity',
+    cliffhanger: 'Deep Scan will install operator certification and shift-level accountability for yield and quality.'
+  }
+};
+
+export const SOAP_QUIZ_COPY = {
+  Operations: {
+    detection: 'batch consistency drift + late QC detection',
+    cost: 're-runs, rejects, and fill-weight leakage are reducing usable output and margin',
+    cliffhanger: 'Deep Scan will lock recipes, critical controls, and first-run QC gates to stabilize batch quality.'
+  },
+  Money: {
+    detection: 'COGS/yield blindness + ingredient volatility exposure',
+    cost: 'sales are growing while true SKU-level profitability is being diluted',
+    cliffhanger: 'Deep Scan will build true SKU costing, yield tracking, and pricing guardrails tied to volatility.'
+  },
+  Market: {
+    detection: 'trust inconsistency + weak differentiation',
+    cost: 'complaints, reviews, and discount pressure are weakening repeat purchase behavior',
+    cliffhanger: 'Deep Scan will install consistency proof and positioning controls that protect brand trust.'
+  },
+  Leadership: {
+    detection: 'firefighting cadence + weak ownership closure',
+    cost: 'recurring defects and planning surprises persist because issues are not closed to root cause',
+    cliffhanger: 'Deep Scan will enforce KPI rhythm, cross-functional ownership, and action closure discipline.'
+  },
+  Innovation: {
+    detection: 'SKU complexity sprawl + low trial discipline',
+    cost: 'setup drag increases while premium, trend-aligned growth opportunities are missed',
+    cliffhanger: 'Deep Scan will prioritize SKU rationalization and controlled innovation sprints tied to margin.'
+  },
+  Risk: {
+    detection: 'label/claim compliance fragility + traceability gaps',
+    cost: 'one complaint can escalate into recall, legal exposure, and long-term trust damage',
+    cliffhanger: 'Deep Scan will harden compliance gates, batch traceability, and safety documentation.'
+  },
+  People: {
+    detection: 'training variance + weak shift accountability',
+    cost: 'quality swings by shift and defects repeat when critical controls depend on individual memory',
+    cliffhanger: 'Deep Scan will install operator certification, handover standards, and role-level quality ownership.'
+  }
+};
+
+export const BRICKS_QUIZ_COPY = {
+  Operations: {
+    detection: 'mix/curing inconsistency + late defect detection',
+    cost: 'rejects, breakage, and site failures are consuming capacity and replacement margin',
+    cliffhanger: 'Deep Scan will lock ratio, curing, and stage QC controls so strength and size consistency hold.'
+  },
+  Money: {
+    detection: 'costing blindness + transport and credit leakage',
+    cost: 'sales volume appears healthy while per-line profitability and cash conversion degrade',
+    cliffhanger: 'Deep Scan will install unit-cost, delivery-pricing, and collections rules that protect margin.'
+  },
+  Market: {
+    detection: 'spec drift + contractor trust instability',
+    cost: 'site rejections, complaints, and rumor-driven churn weaken repeat demand and pricing power',
+    cliffhanger: 'Deep Scan will implement spec-lock and proof-pack routines that reduce disputes and improve trust.'
+  },
+  Leadership: {
+    detection: 'firefighting cadence + weak ownership closure',
+    cost: 'urgent planning and delayed decisions keep recurring delays and quality failures alive',
+    cliffhanger: 'Deep Scan will enforce KPI cadence, delegated limits, and root-cause closure discipline.'
+  },
+  Innovation: {
+    detection: 'SKU/tooling inefficiency + weak premium mix',
+    cost: 'commodity pressure persists while high-margin variants and bundle value remain underleveraged',
+    cliffhanger: 'Deep Scan will prioritize SKU rationalization, tooling upgrades, and premium-line experiments.'
+  },
+  Risk: {
+    detection: 'traceability/compliance fragility + strength and safety exposure',
+    cost: 'one failure, incident, or undocumented dispute can trigger major financial and legal downside',
+    cliffhanger: 'Deep Scan will harden traceability, acceptance terms, and safety control routines.'
+  },
+  People: {
+    detection: 'shift variance + training and accountability gaps',
+    cost: 'quality becomes person-dependent and defects repeat under load pressure',
+    cliffhanger: 'Deep Scan will install certification, handover structure, and shift-level ownership of quality.'
+  }
+};
+
+export const WATER_QUIZ_COPY = {
+  Operations: {
+    detection: 'fill/seal drift + sanitation inconsistency',
+    cost: 'small quality losses are accumulating as rework, leak returns, and unstable output',
+    cliffhanger: 'Deep Scan will lock fill, seal, filter, and CIP controls so quality stabilizes by shift.'
+  },
+  Money: {
+    detection: 'unit-cost blindness + route and power leakage',
+    cost: 'volume activity is masking weak per-SKU margin and slow cash conversion',
+    cliffhanger: 'Deep Scan will build true unit economics and route-level controls that protect cash and margin.'
+  },
+  Market: {
+    detection: 'trust volatility + route/shelf control gaps',
+    cost: 'repeat demand and price realization are weakening where service and rotation are inconsistent',
+    cliffhanger: 'Deep Scan will install route profitability and shelf-discipline routines to improve retention.'
+  },
+  Leadership: {
+    detection: 'firefighting cadence + centralized approvals',
+    cost: 'delays and recurring defects persist because actions are not closed to root cause',
+    cliffhanger: 'Deep Scan will enforce delegation limits, KPI rhythm, and closure discipline across teams.'
+  },
+  Innovation: {
+    detection: 'SKU sprawl + weak differentiation strategy',
+    cost: 'operational complexity rises while premium pricing and channel growth remain limited',
+    cliffhanger: 'Deep Scan will prioritize SKU focus, packaging upgrades, and service bundle experiments.'
+  },
+  Risk: {
+    detection: 'testing/traceability fragility + hygiene exposure',
+    cost: 'one contamination incident can trigger recall pressure and long-term trust damage',
+    cliffhanger: 'Deep Scan will harden testing cadence, batch coding, and compliance evidence routines.'
+  },
+  People: {
+    detection: 'shift variance + training accountability gaps',
+    cost: 'quality swings by operator and avoidable defects repeat under pressure',
+    cliffhanger: 'Deep Scan will install role certification, handover standards, and clear KPI ownership.'
+  }
+};
+
+export const FMCG_QUIZ_COPY = {
+  Operations: {
+    detection: 'stockout pressure + dispatch accuracy and route instability',
+    cost: 'availability gaps and execution errors are converting delivery activity into silent margin leakage',
+    cliffhanger: 'Deep Scan will lock fast-mover replenishment, stock truth, and route/POD discipline.'
+  },
+  Money: {
+    detection: 'margin leak stack (discounts, AR drag, promo and route economics)',
+    cost: 'sales momentum is not translating into protected margin and clean cash conversion',
+    cliffhanger: 'Deep Scan will build a margin bridge and enforce pricing, credit, and reconciliation controls.'
+  },
+  Market: {
+    detection: 'repeat-order friction + service inconsistency and weak shelf discipline',
+    cost: 'silent churn and weaker price power are reducing compounding growth',
+    cliffhanger: 'Deep Scan will install repeat-order protection, segmentation cadence, and complaint closure loops.'
+  },
+  Leadership: {
+    detection: 'KPI cadence gaps + approval and action-closure bottlenecks',
+    cost: 'the same leaks are being paid repeatedly because prevention is weaker than urgency',
+    cliffhanger: 'Deep Scan will enforce ownership cadence, delegated limits, and no-repeat closure routines.'
+  },
+  Innovation: {
+    detection: 'low test discipline + SKU and data complexity drift',
+    cost: 'improvement effort is high but measurable gains are inconsistent and slow to compound',
+    cliffhanger: 'Deep Scan will prioritize test-and-learn execution, structured order capture, and margin-first assortment.'
+  },
+  Risk: {
+    detection: 'shrinkage/AR/dispute exposure with weak compliance and continuity controls',
+    cost: 'one avoidable incident can trigger cash loss, trust damage, and contract friction',
+    cliffhanger: 'Deep Scan will harden control points across POD, cash handling, supplier verification, and incident response.'
+  },
+  People: {
+    detection: 'behavior variance in reps/drivers/warehouse plus weak scorecard accountability',
+    cost: 'quality and collections drift by person and shift, increasing disputes and avoidable rework',
+    cliffhanger: 'Deep Scan will align incentives, training certification, and ownership so execution becomes predictable.'
+  }
+};
+
+export const ASSEMBLY_QUIZ_COPY = {
+  Operations: {
+    detection: 'rework/yield instability + bottleneck flow loss',
+    cost: 'busy stations are masking rework, retest, and throughput leakage',
+    cliffhanger: 'Deep Scan will lock defect containment, bottleneck flow, and traceable station controls.'
+  },
+  Money: {
+    detection: 'costing and expedite leakage + warranty drag',
+    cost: 'margin is being diluted by hidden rework, premium freight, and complexity mispricing',
+    cliffhanger: 'Deep Scan will build SKU margin guardrails and cash-protection controls tied to complexity.'
+  },
+  Market: {
+    detection: 'OTIF/spec drift pressure + escalation loops',
+    cost: 'customer trust and repeat demand are weakening through avoidable delivery and requirement failures',
+    cliffhanger: 'Deep Scan will enforce requirement lock, RFQ speed, and proof-pack discipline.'
+  },
+  Leadership: {
+    detection: 'firefighting cadence + decision bottlenecks',
+    cost: 'recurring defects and delays persist because ownership and closure rhythm are weak',
+    cliffhanger: 'Deep Scan will install KPI visibility, delegated limits, and root-cause closure systems.'
+  },
+  Innovation: {
+    detection: 'variant/NPI complexity without control',
+    cost: 'changeover tax and launch friction are rising faster than throughput and margin',
+    cliffhanger: 'Deep Scan will prioritize variant governance, DFM gates, and test strategy upgrades.'
+  },
+  Risk: {
+    detection: 'traceability/compliance fragility + supplier/firmware exposure',
+    cost: 'one lot or field failure can escalate into recall, chargeback, and reputation shock',
+    cliffhanger: 'Deep Scan will harden traceability, supplier controls, and compliance-ready evidence flows.'
+  },
+  People: {
+    detection: 'skill/shift variance + weak quality ownership',
+    cost: 'defect volatility increases when execution depends on hero operators and informal handovers',
+    cliffhanger: 'Deep Scan will install station certification, handover discipline, and role-based accountability.'
+  }
 };
 
 export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
@@ -814,20 +1355,20 @@ QUICK_SCAN_QUESTIONS.push(
     }
   },
   {
-    pillar: 'Shield',
+    pillar: 'Risk',
     variants: {
       agro_processing: { a: "Compliance paperwork is handled when needed for buyers.", b: "Compliance readiness is maintained continuously to unlock bigger buyers." }
     }
   },
-  // Tribe
+  // People
   {
-    pillar: 'Tribe',
+    pillar: 'People',
     variants: {
       agro_processing: { a: "People prefer approvals to avoid mistakes and blame.", b: "People work within clear limits so speed and accountability improve." }
     }
   },
   {
-    pillar: 'Tribe',
+    pillar: 'People',
     variants: {
       agro_processing: { a: "Shift handover is informal; the next shift figures it out.", b: "Shift handover is standardized so quality doesn’t drift." }
     }
@@ -913,6 +1454,10 @@ export const INDUSTRY_DATA: Record<string, IndustryData> = {
   },
   mining: {
     weights: { shield: 20, engine: 18, fuel: 15, tribe: 13, brain: 12, voice: 12, pulse: 10 },
+    kpis: []
+  },
+  oil_gas_services: {
+    weights: { shield: 20, engine: 17, fuel: 17, brain: 14, tribe: 12, voice: 11, pulse: 9 },
     kpis: []
   },
   professional: {

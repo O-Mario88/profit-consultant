@@ -43,7 +43,7 @@ import {
    X
 } from 'lucide-react';
 import { User, PillarScores } from '../types';
-import { GoogleGenAI } from "@google/genai";
+import { getGeminiClient } from '../services/gemini';
 import { useLocalization } from '../contexts/LocalizationContext';
 
 interface DashboardProps {
@@ -207,7 +207,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onViewCourse, onLaunchTribe
       setChatResponse('');
 
       try {
-         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+         const ai = await getGeminiClient({ promptForKey: true });
+         if (!ai) {
+            setChatResponse("AI key not configured. Select a key to continue.");
+            return;
+         }
+
          const systemContext = `You are a Pocket COO. User scores: ${JSON.stringify(scores)}. Critical: ${String(criticalPillar[0])}. Advice must be numeric and ruthless.`;
 
          const response = await ai.models.generateContent({

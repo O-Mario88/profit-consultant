@@ -115,6 +115,12 @@ export const generateFixPlan = (report: GeneratedReport): FixPlan => {
           metric: action.metric || 'Completion',
           deadline: action.type === 'today' ? 'Day 7' : 'Day 30',
           impactScore: 9,
+          signalTag: action.signalTag,
+          costType: action.costType,
+          evidencePrompt: action.evidencePrompt,
+          verificationCriteria: action.verificationCriteria,
+          optionalEvidence: action.optionalEvidence,
+          autoTags: action.autoTags,
           _sortScore: 1000 // Top priority
         });
       });

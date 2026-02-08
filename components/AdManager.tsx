@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import { AdCampaign, User, BillingTransaction, AdObjective } from '../types';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { GoogleGenAI } from "@google/genai";
+import { getGeminiClient } from '../services/gemini';
 
 interface AdManagerProps {
   user: User;
@@ -130,7 +130,12 @@ const AdManager: React.FC<AdManagerProps> = ({ user }) => {
      }
      setGeneratingImage(true);
      try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = await getGeminiClient({ promptForKey: true });
+        if (!ai) {
+           alert("AI key not configured. Please select a key and try again.");
+           return;
+        }
+
         const response = await ai.models.generateContent({
            model: 'gemini-2.5-flash-image',
            contents: {

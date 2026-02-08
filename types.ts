@@ -168,6 +168,12 @@ export interface ActionItem {
   owner: string;
   effort?: 'Low' | 'Med' | 'High';
   metric?: string;
+  signalTag?: SignalTag;
+  costType?: string;
+  evidencePrompt?: string;
+  verificationCriteria?: string;
+  optionalEvidence?: string;
+  autoTags?: string[];
 }
 
 export interface PillarDriver {
@@ -279,6 +285,12 @@ export interface FixTask {
   deadline: string;
   impactScore: number;
   evidence?: { type: 'text' | 'file' | 'link'; value: string; timestamp: string };
+  signalTag?: SignalTag;
+  costType?: string;
+  evidencePrompt?: string;
+  verificationCriteria?: string;
+  optionalEvidence?: string;
+  autoTags?: string[];
   _sortScore?: number;
 }
 

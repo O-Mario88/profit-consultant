@@ -185,7 +185,7 @@ export const AGRO_INDICES: AgroIndex[] = [
         proofItems: [
             { item: "Signed cleaning verifications + audit readiness score" }
         ],
-        pillar: 'Shield'
+        pillar: 'Risk'
     },
     {
         id: 'G',
@@ -274,14 +274,26 @@ export const getTopIndices = (reportScores: Record<string, number>, profile?: Bu
     // Logic: Map indices to their pillars.
     // Return indices associated with the lowest scoring pillars.
 
+    const normalizePillar = (pillar: string): string => {
+        const key = pillar.toLowerCase();
+        if (key === 'engine' || key === 'operations') return 'operations';
+        if (key === 'fuel' || key === 'money') return 'money';
+        if (key === 'voice' || key === 'market') return 'market';
+        if (key === 'brain' || key === 'leadership') return 'leadership';
+        if (key === 'pulse' || key === 'innovation') return 'innovation';
+        if (key === 'shield' || key === 'risk') return 'risk';
+        if (key === 'tribe' || key === 'people') return 'people';
+        return key;
+    };
+
     const sortedPillars = Object.entries(reportScores)
         .sort(([, a], [, b]) => a - b) // Ascending score (lowest first)
-        .map(([p]) => p); // ['Fuel', 'Engine', ...]
+        .map(([p]) => normalizePillar(p)); // ['money', 'operations', ...]
 
-    const top3Pillars = sortedPillars.slice(0, 3);
+    const top3Pillars = Array.from(new Set(sortedPillars)).slice(0, 3);
 
     // Filter indices that match the top 3 critical pillars
-    let relevantIndices = AGRO_INDICES.filter(idx => top3Pillars.includes(idx.pillar));
+    let relevantIndices = AGRO_INDICES.filter(idx => top3Pillars.includes(normalizePillar(idx.pillar)));
 
     // Clone and inject costs if profile exists
     if (profile) {

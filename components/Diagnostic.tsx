@@ -14,9 +14,21 @@ import { useLocalization } from '../contexts/LocalizationContext';
 import { generateStrategicReport, calculateLeakIndices, generateSignalBasedReport } from '../services/reportEngine';
 import { AGRO_PACK } from '../data/agro';
 import { AGRI_PACK } from '../data/agri';
+import { MINING_PACK } from '../data/mining';
+import { OIL_GAS_PACK } from '../data/oilGas';
+import { FNB_PACK } from '../data/fnb';
+import { TEXTILE_PACK } from '../data/textile';
+import { FURNITURE_PACK } from '../data/furniture';
+import { METAL_PACK } from '../data/metal';
+import { PLASTICS_PACK } from '../data/plastics';
+import { SOAP_PACK } from '../data/soap';
+import { BRICKS_PACK } from '../data/bricks';
+import { WATER_PACK } from '../data/water';
+import { FMCG_PACK } from '../data/fmcg';
+import { ASSEMBLY_PACK } from '../data/assembly';
 import { PRODUCE_PACK } from '../data/produce';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
-import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY } from '../data/industryContext';
+import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY } from '../data/industryContext';
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
 
 interface DiagnosticProps {
@@ -52,6 +64,112 @@ const TEAM_SIZES = [
    { id: 'medium', label: 'Medium', sub: '51–200' },
    { id: 'large', label: 'Large', sub: '201–1k' },
    { id: 'enterprise', label: 'Enterprise', sub: '1k+' },
+];
+
+const FNB_SUB_INDUSTRIES = [
+   'Food & beverage manufacturing',
+   'Bakery / Flour / Grain-based processing',
+   'Dairy processing (milk, yoghurt, cheese)',
+   'Beverages (juice, soda, water)',
+   'Meat processing',
+   'Snacks & packaged foods',
+   'Edible oils (sunflower, palm, groundnut, etc.)'
+];
+
+const TEXTILE_SUB_INDUSTRIES = [
+   'Textile & garment manufacturing',
+   'CMT Factory (Cut-Make-Trim for buyers)',
+   'Uniforms & Workwear Manufacturing',
+   'Fashion / Retail Brand (own brand)',
+   'Knitwear / T-shirts / Casualwear (high volume)',
+   'Tailoring / Bespoke / Small Batch (custom)'
+];
+
+const FURNITURE_SUB_INDUSTRIES = [
+   'Furniture & carpentry production',
+   'Custom Residential Furniture (beds, wardrobes, kitchens)',
+   'Commercial Fit-Out & Office Furniture',
+   'Doors, Windows & Building Joinery',
+   'Mass/Batch Production (standard designs)',
+   'Upholstered Furniture (sofas, chairs)'
+];
+
+const METAL_SUB_INDUSTRIES = [
+   'Metal works / fabrication',
+   'Structural Steel & Construction Fabrication (frames, beams, gates, stairs)',
+   'Doors, Windows, Grills & Security Products',
+   'Industrial Fabrication (tanks, platforms, racks, hoppers)',
+   'Automotive Fabrication (trailers, bodies, repairs/mods)',
+   'Aluminum Fabrication (doors, partitions, glazing frames)',
+   'Stainless Steel Works (kitchen, hospital, food-grade)'
+];
+
+const PLASTICS_SUB_INDUSTRIES = [
+   'Plastics & packaging manufacturing',
+   'Film & Bag Manufacturing (poly bags, shrink film, liners)',
+   'Rigid Packaging (bottles, jerrycans, containers)',
+   'Injection Molding (caps, parts, household items)',
+   'Printing & Lamination (labels, flexible packs, pouches)',
+   'Recycled Plastics (regrind, washing, pelletizing)',
+   'Industrial Packaging (drums, crates, bulk packaging accessories)'
+];
+
+const SOAP_SUB_INDUSTRIES = [
+   'Soap / detergents / cosmetics production',
+   'Laundry Detergent & Multipurpose Cleaners (powder/liquid)',
+   'Bar Soap & Bath Soap (beauty/medicated)',
+   'Personal Care & Cosmetics (lotions, creams, oils, hair products)',
+   'Institutional / Bulk Supply (hotels, hospitals, schools)',
+   'Natural/Organic & Sensitive-Skin Brands',
+   'Distributors / Private Label Manufacturing'
+];
+
+const BRICKS_SUB_INDUSTRIES = [
+   'Bricks / blocks / cement products',
+   'Manual Yard Bricks (small-scale clay bricks / hand-mold)',
+   'Concrete Blocks (hollow/solid blocks, machine-vibro)',
+   'Pavers / Kerbs / Precast (high mix + high QC demand)',
+   'Cement Tiles / Terrazzo / Floor Tiles',
+   'Roofing Tiles (concrete tiles, decorative roofing pieces)',
+   'Multi-Product Yard (blocks + pavers + tiles + custom orders)'
+];
+
+const WATER_SUB_INDUSTRIES = [
+   'Bottled water / ice production',
+   'Small Plant Bottled Water (manual/semi-automatic)',
+   'Automated Bottling Line (higher volume)',
+   'Sachet Water (high volume, price-sensitive)',
+   'Ice Blocks / Ice Cubes (standalone)',
+   'Bottled Water + Ice (combined plant)',
+   'Institutional Supply (schools, hospitals, offices, events)',
+   'Distributor / Private Label Bottling'
+];
+
+const ASSEMBLY_SUB_INDUSTRIES = [
+   'Assembly / OEM',
+   'Assembly / OEM (electronics, components)',
+   'EMS Contract Manufacturer (PCBA + Box Build)',
+   'PCBA-Only (SMT + Reflow + AOI + Test)',
+   'Cable / Harness / Connector Assembly',
+   'High-Mix Low-Volume Custom Builds (Industrial, Lab, Prototypes)',
+   'White-Label / Multi-Variant OEM (Many clients, similar products)',
+   'Repair / Refurb / Rework Center (Reverse Logistics)',
+   'Precision Electronics / Medical / High-Compliance Assembly',
+   'Contract Electronics Assembly (EMS) — boards & devices',
+   'Component Assembly OEM (connectors, harnesses, modules)',
+   'Final Device Assembly (phones, gadgets, appliances sub-assemblies)',
+   'Private Label / White Label OEM (multiple variants for buyers)',
+   'High-Mix Low-Volume (custom builds)'
+];
+
+const FMCG_SUB_INDUSTRIES = [
+   'FMCG wholesale & distribution',
+   'Cash & Carry Wholesaler (walk-in shop, bulk buying)',
+   'Route-to-Market Distributor (van sales to retailers)',
+   'Sub-Distributor / Agent Network (many small resellers)',
+   'Modern Trade / Key Accounts (supermarkets, chains)',
+   'Importer + Regional Distributor (cross-border + bulk)',
+   'Cold-Chain / Perishables Distributor (dairy, frozen, chilled)'
 ];
 
 const getIcon = (name: string) => {
@@ -108,14 +226,49 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    // -- Initialization --
    useEffect(() => {
       if (!businessProfile.industry) return;
+      const isFnbManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isTextileManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isFurnitureManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isMetalManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isPlasticsManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isSoapManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isBricksManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isWaterManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isFmcgRetail =
+         businessProfile.industry === 'retail' &&
+         FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isAssemblyManufacturing =
+         businessProfile.industry === 'manufacturing' &&
+         ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
 
       const pillars = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'];
+      const toQuickScanSet = <T extends { qid: string }>(questions: T[]): T[] => {
+         const quickScan = questions.filter(q => q.qid.startsWith('QS_'));
+         if (quickScan.length > 0) return quickScan;
+         return questions.filter(q => !q.qid.startsWith('DS_'));
+      };
 
       // 1. Build Quick Scan Questions
       let quickScanQs: ActiveQuestion[] = [];
 
       if (businessProfile.industry === 'agro_processing') {
-         quickScanQs = AGRO_PACK.questions.map((q, idx) => ({
+         quickScanQs = toQuickScanSet(AGRO_PACK.questions).map((q, idx) => ({
             id: q.qid,
             pillar: q.pillar,
             a: q.textA,
@@ -124,7 +277,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             isGoalRelevant: true
          }));
       } else if (businessProfile.industry === 'agri_input') {
-         quickScanQs = AGRI_PACK.questions.map((q, idx) => ({
+         quickScanQs = toQuickScanSet(AGRI_PACK.questions).map((q, idx) => ({
             id: q.qid,
             pillar: q.pillar,
             a: q.textA,
@@ -135,9 +288,141 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       } else if (businessProfile.industry === 'produce_aggregation') {
          // Filter questions based on line_type (sub-industry)
          // Default to 'all' + matched sub-industry
-         quickScanQs = PRODUCE_PACK.questions
+         quickScanQs = toQuickScanSet(PRODUCE_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q, idx) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (businessProfile.industry === 'mining') {
+         quickScanQs = toQuickScanSet(MINING_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (businessProfile.industry === 'oil_gas_services') {
+         quickScanQs = toQuickScanSet(OIL_GAS_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isFnbManufacturing) {
+         quickScanQs = toQuickScanSet(FNB_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isTextileManufacturing) {
+         quickScanQs = toQuickScanSet(TEXTILE_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isFurnitureManufacturing) {
+         quickScanQs = toQuickScanSet(FURNITURE_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isMetalManufacturing) {
+         quickScanQs = toQuickScanSet(METAL_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isPlasticsManufacturing) {
+         quickScanQs = toQuickScanSet(PLASTICS_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isSoapManufacturing) {
+         quickScanQs = toQuickScanSet(SOAP_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isBricksManufacturing) {
+         quickScanQs = toQuickScanSet(BRICKS_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isWaterManufacturing) {
+         quickScanQs = toQuickScanSet(WATER_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isAssemblyManufacturing) {
+         quickScanQs = toQuickScanSet(ASSEMBLY_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isFmcgRetail) {
+         quickScanQs = toQuickScanSet(FMCG_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
                id: q.qid,
                pillar: q.pillar,
                a: q.textA,
@@ -169,7 +454,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       }
 
       setSessionQuestions(quickScanQs);
-   }, [businessProfile.industry, businessProfile.goals]);
+   }, [businessProfile.industry, businessProfile.subIndustry, businessProfile.goals]);
 
    // -- Handlers --
 
@@ -277,6 +562,78 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             agriAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(agriAnswers, businessProfile);
+      } else if (businessProfile.industry === 'mining') {
+         const miningAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            miningAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(miningAnswers, businessProfile);
+      } else if (businessProfile.industry === 'oil_gas_services') {
+         const oilGasAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            oilGasAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(oilGasAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const fnbAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            fnbAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(fnbAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const textileAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            textileAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(textileAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const furnitureAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            furnitureAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(furnitureAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const metalAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            metalAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(metalAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const plasticsAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            plasticsAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(plasticsAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const soapAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            soapAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(soapAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const bricksAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            bricksAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(bricksAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const waterAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            waterAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(waterAnswers, businessProfile);
+      } else if (businessProfile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const assemblyAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            assemblyAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(assemblyAnswers, businessProfile);
+      } else if (businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const fmcgAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            fmcgAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(fmcgAnswers, businessProfile);
       } else {
          report = await generateStrategicReport(finalScores, archetype, businessProfile);
       }
@@ -811,7 +1168,19 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const selectedPlan = 'basic';
 
       const quizCopy = businessProfile.industry === 'aquaculture' ? AQUACULTURE_QUIZ_COPY
-         : businessProfile.industry === 'agro_processing' ? AGRO_PROCESSING_QUIZ_COPY
+            : businessProfile.industry === 'agro_processing' ? AGRO_PROCESSING_QUIZ_COPY
+               : businessProfile.industry === 'mining' ? MINING_QUIZ_COPY
+                  : businessProfile.industry === 'oil_gas_services' ? OIL_GAS_QUIZ_COPY
+                  : businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FMCG_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FNB_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? TEXTILE_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FURNITURE_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? METAL_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? PLASTICS_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? SOAP_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? BRICKS_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? WATER_QUIZ_COPY
+               : businessProfile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ASSEMBLY_QUIZ_COPY
             : null;
 
       const specificHook = quizCopy ? (quizCopy as any)[results.silentKiller] : null;
@@ -888,32 +1257,55 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 export default Diagnostic;
 
 const determineAquacultureArchetype = (scores: Record<string, number>): Archetype => {
-   const s = (p: string) => scores[p] || 0;
-   const sorted = Object.entries(scores).sort(([, a], [, b]) => a - b);
-   const minPillar = sorted[0][0];
+   const get = (...keys: string[]) => {
+      for (const key of keys) {
+         const value = scores[key];
+         if (typeof value === 'number') return value;
+      }
+      return 0;
+   };
 
-   // 1. Market Taker (Voice low)
-   if (minPillar === 'Voice' || s('Voice') <= 40) return 'The Market Taker';
+   const operations = get('Operations', 'Engine');
+   const money = get('Money', 'Fuel');
+   const market = get('Market', 'Voice');
+   const leadership = get('Leadership', 'Brain');
+   const innovation = get('Innovation', 'Pulse');
+   const risk = get('Risk', 'Shield');
 
-   // 2. Fragile Winner (Shield low, Voice/Fuel high)
-   if (minPillar === 'Shield' && (s('Voice') >= 60 || s('Fuel') >= 60)) return 'The Fragile Winner';
+   const normalizedScores: Record<string, number> = {
+      Operations: operations,
+      Money: money,
+      Market: market,
+      Leadership: leadership,
+      Innovation: innovation,
+      Risk: risk,
+      People: get('People', 'Tribe')
+   };
 
-   // 3. Silent Leak (Fuel low)
-   if (minPillar === 'Fuel' || s('Fuel') <= 40) return 'The Silent Leak';
+   const minPillar = Object.entries(normalizedScores).sort(([, a], [, b]) => a - b)[0][0];
 
-   // 4. Busy Operator (Engine mid/high, Brain low)
-   if (minPillar === 'Brain' && s('Engine') >= 50) return 'The Busy Operator';
+   // 1. Market Taker (Market low)
+   if (minPillar === 'Market' || market <= 40) return 'The Market Taker';
 
-   // 5. Growth Chaser (Pulse/Engine high, Fuel/Brain low)
-   if ((s('Pulse') >= 60 || s('Engine') >= 60) && (s('Fuel') <= 40 || s('Brain') <= 40)) return 'The Growth Chaser';
+   // 2. Fragile Winner (Risk low, Market/Money high)
+   if (minPillar === 'Risk' && (market >= 60 || money >= 60)) return 'The Fragile Winner';
 
-   // 6. Control Builder (Brain/Shield/Engine high)
-   if (s('Brain') >= 60 && s('Shield') >= 60 && s('Engine') >= 60) return 'The Control Builder';
+   // 3. Silent Leak (Money low)
+   if (minPillar === 'Money' || money <= 40) return 'The Silent Leak';
+
+   // 4. Busy Operator (Leadership low, Operations reasonable)
+   if (minPillar === 'Leadership' && operations >= 50) return 'The Busy Operator';
+
+   // 5. Growth Chaser (Innovation/Operations high, Money/Leadership low)
+   if ((innovation >= 60 || operations >= 60) && (money <= 40 || leadership <= 40)) return 'The Growth Chaser';
+
+   // 6. Control Builder (Leadership/Risk/Operations high)
+   if (leadership >= 60 && risk >= 60 && operations >= 60) return 'The Control Builder';
 
    // Fallbacks
-   if (minPillar === 'Pulse') return 'The Growth Chaser';
-   if (minPillar === 'Shield') return 'The Fragile Winner';
-   if (minPillar === 'Brain') return 'The Busy Operator';
+   if (minPillar === 'Innovation') return 'The Growth Chaser';
+   if (minPillar === 'Risk') return 'The Fragile Winner';
+   if (minPillar === 'Leadership') return 'The Busy Operator';
 
    return 'The Busy Operator';
 };

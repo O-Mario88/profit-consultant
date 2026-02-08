@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, userRole }) => 
           { id: 'locker', label: 'Learning Locker', icon: Library },
           { id: 'action_lab', label: 'Action Lab', icon: Zap },
           { id: 'ai_ad_studio', label: 'AI Ad Studio', icon: Sparkles },
-          { id: 'marketplace', label: 'Marketplace', icon: BookOpen },
+          { id: 'catalog', label: 'Marketplace', icon: BookOpen },
           { id: 'pricing', label: 'Upgrade Tier', icon: ArrowUpCircle },
           ...common
         ];
@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, userRole }) => 
           { id: 'clients', label: 'Client List', icon: Briefcase },
           { id: 'ad_manager', label: 'Promotions', icon: Megaphone },
           { id: 'ai_ad_studio', label: 'AI Ad Studio', icon: Sparkles },
-          { id: 'marketplace', label: 'View Marketplace', icon: BookOpen },
+          { id: 'consultant_marketplace', label: 'View Marketplace', icon: BookOpen },
           { id: 'consultant_onboarding', label: 'Build Profile', icon: Flag },
           ...common
         ];

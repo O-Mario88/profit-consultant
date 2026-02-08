@@ -2,10 +2,49 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ActionPlan, ActionStep, Quiz, QuizQuestion, BusinessProfile, PillarScores, Archetype } from "../types";
 
-// Initialize Gemini
-// NOTE: In a production app, never expose keys on client. 
-// This is for the demo requirement where process.env.API_KEY is available.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const RUNTIME_GEMINI_KEY = 'gemini_api_key';
+
+const readServerEnvKey = (): string | undefined => {
+  if (typeof process === 'undefined' || !process.env) return undefined;
+  return process.env.GEMINI_API_KEY || process.env.API_KEY;
+};
+
+const readBrowserKey = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return window.sessionStorage.getItem(RUNTIME_GEMINI_KEY) || window.localStorage.getItem(RUNTIME_GEMINI_KEY);
+};
+
+export const getGeminiClient = async ({ promptForKey = false }: { promptForKey?: boolean } = {}): Promise<GoogleGenAI | null> => {
+  const serverKey = readServerEnvKey();
+  if (serverKey) return new GoogleGenAI({ apiKey: serverKey });
+
+  const browserKey = readBrowserKey();
+  if (browserKey) return new GoogleGenAI({ apiKey: browserKey });
+
+  if (typeof window !== 'undefined') {
+    const aistudio = (window as any).aistudio;
+    if (aistudio?.hasSelectedApiKey) {
+      let hasSelectedKey = await aistudio.hasSelectedApiKey();
+      if (!hasSelectedKey && promptForKey && aistudio.openSelectKey) {
+        await aistudio.openSelectKey();
+        hasSelectedKey = await aistudio.hasSelectedApiKey();
+      }
+      if (hasSelectedKey) {
+        return new GoogleGenAI({});
+      }
+    }
+
+    if (promptForKey && typeof window.prompt === 'function') {
+      const enteredKey = window.prompt('Enter your Gemini API key. It will be stored for this browser session only.');
+      if (enteredKey && enteredKey.trim()) {
+        window.sessionStorage.setItem(RUNTIME_GEMINI_KEY, enteredKey.trim());
+        return new GoogleGenAI({ apiKey: enteredKey.trim() });
+      }
+    }
+  }
+
+  return null;
+};
 
 export const generateReportAnalysis = async (
   profile: BusinessProfile,
@@ -13,6 +52,9 @@ export const generateReportAnalysis = async (
   archetype: Archetype
 ) => {
   try {
+    const ai = await getGeminiClient();
+    if (!ai) return null;
+
     const prompt = `
       Act as an expert elite business consultant. Analyze this business profile and diagnostic scores.
       
@@ -76,6 +118,9 @@ export const generateReportAnalysis = async (
 
 export const generateActionPlan = async (topic: string, context: string = ""): Promise<ActionPlan | null> => {
   try {
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) return null;
+
     const prompt = `
       You are an elite executive coach and operations architect. 
       Create a rigorous, high-level action plan for the following topic/goal: "${topic}".
@@ -141,6 +186,9 @@ export const generateActionPlan = async (topic: string, context: string = ""): P
 
 export const generateQuiz = async (topic: string, difficulty: string = "mixed"): Promise<QuizQuestion[] | null> => {
   try {
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) return null;
+
     const prompt = `
       Create 5 multiple choice quiz questions for a professional training sprint about: "${topic}".
       Difficulty level: ${difficulty}.
@@ -191,6 +239,9 @@ export interface SecondBrainResult {
 
 export const askSecondBrain = async (query: string): Promise<SecondBrainResult | null> => {
   try {
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) return null;
+
     const prompt = `
       You are the "Second Brain" of an execution-focused learning platform.
       The user is asking: "${query}".
@@ -235,9 +286,10 @@ export const askSecondBrain = async (query: string): Promise<SecondBrainResult |
 
 export const generateAdImage = async (prompt: string, style: string = 'photorealistic'): Promise<string | null> => {
   try {
-    // Re-init for key freshness if needed, though module-level 'ai' handles env key.
-    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const response = await aiInstance.models.generateContent({
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) return null;
+
+    const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [{
@@ -265,14 +317,16 @@ export const generateAdImage = async (prompt: string, style: string = 'photoreal
 
 export const generateAdCopy = async (product: string, goal: string): Promise<any | null> => {
   try {
-    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) return null;
+
     const prompt = `
       Write 3 variations of ad copy for: "${product}".
       Goal: ${goal}.
       Format: JSON with 'headline' (max 40 chars) and 'body' (max 90 chars).
     `;
 
-    const response = await aiInstance.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
@@ -302,10 +356,10 @@ export const generateAdCopy = async (product: string, goal: string): Promise<any
 
 export const generateAdVideo = async (prompt: string): Promise<string | null> => {
   try {
-    // Note: Veo requires a paid key selected via the window.aistudio flow if standard key fails
-    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) return null;
 
-    let operation = await aiInstance.models.generateVideos({
+    let operation = await ai.models.generateVideos({
       model: 'veo-3.1-fast-generate-preview',
       prompt: prompt,
       config: {
@@ -318,13 +372,17 @@ export const generateAdVideo = async (prompt: string): Promise<string | null> =>
     // Poll for completion
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, 5000));
-      operation = await aiInstance.operations.getVideosOperation({ operation: operation });
+      operation = await ai.operations.getVideosOperation({ operation: operation });
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
     if (downloadLink) {
-      // Appending key is required for Veo download links usually
-      return `${downloadLink}&key=${process.env.API_KEY}`;
+      const explicitKey = readServerEnvKey() || readBrowserKey();
+      if (explicitKey) {
+        const separator = downloadLink.includes('?') ? '&' : '?';
+        return `${downloadLink}${separator}key=${encodeURIComponent(explicitKey)}`;
+      }
+      return downloadLink;
     }
     return null;
   } catch (e) {

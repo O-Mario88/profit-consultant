@@ -88,6 +88,15 @@ const FixMode: React.FC<FixModeProps> = ({ user, onUpdateUser, onBack }) => {
          </div>
          <h4 className="font-bold text-gray-900 text-sm mb-1 leading-tight group-hover:text-brand-600 transition-colors">{task.title}</h4>
          <p className="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">{task.desc}</p>
+         {task.autoTags && task.autoTags.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-1">
+               {task.autoTags.slice(0, 2).map(tag => (
+                  <span key={tag} className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">
+                     {tag}
+                  </span>
+               ))}
+            </div>
+         )}
 
          <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
             <div className="flex items-center gap-2">
@@ -250,7 +259,25 @@ const FixMode: React.FC<FixModeProps> = ({ user, onUpdateUser, onBack }) => {
                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Rescore Reward</p>
                            <p className="text-sm font-bold text-brand-600">+{activeTask.impactScore} points</p>
                         </div>
+                        {activeTask.costType && (
+                           <div>
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Cost Type</p>
+                              <p className="text-sm font-bold text-gray-900">{activeTask.costType}</p>
+                           </div>
+                        )}
                      </div>
+                     {activeTask.autoTags && activeTask.autoTags.length > 0 && (
+                        <div>
+                           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Auto Tags</p>
+                           <div className="flex flex-wrap gap-2">
+                              {activeTask.autoTags.map(tag => (
+                                 <span key={tag} className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded-full border border-slate-200">
+                                    {tag}
+                                 </span>
+                              ))}
+                           </div>
+                        </div>
+                     )}
 
                      {activeTask.status !== 'done' ? (
                         <div className="space-y-6">
@@ -259,8 +286,18 @@ const FixMode: React.FC<FixModeProps> = ({ user, onUpdateUser, onBack }) => {
                                  <UploadCloud className="w-4 h-4" /> Proof-of-Work Required
                               </h4>
                               <p className="text-xs text-amber-800 mb-4 leading-relaxed">
-                                 To mark this task as fixed, upload a brief description of the system change OR a link to the new documentation/SOP.
+                                 {activeTask.evidencePrompt || 'To mark this task as fixed, upload a brief description of the system change OR a link to the new documentation/SOP.'}
                               </p>
+                              {activeTask.verificationCriteria && (
+                                 <p className="text-[11px] text-amber-900 mb-4 font-semibold">
+                                    Verify: {activeTask.verificationCriteria}
+                                 </p>
+                              )}
+                              {activeTask.optionalEvidence && (
+                                 <p className="text-[11px] text-amber-700 mb-4">
+                                    Optional: {activeTask.optionalEvidence}
+                                 </p>
+                              )}
                               <textarea
                                  className="w-full bg-white border border-amber-200 rounded-lg p-3 text-sm focus:ring-black focus:border-black h-32 resize-none"
                                  placeholder="Describe how the fix was implemented..."

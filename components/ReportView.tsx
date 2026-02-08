@@ -230,20 +230,20 @@ const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix }) =
 
                                  <div className="prose prose-lg text-slate-700 max-w-none">
                                     {/* Section 1: Theory */}
-                                    <div dangerouslySetInnerHTML={{ __html: pillar.deepScanChapter.theory.replace(/\n/g, '<br/>').replace(/### (.*)/g, '<h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">$1</h3>').replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>') }} />
+                                    <ReactMarkdown>{pillar.deepScanChapter.theory}</ReactMarkdown>
 
                                     <hr className="my-8 border-slate-200" />
 
                                     {/* Section 2: Diagnosis */}
-                                    <div dangerouslySetInnerHTML={{ __html: pillar.deepScanChapter.diagnosis.replace(/\n/g, '<br/>').replace(/### (.*)/g, '<h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">$1</h3>').replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>') }} />
+                                    <ReactMarkdown>{pillar.deepScanChapter.diagnosis}</ReactMarkdown>
                                  </div>
 
                                  <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl">
-                                    <div dangerouslySetInnerHTML={{ __html: pillar.deepScanChapter.psychology.replace(/\n/g, '<br/>').replace(/### (.*)/g, '<h4 class="text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">$1</h4>') }} />
+                                    <ReactMarkdown className="prose prose-sm max-w-none text-blue-900">{pillar.deepScanChapter.psychology}</ReactMarkdown>
                                  </div>
 
                                  <div className="prose prose-lg text-slate-700 max-w-none">
-                                    <div dangerouslySetInnerHTML={{ __html: pillar.deepScanChapter.financials.replace(/\n/g, '<br/>').replace(/### (.*)/g, '<h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">$1</h3>').replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>') }} />
+                                    <ReactMarkdown>{pillar.deepScanChapter.financials}</ReactMarkdown>
                                  </div>
 
                               </div>
