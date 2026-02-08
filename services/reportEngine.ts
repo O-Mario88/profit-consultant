@@ -20,7 +20,11 @@ import { PLASTICS_PACK } from "../data/plastics";
 import { SOAP_PACK } from "../data/soap";
 import { BRICKS_PACK } from "../data/bricks";
 import { WATER_PACK } from "../data/water";
+import { FASHION_PACK } from "../data/fashion";
+import { HARDWARE_PACK } from "../data/hardware";
+import { ELECTRONICS_PACK } from "../data/electronics";
 import { FMCG_PACK } from "../data/fmcg";
+import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES } from "../data/retailSubIndustries";
 import {
   ASSEMBLY_PACK,
   ASSEMBLY_CLIFFHANGER_STARTERS,
@@ -506,15 +510,6 @@ export const generateSignalBasedReport = async (
     'Institutional Supply (schools, hospitals, offices, events)',
     'Distributor / Private Label Bottling'
   ];
-  const fmcgSubIndustries = [
-    'FMCG wholesale & distribution',
-    'Cash & Carry Wholesaler (walk-in shop, bulk buying)',
-    'Route-to-Market Distributor (van sales to retailers)',
-    'Sub-Distributor / Agent Network (many small resellers)',
-    'Modern Trade / Key Accounts (supermarkets, chains)',
-    'Importer + Regional Distributor (cross-border + bulk)',
-    'Cold-Chain / Perishables Distributor (dairy, frozen, chilled)'
-  ];
   const assemblySubIndustries = [
     'Assembly / OEM',
     'Assembly / OEM (electronics, components)',
@@ -539,7 +534,10 @@ export const generateSignalBasedReport = async (
   const isSoapManufacturing = profile.industry === 'manufacturing' && soapSubIndustries.includes(profile.subIndustry);
   const isBricksManufacturing = profile.industry === 'manufacturing' && bricksSubIndustries.includes(profile.subIndustry);
   const isWaterManufacturing = profile.industry === 'manufacturing' && waterSubIndustries.includes(profile.subIndustry);
-  const isFmcgRetail = profile.industry === 'retail' && fmcgSubIndustries.includes(profile.subIndustry);
+  const isFashionRetail = profile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isHardwareRetail = profile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isElectronicsRetail = profile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isFmcgRetail = profile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isAssemblyManufacturing = profile.industry === 'manufacturing' && assemblySubIndustries.includes(profile.subIndustry);
   const pack = isFnbManufacturing
     ? FNB_PACK
@@ -557,6 +555,12 @@ export const generateSignalBasedReport = async (
                 ? BRICKS_PACK
                 : isWaterManufacturing
                   ? WATER_PACK
+                  : isFashionRetail
+                    ? FASHION_PACK
+                  : isHardwareRetail
+                    ? HARDWARE_PACK
+                  : isElectronicsRetail
+                    ? ELECTRONICS_PACK
                   : isFmcgRetail
                     ? FMCG_PACK
                   : isAssemblyManufacturing
@@ -814,6 +818,12 @@ export const generateSignalBasedReport = async (
                           ? 'Bricks and cement-product margin is protected by mix control, curing discipline, and dispatch reliability.'
                           : isWaterManufacturing
                             ? 'Bottled water and ice margin depends on hygiene discipline, fill and seal control, and route-level cash control.'
+                            : isFashionRetail
+                              ? 'Fashion boutique margin depends on size and SKU truth, markdown discipline, repeat-demand systems, and shrink-safe floor execution.'
+                            : isHardwareRetail
+                              ? 'Hardware and building-material margin depends on stock truth, dispatch accuracy, pricing discipline, and dispute-safe contractor service.'
+                            : isElectronicsRetail
+                              ? 'Electronics and phone-shop margin depends on stock truth, repair QC discipline, pricing control, and trust-safe after-sales execution.'
                             : isFmcgRetail
                               ? 'FMCG distribution margin depends on stock discipline, route reliability, credit control, and repeat-order consistency.'
                             : isAssemblyManufacturing

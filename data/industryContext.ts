@@ -1,5 +1,6 @@
 
 import { KPI } from "../types";
+import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES } from "./retailSubIndustries";
 
 export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'mining' | 'oil_gas_services' | 'produce' | 'other';
 
@@ -341,15 +342,13 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'ShoppingBag',
     lexiconKey: 'retail',
     subIndustries: [
-      'Supermarket / mini-mart', 'Kiosk / market vendor', 'FMCG wholesale & distribution',
-      'Cash & Carry Wholesaler (walk-in shop, bulk buying)',
-      'Route-to-Market Distributor (van sales to retailers)',
-      'Sub-Distributor / Agent Network (many small resellers)',
-      'Modern Trade / Key Accounts (supermarkets, chains)',
-      'Importer + Regional Distributor (cross-border + bulk)',
-      'Cold-Chain / Perishables Distributor (dairy, frozen, chilled)',
-      'Pharmacy / drug shop', 'Electronics & phone shop', 'Hardware & building materials shop',
-      'Fashion & boutique', 'Cosmetics / beauty supplies', 'Stationery & bookstore',
+      'Supermarket / mini-mart', 'Kiosk / market vendor',
+      ...ELECTRONICS_SHOP_SUB_INDUSTRIES,
+      ...FMCG_SUB_INDUSTRIES,
+      'Pharmacy / drug shop',
+      ...HARDWARE_SUB_INDUSTRIES,
+      ...FASHION_SUB_INDUSTRIES,
+      'Cosmetics / beauty supplies', 'Stationery & bookstore',
       'Spare parts & accessories shop', 'Import/export trading', 'E-commerce store / online retail'
     ]
   },
@@ -977,6 +976,120 @@ export const WATER_QUIZ_COPY = {
     detection: 'shift variance + training accountability gaps',
     cost: 'quality swings by operator and avoidable defects repeat under pressure',
     cliffhanger: 'Deep Scan will install role certification, handover standards, and clear KPI ownership.'
+  }
+};
+
+export const FASHION_QUIZ_COPY = {
+  Operations: {
+    detection: 'size chaos + weak arrival-to-floor discipline',
+    cost: 'stock mismatch, tagging delays, and catalog gaps are reducing conversion and speed',
+    cliffhanger: 'Deep Scan will lock SKU-size truth, no-tag-no-floor control, and fast catalogue flow.'
+  },
+  Money: {
+    detection: 'margin mirage + markdown and return leakage',
+    cost: 'sales movement is not translating into protected category margin and clean cash',
+    cliffhanger: 'Deep Scan will build category margin controls and enforce markdown, discount, and return guardrails.'
+  },
+  Market: {
+    detection: 'one-time buyer pattern + trust/content inconsistency',
+    cost: 'repeat demand and pricing power are leaking through weak follow-up and proof',
+    cliffhanger: 'Deep Scan will install VIP retention, social proof rhythm, and response SLAs.'
+  },
+  Leadership: {
+    detection: 'KPI darkness + approval bottlenecks',
+    cost: 'the same leaks are repeating because closure discipline and delegation are weak',
+    cliffhanger: 'Deep Scan will enforce KPI cadence, decision limits, and no-repeat action closure.'
+  },
+  Innovation: {
+    detection: 'drop stagnation + bundle engine gaps',
+    cost: 'newness and AOV growth are relying on instinct instead of measured experiments',
+    cliffhanger: 'Deep Scan will launch micro-test drops, outfit bundles, and conversion-focused experiments.'
+  },
+  Risk: {
+    detection: 'shrink and return-fraud exposure + authenticity risk',
+    cost: 'small daily losses and policy disputes are quietly compounding into margin and trust damage',
+    cliffhanger: 'Deep Scan will harden shrink controls, returns firewall, and supplier authenticity checks.'
+  },
+  People: {
+    detection: 'incentive misalignment + scriptless selling',
+    cost: 'discount-first behavior and inconsistent service are increasing returns and lowering profit quality',
+    cliffhanger: 'Deep Scan will align incentives, scripts, and onboarding for consistent profitable execution.'
+  }
+};
+
+export const HARDWARE_QUIZ_COPY = {
+  Operations: {
+    detection: 'phantom stock + dispatch and handling drift',
+    cost: 'search time, wrong deliveries, and breakage are quietly reducing throughput and trust',
+    cliffhanger: 'Deep Scan will lock stock truth, fast-mover protection, and dispatch proof discipline.'
+  },
+  Money: {
+    detection: 'margin mirage + discount and credit leakage',
+    cost: 'sales movement is not converting cleanly into protected margin and restock cash',
+    cliffhanger: 'Deep Scan will map category margin, tighten discount rules, and enforce collections cadence.'
+  },
+  Market: {
+    detection: 'quote leakage + weak repeat-order system',
+    cost: 'project opportunities are being lost through slow follow-up and inconsistent reliability signals',
+    cliffhanger: 'Deep Scan will install contractor conversion and repeat-demand control routines.'
+  },
+  Leadership: {
+    detection: 'KPI darkness + approval bottlenecks',
+    cost: 'the same leaks are repeating because action closure and delegation are too weak',
+    cliffhanger: 'Deep Scan will enforce KPI cadence, decision limits, and no-repeat closure rules.'
+  },
+  Innovation: {
+    detection: 'bundle and process testing is inconsistent',
+    cost: 'growth and efficiency are relying on instinct instead of measured improvement',
+    cliffhanger: 'Deep Scan will launch project-kit experiments and lightweight workflow automation.'
+  },
+  Risk: {
+    detection: 'supplier verification gaps + dispute and shrinkage exposure',
+    cost: 'one counterfeit or evidence-poor dispute can trigger outsized cash and reputation damage',
+    cliffhanger: 'Deep Scan will harden supplier firewall, POD defense, and shrinkage controls.'
+  },
+  People: {
+    detection: 'incentive and training misalignment',
+    cost: 'shortcut behavior and role variance are increasing errors, returns, and avoidable margin loss',
+    cliffhanger: 'Deep Scan will align incentives, onboarding, and ownership for stable execution.'
+  }
+};
+
+export const ELECTRONICS_QUIZ_COPY = {
+  Operations: {
+    detection: 'inventory ghosting + repair workflow drift',
+    cost: 'search time, comebacks, and stock errors are quietly reducing throughput and trust',
+    cliffhanger: 'Deep Scan will lock stock truth, repair stage controls, and Top-SKU execution discipline.'
+  },
+  Money: {
+    detection: 'margin visibility gaps + discount and warranty leakage',
+    cost: 'sales activity is not translating into protected cash and predictable margin',
+    cliffhanger: 'Deep Scan will build category margin controls and stop discount, recon, and warranty bleed.'
+  },
+  Market: {
+    detection: 'lead and follow-up inconsistency + weak attach behavior',
+    cost: 'repeat demand and basket value are leaking through avoidable trust and response gaps',
+    cliffhanger: 'Deep Scan will install lead response cadence, trust proof, and attach scripts that compound revenue.'
+  },
+  Leadership: {
+    detection: 'KPI cadence weakness + approval bottlenecks',
+    cost: 'issues repeat because action closure and delegated control are too slow',
+    cliffhanger: 'Deep Scan will enforce KPI visibility, decision limits, and closure discipline by owner.'
+  },
+  Innovation: {
+    detection: 'offer testing is irregular + service productization is weak',
+    cost: 'growth depends on luck instead of a repeatable experiment system',
+    cliffhanger: 'Deep Scan will launch monthly test loops, bundle optimization, and lightweight automation.'
+  },
+  Risk: {
+    detection: 'IMEI/parts verification exposure + policy ambiguity',
+    cost: 'a single dispute or authenticity incident can trigger outsized cash and reputation damage',
+    cliffhanger: 'Deep Scan will harden verification, dispute evidence, and shrinkage controls before failure events.'
+  },
+  People: {
+    detection: 'incentive and training misalignment across sales and technicians',
+    cost: 'returns, comebacks, and service variance rise when behavior is not aligned to quality outcomes',
+    cliffhanger: 'Deep Scan will align incentives, certification, and ownership for stable execution.'
   }
 };
 

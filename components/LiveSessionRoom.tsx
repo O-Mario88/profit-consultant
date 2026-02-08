@@ -200,7 +200,7 @@ const LiveSessionRoom: React.FC<LiveSessionRoomProps> = ({ user, onExit }) => {
            {/* Sentinel Assurance */}
            <div className="mt-12 flex items-center justify-center gap-2 text-xs text-gray-500">
               <ShieldAlert className="w-4 h-4" />
-              <span>Protected by Sentinel: If start delayed >30m, auto-refund triggers.</span>
+              <span>Protected by Sentinel: If start delayed {'>'}30m, auto-refund triggers.</span>
            </div>
         </div>
      </div>

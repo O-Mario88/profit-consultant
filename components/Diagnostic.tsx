@@ -24,11 +24,15 @@ import { PLASTICS_PACK } from '../data/plastics';
 import { SOAP_PACK } from '../data/soap';
 import { BRICKS_PACK } from '../data/bricks';
 import { WATER_PACK } from '../data/water';
+import { FASHION_PACK } from '../data/fashion';
+import { HARDWARE_PACK } from '../data/hardware';
+import { ELECTRONICS_PACK } from '../data/electronics';
 import { FMCG_PACK } from '../data/fmcg';
 import { ASSEMBLY_PACK } from '../data/assembly';
 import { PRODUCE_PACK } from '../data/produce';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
-import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY } from '../data/industryContext';
+import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY } from '../data/industryContext';
+import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES } from '../data/retailSubIndustries';
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
 
 interface DiagnosticProps {
@@ -162,16 +166,6 @@ const ASSEMBLY_SUB_INDUSTRIES = [
    'High-Mix Low-Volume (custom builds)'
 ];
 
-const FMCG_SUB_INDUSTRIES = [
-   'FMCG wholesale & distribution',
-   'Cash & Carry Wholesaler (walk-in shop, bulk buying)',
-   'Route-to-Market Distributor (van sales to retailers)',
-   'Sub-Distributor / Agent Network (many small resellers)',
-   'Modern Trade / Key Accounts (supermarkets, chains)',
-   'Importer + Regional Distributor (cross-border + bulk)',
-   'Cold-Chain / Perishables Distributor (dairy, frozen, chilled)'
-];
-
 const getIcon = (name: string) => {
    const map: Record<string, any> = {
       Sprout, ShoppingBag, Factory, HardHat, Truck, Utensils,
@@ -250,6 +244,15 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const isWaterManufacturing =
          businessProfile.industry === 'manufacturing' &&
          WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isFashionRetail =
+         businessProfile.industry === 'retail' &&
+         FASHION_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isHardwareRetail =
+         businessProfile.industry === 'retail' &&
+         HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isElectronicsRetail =
+         businessProfile.industry === 'retail' &&
+         ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
       const isFmcgRetail =
          businessProfile.industry === 'retail' &&
          FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
@@ -410,6 +413,39 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             }));
       } else if (isAssemblyManufacturing) {
          quickScanQs = toQuickScanSet(ASSEMBLY_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isFashionRetail) {
+         quickScanQs = toQuickScanSet(FASHION_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isHardwareRetail) {
+         quickScanQs = toQuickScanSet(HARDWARE_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isElectronicsRetail) {
+         quickScanQs = toQuickScanSet(ELECTRONICS_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q) => ({
                id: q.qid,
@@ -628,6 +664,24 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             assemblyAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(assemblyAnswers, businessProfile);
+      } else if (businessProfile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const fashionAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            fashionAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(fashionAnswers, businessProfile);
+      } else if (businessProfile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const hardwareAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            hardwareAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(hardwareAnswers, businessProfile);
+      } else if (businessProfile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+         const electronicsAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            electronicsAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(electronicsAnswers, businessProfile);
       } else if (businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
          const fmcgAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
@@ -1171,6 +1225,9 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             : businessProfile.industry === 'agro_processing' ? AGRO_PROCESSING_QUIZ_COPY
                : businessProfile.industry === 'mining' ? MINING_QUIZ_COPY
                   : businessProfile.industry === 'oil_gas_services' ? OIL_GAS_QUIZ_COPY
+                  : businessProfile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FASHION_QUIZ_COPY
+                  : businessProfile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? HARDWARE_QUIZ_COPY
+                  : businessProfile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ELECTRONICS_QUIZ_COPY
                   : businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FMCG_QUIZ_COPY
                : businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FNB_QUIZ_COPY
                : businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? TEXTILE_QUIZ_COPY

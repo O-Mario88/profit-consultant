@@ -718,7 +718,13 @@ export type SignalTag =
   | 'cargo_insurance_gap' | 'regulatory_blindspot' | 'supplier_side_selling' | 'cyber_security_weak' | 'political_risk_exposure'
   | 'reputation_risk' | 'climate_risk_exposure' | 'single_logistic_partner' | 'internal_theft' | 'specialist_skill_gap'
   | 'integrity_issue' | 'labour_shortage_risk' | 'manager_overload' | 'communication_breakdown' | 'safety_culture_weak'
-  | 'performance_review_gap' | 'incentive_misalignment' | 'gender_balance_gap' | 'conflict_handling_poor';
+  | 'performance_review_gap' | 'incentive_misalignment' | 'gender_balance_gap' | 'conflict_handling_poor'
+  // STATIONERY & BOOKSTORE TAGS
+  | 'sku_fog' | 'seasonality_shock' | 'shelf_maze' | 'queue_chaos' | 'dead_book_trap'
+  | 'bargain_drift' | 'credit_sink' | 'cash_drawer_drift' | 'hidden_service_leak'
+  | 'one_time_buyer_curse' | 'school_contract_miss' | 'whatsapp_blackhole' | 'bundle_blindness'
+  | 'kpi_darkness' | 'stale_shelf_syndrome' | 'theft_tax' | 'counterfeit_piracy_landmine'
+  | 'dispute_tax' | 'supplier_short_delivery' | 'scriptless_selling' | 'careless_handling';
 
 export type PillarId = 'Operations' | 'Money' | 'Market' | 'Leadership' | 'Innovation' | 'Risk' | 'People';
 
