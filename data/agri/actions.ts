@@ -2,231 +2,387 @@
 import { ActionDefinition } from '../../types';
 
 export const actions: ActionDefinition[] = [
-    // --- 7-DAY ACTIONS ---
+    // --- 7-DAY ACTIONS (Stabilize Profit) ---
     {
-        action_id: 'ACT7_ENGINE_STOCKOUT_FREEZE',
+        action_id: 'ACT_MACH_OPS_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Engine',
-        signal_tags: ['stockout_tax', 'restock_delay'],
-        title: "7-day Stockout Freeze for Top 20 Items",
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        pillar: 'Operations',
+        signal_tags: ['dispatch_chaos', 'downtime_debt'],
+        title: 'Start Dispatch Board',
         days: 7,
         effort: 'S',
-        default_owner_by_size: { "solo": "Founder", "small_team": "OpsLead", "sme": "OpsSupervisor", "enterprise": "OpsManager" },
-        kpi_links: ["KPI_ENGINE_STOCKOUT_RATE"],
-        proof_required: ["PROOF_STOCKOUT_LOG_7D", "PROOF_REORDER_POINTS"],
-        impact_score: 10
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Ops Lead',
+            sme: 'Ops Manager',
+            enterprise: 'Dispatch Lead'
+        },
+        kpi_links: ['start_rate'],
+        proof_required: ['photo_of_board', '7_day_log'],
+        impact_score: 8
     },
     {
-        action_id: 'ACT7_ENGINE_QUEUE_KILL_ROUTINE',
+        action_id: 'ACT_MACH_MON_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Engine',
-        signal_tags: ['queue_to_cash_lag', 'peak_season_chaos'],
-        title: "Peak-hour Queue Kill Routine (timed service + staffing)",
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        pillar: 'Money',
+        signal_tags: ['deposit_discipline_gap', 'underpricing_trap'],
+        title: 'Enforce Deposit Rule',
         days: 7,
         effort: 'S',
-        default_owner_by_size: { "solo": "Founder", "small_team": "BranchLead", "sme": "BranchManager", "enterprise": "RegionalManager" },
-        kpi_links: ["KPI_ENGINE_SERVICE_TIME"],
-        proof_required: ["PROOF_SERVICE_TIMES"],
-        impact_score: 10
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Sales/Finance',
+            sme: 'Finance Manager',
+            enterprise: 'Finance Controller'
+        },
+        kpi_links: ['deposit_compliance'],
+        proof_required: ['policy_doc', '10_invoices_audit'],
+        impact_score: 9
     },
     {
-        action_id: 'ACT7_FUEL_CREDIT_STOPLIGHT',
+        action_id: 'ACT_MACH_MON_02',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Fuel',
-        signal_tags: ['credit_chokehold', 'payment_terms_risk'],
-        title: "Credit Stoplight + Follow-up Log (Green/Amber/Red)",
+        line_type: ['Mechanization Hire'],
+        pillar: 'Money',
+        signal_tags: ['fuel_burn_leak'],
+        title: 'Fuel Log + Route Note',
         days: 7,
         effort: 'S',
-        default_owner_by_size: { "solo": "Founder", "small_team": "FinanceLead", "sme": "FinanceOfficer", "enterprise": "FinanceController" },
-        kpi_links: ["KPI_FUEL_DSO"],
-        proof_required: ["PROOF_CREDIT_STOPLIGHT"],
-        impact_score: 15
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Field Supervisor',
+            sme: 'Fleet Manager',
+            enterprise: 'Fleet Manager'
+        },
+        kpi_links: ['fuel_cost_per_job'],
+        proof_required: ['fuel_log_photos'],
+        impact_score: 7
     },
     {
-        action_id: 'ACT7_FUEL_PRICE_LIST_LOCK',
+        action_id: 'ACT_MACH_OPS_02',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Fuel',
-        signal_tags: ['pricing_inconsistency', 'category_margin_blindspot'],
-        title: "Lock Category Price List (replacement-cost based)",
+        line_type: ['Mechanization Hire', 'Repair & Maintenance Services'],
+        pillar: 'Operations',
+        signal_tags: ['job_card_blindness'],
+        title: 'Job Card for Every Job',
         days: 7,
         effort: 'S',
-        default_owner_by_size: { "solo": "Founder", "small_team": "BranchLead", "sme": "BranchManager", "enterprise": "SalesManager" },
-        kpi_links: ["KPI_FUEL_GROSS_MARGIN_BY_CATEGORY"],
-        proof_required: ["PROOF_MARGIN_DASH"],
-        impact_score: 10
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Ops Lead',
+            sme: 'Ops Manager',
+            enterprise: 'Service Manager'
+        },
+        kpi_links: ['job_card_completion'],
+        proof_required: ['10_completed_cards'],
+        impact_score: 8
     },
     {
-        action_id: 'ACT7_SHIELD_EXPIRY_RESCUE_SWEEP',
+        action_id: 'ACT_MACH_OPS_03',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Shield',
-        signal_tags: ['expiry_rotation_gap', 'expiry_compliance_risk'],
-        title: "Expiry Rescue Sweep (60-day risk shelf)",
+        line_type: ['Repair & Maintenance Services'],
+        pillar: 'Operations',
+        signal_tags: ['breakdown_tax', 'reactive_maintenance'],
+        title: 'List Top 5 Failure Causes',
         days: 7,
         effort: 'S',
-        default_owner_by_size: { "solo": "Founder", "small_team": "OpsLead", "sme": "OpsSupervisor", "enterprise": "OpsManager" },
-        kpi_links: ["KPI_FUEL_DEAD_STOCK_PCT"],
-        proof_required: ["PROOF_EXPIRY_SWEEP"],
-        impact_score: 10
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Workshop Lead',
+            sme: 'Workshop Manager',
+            enterprise: 'Technical Director'
+        },
+        kpi_links: ['repeat_breakdown_rate'],
+        proof_required: ['failure_list', 'countermeasures'],
+        impact_score: 6
     },
     {
-        action_id: 'ACT7_SHIELD_SUPPLIER_WHITELIST',
+        action_id: 'ACT_MACH_MKT_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Shield',
-        signal_tags: ['counterfeit_exposure', 'supplier_doc_gap'],
-        title: "Supplier Whitelist + Document Folder (counterfeit gate)",
-        days: 7,
-        effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "ProcurementLead", "sme": "ProcurementLead", "enterprise": "ProcurementManager" },
-        kpi_links: ["KPI_SHIELD_TRACE_COVERAGE"],
-        proof_required: ["PROOF_SUPPLIER_WHITELIST"],
-        impact_score: 15
-    },
-    {
-        action_id: 'ACT7_VOICE_CYCLE_WHATSAPP_FOLLOWUP',
-        industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Voice',
-        signal_tags: ['followup_gap', 'repeat_order_drift'],
-        title: "Cycle Follow-up List (WhatsApp reminders by customer type)",
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        pillar: 'Market',
+        signal_tags: ['quotation_to_cash_lag', 'trust_collapse_moment'],
+        title: 'Quote Turnaround Sprint',
         days: 7,
         effort: 'S',
-        default_owner_by_size: { "solo": "Founder", "small_team": "SalesLead", "sme": "SalesSupervisor", "enterprise": "SalesManager" },
-        kpi_links: ["KPI_VOICE_REPEAT_RATE"],
-        proof_required: ["PROOF_POLICY_DOC"],
-        impact_score: 10
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Sales Lead',
+            sme: 'Sales Manager',
+            enterprise: 'Sales Director'
+        },
+        kpi_links: ['quote_turnaround_time'],
+        proof_required: ['quote_timestamps'],
+        impact_score: 7
     },
     {
-        action_id: 'ACT7_TRIBE_PRODUCT_GUIDE_CARD',
+        action_id: 'ACT_MACH_OPS_04',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Tribe',
-        signal_tags: ['training_gap', 'sales_without_standards', 'liability_landmine'],
-        title: "1-page Product Guidance Cards (top 10 items) + mini test",
+        line_type: ['Repair & Maintenance Services'],
+        pillar: 'Operations',
+        signal_tags: ['spare_parts_blackhole'],
+        title: 'Parts "Emergency Kit" for Peak',
         days: 7,
-        effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "SalesLead", "sme": "BranchManager", "enterprise": "HRLead" },
-        kpi_links: ["KPI_TRIBE_TRAINING_PASS"],
-        proof_required: ["PROOF_TRAINING_ATTEND"],
-        impact_score: 10
+        effort: 'S',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Workshop Lead',
+            sme: 'Parts Manager',
+            enterprise: 'Procurement Lead'
+        },
+        kpi_links: ['downtime_hours'],
+        proof_required: ['kit_inventory_photo'],
+        impact_score: 8
+    },
+    {
+        action_id: 'ACT_MACH_MKT_02',
+        industry: 'agri_input',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        pillar: 'Market',
+        signal_tags: ['trust_leak'],
+        title: 'Capture Customer Proof',
+        days: 7,
+        effort: 'S',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Field Team',
+            sme: 'Marketing Lead',
+            enterprise: 'Marketing Manager'
+        },
+        kpi_links: ['referral_rate'],
+        proof_required: ['5_before_after_photos', '3_testimonials'],
+        impact_score: 6
+    },
+    {
+        action_id: 'ACT_MACH_MKT_03',
+        industry: 'agri_input',
+        line_type: ['all'],
+        pillar: 'Market',
+        signal_tags: ['complaint_handling_gap'],
+        title: 'Complaint Closure Log',
+        days: 7,
+        effort: 'S',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Manager',
+            sme: 'Customer Service Lead',
+            enterprise: 'CX Manager'
+        },
+        kpi_links: ['complaint_repeat_rate'],
+        proof_required: ['log_sheet', 'closures'],
+        impact_score: 7
+    },
+    {
+        action_id: 'ACT_MACH_PPL_01',
+        industry: 'agri_input',
+        line_type: ['Mechanization Hire'],
+        pillar: 'People',
+        signal_tags: ['operator_drift'],
+        title: 'Operator Daily Checklist',
+        days: 7,
+        effort: 'S',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Field Supervisor',
+            sme: 'Field Manager',
+            enterprise: 'Ops Director'
+        },
+        kpi_links: ['operator_error_rate'],
+        proof_required: ['checklist_doc', 'signatures'],
+        impact_score: 8
     },
 
-    // --- 30-DAY ACTIONS ---
+    // --- 30-DAY ACTIONS (Build Control) ---
     {
-        action_id: 'ACT30_ENGINE_WEEKLY_CYCLE_COUNTS',
+        action_id: 'ACT_MACH_OPS_30_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Engine',
-        signal_tags: ['inventory_accuracy_gap', 'silent_shrink'],
-        title: "Weekly Cycle Count + Variance Investigation Routine",
+        line_type: ['Mechanization Hire', 'Repair & Maintenance Services'],
+        pillar: 'Operations',
+        signal_tags: ['reactive_maintenance', 'breakdown_tax'],
+        title: 'Build PM Calendar',
         days: 30,
         effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "OpsLead", "sme": "OpsSupervisor", "enterprise": "OpsManager" },
-        kpi_links: ["KPI_ENGINE_STOCK_ACCURACY"],
-        proof_required: ["PROOF_REORDER_POINTS"],
-        impact_score: 20
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Workshop Lead',
+            sme: 'Maintenance Manager',
+            enterprise: 'Engineering Lead'
+        },
+        kpi_links: ['pm_compliance', 'mtbf'],
+        proof_required: ['calendar_doc', 'checklists'],
+        impact_score: 9
     },
     {
-        action_id: 'ACT30_FUEL_CATEGORY_MARGIN_DASH',
+        action_id: 'ACT_MACH_MON_30_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Fuel',
-        signal_tags: ['margin_mirage', 'category_margin_blindspot'],
-        title: "Category Margin Dashboard + Weekly Review",
+        line_type: ['all'],
+        pillar: 'Money',
+        signal_tags: ['costing_gap', 'underpricing_trap'],
+        title: 'Cost-Based Pricing Sheet',
         days: 30,
         effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "FinanceLead", "sme": "FinanceOfficer", "enterprise": "FinanceController" },
-        kpi_links: ["KPI_FUEL_GROSS_MARGIN_BY_CATEGORY"],
-        proof_required: ["PROOF_MARGIN_DASH"],
-        impact_score: 20
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Finance',
+            sme: 'Finance Manager',
+            enterprise: 'CFO'
+        },
+        kpi_links: ['gross_margin_per_service'],
+        proof_required: ['pricing_model', 'updated_price_list'],
+        impact_score: 9
     },
     {
-        action_id: 'ACT30_FUEL_CREDIT_TERMS_STANDARD',
+        action_id: 'ACT_MACH_OPS_30_02',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Fuel',
-        signal_tags: ['credit_contract_gap', 'payment_terms_risk'],
-        title: "Standard Credit Terms + Signed Coverage for Top Credit Customers",
+        line_type: ['Mechanization Hire'],
+        pillar: 'Operations',
+        signal_tags: ['downtime_debt'],
+        title: 'Utilization Dashboard',
         days: 30,
         effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "FinanceLead", "sme": "FinanceOfficer", "enterprise": "FinanceController" },
-        kpi_links: ["KPI_FUEL_DSO"],
-        proof_required: ["PROOF_POLICY_DOC"],
-        impact_score: 15
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Ops',
+            sme: 'Ops Manager',
+            enterprise: 'COO'
+        },
+        kpi_links: ['utilization_rate'],
+        proof_required: ['dashboard_screenshot'],
+        impact_score: 8
     },
     {
-        action_id: 'ACT30_VOICE_BUNDLE_ENGINE',
+        action_id: 'ACT_MACH_MKT_30_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Voice',
-        signal_tags: ['bundle_blindspot', 'advice_to_sale_gap'],
-        title: "Bundle Engine (solution packs) + staff pitch scripts",
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        pillar: 'Market',
+        signal_tags: ['seasonal_demand_miss'],
+        title: 'Pre-Booking Program',
         days: 30,
         effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "SalesLead", "sme": "SalesSupervisor", "enterprise": "SalesManager" },
-        kpi_links: ["KPI_VOICE_BASKET_SIZE"],
-        proof_required: ["PROOF_TRAINING_ATTEND"],
-        impact_score: 20
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Sales',
+            sme: 'Sales Manager',
+            enterprise: 'Commercial Director'
+        },
+        kpi_links: ['pre_booking_rate'],
+        proof_required: ['campaign_material', 'bookings_list'],
+        impact_score: 8
     },
     {
-        action_id: 'ACT30_PULSE_SKU_WINNERS_MAP',
+        action_id: 'ACT_MACH_RISK_30_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Pulse',
-        signal_tags: ['sku_clutter', 'slow_mover_attachment', 'assortment_confusion'],
-        title: "SKU Winners Map (80/20) + slow mover clearance rules",
+        line_type: ['all'],
+        pillar: 'Risk',
+        signal_tags: ['contract_exposure'],
+        title: 'Standard Contracts',
+        days: 30,
+        effort: 'S',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Manager',
+            sme: 'Legal/Admin',
+            enterprise: 'Legal Counsel'
+        },
+        kpi_links: ['contract_coverage'],
+        proof_required: ['template_doc', '10_signed_samples'],
+        impact_score: 9
+    },
+    {
+        action_id: 'ACT_MACH_OPS_30_03',
+        industry: 'agri_input',
+        line_type: ['Repair & Maintenance Services'],
+        pillar: 'Operations',
+        signal_tags: ['spare_parts_blackhole'],
+        title: 'Spare Parts Control',
         days: 30,
         effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "BranchLead", "sme": "BranchManager", "enterprise": "RegionalManager" },
-        kpi_links: ["KPI_PULSE_SKU_PRODUCTIVITY", "KPI_FUEL_DEAD_STOCK_PCT"],
-        proof_required: ["PROOF_EXPIRY_SWEEP"],
-        impact_score: 20
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Workshop',
+            sme: 'Procurement',
+            enterprise: 'Supply Chain Lead'
+        },
+        kpi_links: ['downtime_hours'],
+        proof_required: ['supplier_list', 'reorder_point_sheet'],
+        impact_score: 8
     },
     {
-        action_id: 'ACT30_SHIELD_TRACEABILITY_LITE',
+        action_id: 'ACT_MACH_INN_30_01',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Shield',
-        signal_tags: ['traceability_gap', 'supplier_doc_gap', 'counterfeit_exposure'],
-        title: "Traceability Lite (supplier doc + batch/lot capture at receiving and sale)",
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        pillar: 'Innovation',
+        signal_tags: ['bundle_blindspot'],
+        title: 'Service Bundles',
+        days: 30,
+        effort: 'M',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Sales',
+            sme: 'Product Manager',
+            enterprise: 'Marketing Director'
+        },
+        kpi_links: ['bundle_attach_rate'],
+        proof_required: ['bundle_pricing', 'training_material'],
+        impact_score: 8
+    },
+    {
+        action_id: 'ACT_MACH_PPL_30_01',
+        industry: 'agri_input',
+        line_type: ['Mechanization Hire', 'Operator Training & Advisory'],
+        pillar: 'People',
+        signal_tags: ['operator_drift'],
+        title: 'Operator Training & Certification',
         days: 30,
         effort: 'L',
-        default_owner_by_size: { "solo": "Founder", "small_team": "OpsLead", "sme": "ComplianceLead", "enterprise": "ComplianceManager" },
-        kpi_links: ["KPI_SHIELD_TRACE_COVERAGE"],
-        proof_required: ["PROOF_TRACE_SAMPLE"],
-        impact_score: 25
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Manager',
+            sme: 'HR/Ops',
+            enterprise: 'Training Manager'
+        },
+        kpi_links: ['skill_pass_rate'],
+        proof_required: ['test_results', 'certificates'],
+        impact_score: 9
     },
     {
-        action_id: 'ACT30_BRAIN_WEEKLY_CADENCE',
+        action_id: 'ACT_MACH_RISK_30_02',
         industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Brain',
-        signal_tags: ['kpi_cadence_gap', 'no_owner_syndrome', 'meeting_no_action'],
-        title: "Weekly KPI Cadence (review → decisions → tasks → owners)",
+        line_type: ['all'],
+        pillar: 'Risk',
+        signal_tags: ['liability_landmine'],
+        title: 'Incident & Damage Review',
+        days: 30,
+        effort: 'S',
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Manager',
+            sme: 'Safety Officer',
+            enterprise: 'HSE Manager'
+        },
+        kpi_links: ['incident_rate'],
+        proof_required: ['monthly_review_notes'],
+        impact_score: 7
+    },
+    {
+        action_id: 'ACT_MACH_MON_30_02',
+        industry: 'agri_input',
+        line_type: ['all'],
+        pillar: 'Money',
+        signal_tags: ['quotation_to_cash_lag'],
+        title: 'Quote-to-Cash Workflow',
         days: 30,
         effort: 'M',
-        default_owner_by_size: { "solo": "Founder", "small_team": "BranchLead", "sme": "BranchManager", "enterprise": "RegionalManager" },
-        kpi_links: ["KPI_BRAIN_ACTION_CLOSURE"],
-        proof_required: ["PROOF_POLICY_DOC"],
-        impact_score: 25
-    },
-    {
-        action_id: 'ACT30_TRIBE_SELLING_STANDARD',
-        industry: 'agri_input',
-        line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
-        pillar: 'Tribe',
-        signal_tags: ['sales_without_standards', 'service_inconsistency', 'ethics_drift'],
-        title: "Selling Standard (5-step advisory flow) + mystery shopper scoring",
-        days: 30,
-        effort: 'L',
-        default_owner_by_size: { "solo": "Founder", "small_team": "SalesLead", "sme": "BranchManager", "enterprise": "SalesManager" },
-        kpi_links: ["KPI_VOICE_REPEAT_RATE"],
-        proof_required: ["PROOF_TRAINING_ATTEND"],
-        impact_score: 25
+        default_owner_by_size: {
+            solo: 'Owner',
+            small_team: 'Finance',
+            sme: 'Finance Manager',
+            enterprise: 'CFO'
+        },
+        kpi_links: ['quote_to_cash_days'],
+        proof_required: ['workflow_doc', 'time_trend_chart'],
+        impact_score: 8
     }
 ];

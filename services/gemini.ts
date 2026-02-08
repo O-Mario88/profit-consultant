@@ -26,7 +26,7 @@ export const generateReportAnalysis = async (
       
       Generate a strategic analysis report in JSON format.
       1. Executive Summary: A high-impact, brutal but encouraging 3-4 sentence summary of their current state, identifying the critical bottleneck.
-      2. For each of the 7 pillars (Engine, Fuel, Voice, Brain, Pulse, Shield, Tribe), provide:
+      2. For each of the 7 pillars (Operations, Money, Market, Leadership, Innovation, Risk, People), provide:
          - quickScan: A ~50 word punchy analysis of their score in this area.
          - deepDive: An object containing detailed sections (approx 100-200 words each):
            - theory: What this pillar represents in their specific industry (${profile.industry}).
@@ -48,13 +48,15 @@ export const generateReportAnalysis = async (
             pillars: {
               type: Type.OBJECT,
               properties: {
-                Engine: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } },
-                Fuel: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } },
-                Voice: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } },
-                Brain: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } },
-                Pulse: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } },
-                Shield: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } },
-                Tribe: { type: Type.OBJECT, properties: { quickScan: {type: Type.STRING}, deepDive: { type: Type.OBJECT, properties: { theory: {type: Type.STRING}, diagnosis: {type: Type.STRING}, psychology: {type: Type.STRING}, financials: {type: Type.STRING}, prescription: {type: Type.STRING} } } } }
+                properties: {
+                  Operations: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } },
+                  Money: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } },
+                  Market: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } },
+                  Leadership: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } },
+                  Innovation: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } },
+                  Risk: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } },
+                  People: { type: Type.OBJECT, properties: { quickScan: { type: Type.STRING }, deepDive: { type: Type.OBJECT, properties: { theory: { type: Type.STRING }, diagnosis: { type: Type.STRING }, psychology: { type: Type.STRING }, financials: { type: Type.STRING }, prescription: { type: Type.STRING } } } } }
+                }
               }
             }
           }
@@ -113,7 +115,7 @@ export const generateActionPlan = async (topic: string, context: string = ""): P
 
     if (response.text) {
       const data = JSON.parse(response.text);
-      
+
       // Transform into our app's internal type
       const newPlan: ActionPlan = {
         id: crypto.randomUUID(),
@@ -210,7 +212,7 @@ export const askSecondBrain = async (query: string): Promise<SecondBrainResult |
             videoTitle: { type: Type.STRING },
             timestamp: { type: Type.STRING },
             answer: { type: Type.STRING },
-            actionItems: { 
+            actionItems: {
               type: Type.ARRAY,
               items: { type: Type.STRING }
             }
@@ -238,11 +240,11 @@ export const generateAdImage = async (prompt: string, style: string = 'photoreal
     const response = await aiInstance.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
-        parts: [{ 
+        parts: [{
           text: `Generate a high-quality professional advertisement image. 
           Style: ${style}. 
           Prompt: ${prompt}. 
-          Ensure it looks like a premium stock photo or high-end illustration suitable for a business website.` 
+          Ensure it looks like a premium stock photo or high-end illustration suitable for a business website.`
         }]
       }
     });
@@ -269,7 +271,7 @@ export const generateAdCopy = async (product: string, goal: string): Promise<any
       Goal: ${goal}.
       Format: JSON with 'headline' (max 40 chars) and 'body' (max 90 chars).
     `;
-    
+
     const response = await aiInstance.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
@@ -302,7 +304,7 @@ export const generateAdVideo = async (prompt: string): Promise<string | null> =>
   try {
     // Note: Veo requires a paid key selected via the window.aistudio flow if standard key fails
     const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    
+
     let operation = await aiInstance.models.generateVideos({
       model: 'veo-3.1-fast-generate-preview',
       prompt: prompt,
@@ -316,13 +318,13 @@ export const generateAdVideo = async (prompt: string): Promise<string | null> =>
     // Poll for completion
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, 5000));
-      operation = await aiInstance.operations.getVideosOperation({operation: operation});
+      operation = await aiInstance.operations.getVideosOperation({ operation: operation });
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
     if (downloadLink) {
-        // Appending key is required for Veo download links usually
-        return `${downloadLink}&key=${process.env.API_KEY}`;
+      // Appending key is required for Veo download links usually
+      return `${downloadLink}&key=${process.env.API_KEY}`;
     }
     return null;
   } catch (e) {

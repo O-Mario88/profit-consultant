@@ -14,6 +14,7 @@ import { useLocalization } from '../contexts/LocalizationContext';
 import { generateStrategicReport, calculateLeakIndices, generateSignalBasedReport } from '../services/reportEngine';
 import { AGRO_PACK } from '../data/agro';
 import { AGRI_PACK } from '../data/agri';
+import { PRODUCE_PACK } from '../data/produce';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
 import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY } from '../data/industryContext';
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
@@ -108,7 +109,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    useEffect(() => {
       if (!businessProfile.industry) return;
 
-      const pillars = ['Engine', 'Fuel', 'Voice', 'Brain', 'Pulse', 'Shield', 'Tribe'];
+      const pillars = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'];
 
       // 1. Build Quick Scan Questions
       let quickScanQs: ActiveQuestion[] = [];
@@ -131,6 +132,19 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             isSwapped: false,
             isGoalRelevant: true
          }));
+      } else if (businessProfile.industry === 'produce_aggregation') {
+         // Filter questions based on line_type (sub-industry)
+         // Default to 'all' + matched sub-industry
+         quickScanQs = PRODUCE_PACK.questions
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q, idx) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
       } else {
          quickScanQs = QUICK_SCAN_QUESTIONS.map((q, idx) => {
             const cat = INDUSTRY_TAXONOMY.find(c => c.id === businessProfile.industry);
@@ -194,8 +208,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    };
 
    const calculateResults = async (finalAnswers: number[]) => {
-      const scores: Record<string, number> = { Engine: 0, Fuel: 0, Voice: 0, Brain: 0, Pulse: 0, Shield: 0, Tribe: 0 };
-      const counts: Record<string, number> = { Engine: 0, Fuel: 0, Voice: 0, Brain: 0, Pulse: 0, Shield: 0, Tribe: 0 };
+      const scores: Record<string, number> = { Operations: 0, Money: 0, Market: 0, Leadership: 0, Innovation: 0, Risk: 0, People: 0 };
+      const counts: Record<string, number> = { Operations: 0, Money: 0, Market: 0, Leadership: 0, Innovation: 0, Risk: 0, People: 0 };
 
       sessionQuestions.forEach((q, idx) => {
          const val = finalAnswers[idx]; // 1-5 scale
@@ -217,8 +231,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
          if (counts[k] > 0) scores[k] = Math.round(scores[k] / counts[k]);
       });
 
-      const heartScore = (scores['Voice'] + scores['Brain'] + scores['Pulse'] + scores['Tribe']) / 4;
-      const walletScore = (scores['Engine'] + scores['Fuel'] + scores['Shield']) / 3;
+      const heartScore = (scores['Market'] + scores['Leadership'] + scores['Innovation'] + scores['People']) / 4;
+      const walletScore = (scores['Operations'] + scores['Money'] + scores['Risk']) / 3;
       const THRESHOLD = 50;
 
       let archetype: Archetype = 'The Hidden Gem';
@@ -236,13 +250,13 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const silentKiller = sortedPillars[0][0];
 
       const finalScores = {
-         engine: scores['Engine'],
-         fuel: scores['Fuel'],
-         voice: scores['Voice'],
-         brain: scores['Brain'],
-         pulse: scores['Pulse'],
-         shield: scores['Shield'],
-         tribe: scores['Tribe']
+         operations: scores['Operations'],
+         money: scores['Money'],
+         market: scores['Market'],
+         leadership: scores['Leadership'],
+         innovation: scores['Innovation'],
+         risk: scores['Risk'],
+         people: scores['People']
       };
 
       // Use AI Generator
@@ -706,7 +720,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                <div className="max-w-4xl mx-auto">
                   <div className="flex justify-between items-end mb-3">
                      <div>
-                        <span className="text-xs font-bold tracking-widest text-slate-400 uppercase mb-1 block">Pillar {['Engine', 'Fuel', 'Voice', 'Brain', 'Pulse', 'Shield', 'Tribe'].indexOf(currentQ.pillar) + 1} of 7</span>
+                        <span className="text-xs font-bold tracking-widest text-slate-400 uppercase mb-1 block">Pillar {['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'].indexOf(currentQ.pillar) + 1} of 7</span>
                         <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                            {currentQ.pillar} <span className="text-slate-300">|</span>
                            <span className="text-base font-normal text-slate-500">

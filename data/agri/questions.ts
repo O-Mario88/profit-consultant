@@ -6,7 +6,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_ENGINE_01',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['stockout_tax'],
         weight: 1.2,
@@ -16,7 +16,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_ENGINE_02',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['inventory_accuracy_gap'],
         weight: 1.0,
@@ -26,7 +26,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_FUEL_01',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['margin_mirage'],
         weight: 1.2,
@@ -36,7 +36,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_FUEL_02',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['credit_chokehold'],
         weight: 1.1,
@@ -46,7 +46,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_VOICE_01',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['bundle_blindspot'],
         weight: 1.0,
@@ -56,7 +56,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_VOICE_02',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['followup_gap'],
         weight: 1.0,
@@ -66,7 +66,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_BRAIN_01',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['kpi_cadence_gap'],
         weight: 1.0,
@@ -76,7 +76,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_BRAIN_02',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['procurement_panic_buying'],
         weight: 1.1,
@@ -86,7 +86,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_PULSE_01',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['sku_clutter'],
         weight: 1.0,
@@ -96,7 +96,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_PULSE_02',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['no_testing_rhythm'],
         weight: 0.9,
@@ -106,7 +106,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_SHIELD_01',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['supplier_doc_gap'],
         weight: 1.1,
@@ -116,7 +116,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_SHIELD_02',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['expiry_compliance_risk'],
         weight: 1.0,
@@ -126,7 +126,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_TRIBE_01',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['training_gap'],
         weight: 1.0,
@@ -136,7 +136,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'QS_TRIBE_02',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['sales_without_standards'],
         weight: 1.0,
@@ -148,7 +148,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_01',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['receiving_slippage', 'traceability_gap'],
         weight: 1.1,
@@ -164,7 +164,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_02',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['restock_delay', 'stockout_tax'],
         weight: 1.2,
@@ -174,7 +174,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_03',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['queue_to_cash_lag', 'peak_season_chaos'],
         weight: 1.0,
@@ -184,7 +184,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_04',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['expiry_rotation_gap'],
         weight: 1.0,
@@ -194,7 +194,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_05',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['dispatch_delivery_instability'],
         weight: 0.9,
@@ -204,7 +204,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_06',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['returns_damage_blindspot'],
         weight: 0.9,
@@ -214,7 +214,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_07',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['inventory_accuracy_gap', 'manual_dependency'],
         weight: 1.0,
@@ -224,7 +224,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_08',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['receiving_slippage', 'inventory_accuracy_gap'],
         weight: 1.0,
@@ -234,7 +234,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_09',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['peak_season_chaos', 'queue_to_cash_lag'],
         weight: 0.9,
@@ -244,7 +244,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_ENGINE_10',
         industry: 'agri_input',
-        pillar: 'Engine',
+        pillar: 'Operations',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['inventory_accuracy_gap', 'silent_shrink'],
         weight: 1.1,
@@ -255,7 +255,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_01',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['pricing_inconsistency', 'category_margin_blindspot'],
         weight: 1.2,
@@ -265,7 +265,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_02',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['discount_addiction'],
         weight: 1.0,
@@ -275,7 +275,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_03',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['credit_chokehold', 'payment_terms_risk'],
         weight: 1.2,
@@ -285,7 +285,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_04',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['dead_stock_cemetery'],
         weight: 1.1,
@@ -295,7 +295,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_05',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['cash_recon_gap'],
         weight: 1.0,
@@ -305,7 +305,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_06',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['silent_shrink'],
         weight: 1.0,
@@ -315,7 +315,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_07',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['supplier_terms_weak', 'procurement_panic_buying'],
         weight: 1.0,
@@ -325,7 +325,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_08',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['margin_mirage'],
         weight: 1.1,
@@ -335,7 +335,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_09',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['category_margin_blindspot'],
         weight: 1.0,
@@ -345,7 +345,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_FUEL_10',
         industry: 'agri_input',
-        pillar: 'Fuel',
+        pillar: 'Money',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['dead_stock_cemetery', 'expiry_rotation_gap'],
         weight: 1.0,
@@ -356,7 +356,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_01',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['bundle_blindspot'],
         weight: 1.0,
@@ -366,7 +366,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_02',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['trust_leak', 'reputation_risk_loop'],
         weight: 1.2,
@@ -376,7 +376,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_03',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['followup_gap', 'repeat_order_drift'],
         weight: 1.0,
@@ -386,7 +386,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_04',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['advice_to_sale_gap'],
         weight: 0.9,
@@ -396,7 +396,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_05',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['complaint_handling_gap'],
         weight: 0.9,
@@ -406,7 +406,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_06',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['channel_dependency'],
         weight: 0.9,
@@ -416,7 +416,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_07',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['referral_weakness'],
         weight: 0.8,
@@ -426,7 +426,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_08',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['value_story_gap'],
         weight: 0.9,
@@ -436,7 +436,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_09',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['repeat_order_drift'],
         weight: 1.0,
@@ -446,7 +446,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_VOICE_10',
         industry: 'agri_input',
-        pillar: 'Voice',
+        pillar: 'Market',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['bundle_blindspot'],
         weight: 0.8,
@@ -457,7 +457,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_01',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['priority_whiplash'],
         weight: 1.0,
@@ -467,7 +467,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_02',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['no_owner_syndrome'],
         weight: 1.1,
@@ -477,7 +477,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_03',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['kpi_cadence_gap'],
         weight: 1.0,
@@ -487,7 +487,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_04',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['procurement_panic_buying'],
         weight: 1.1,
@@ -497,7 +497,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_05',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['training_planning_gap'],
         weight: 0.9,
@@ -507,7 +507,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_06',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['meeting_no_action'],
         weight: 0.9,
@@ -517,7 +517,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_07',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['forecasting_guesswork'],
         weight: 1.0,
@@ -527,7 +527,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_08',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['role_clarity_gap'],
         weight: 0.9,
@@ -537,7 +537,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_09',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['supplier_selection_undisciplined'],
         weight: 0.9,
@@ -547,7 +547,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_BRAIN_10',
         industry: 'agri_input',
-        pillar: 'Brain',
+        pillar: 'Leadership',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['management_by_guessing'],
         weight: 1.0,
@@ -558,7 +558,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_01',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['assortment_confusion', 'sku_clutter'],
         weight: 1.0,
@@ -568,7 +568,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_02',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['bundle_engine_missing'],
         weight: 1.0,
@@ -578,7 +578,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_03',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['no_testing_rhythm'],
         weight: 0.9,
@@ -588,7 +588,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_04',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['slow_mover_attachment'],
         weight: 0.9,
@@ -598,7 +598,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_05',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['segment_blindspot'],
         weight: 0.8,
@@ -608,7 +608,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_06',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['seasonal_offer_stagnation'],
         weight: 0.8,
@@ -618,7 +618,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_07',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['offer_measurement_gap'],
         weight: 0.8,
@@ -628,7 +628,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_08',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['low_margin_skus'],
         weight: 0.9,
@@ -638,7 +638,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_09',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['customer_experience_stagnation'],
         weight: 0.8,
@@ -648,7 +648,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_PULSE_10',
         industry: 'agri_input',
-        pillar: 'Pulse',
+        pillar: 'Innovation',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['bundle_engine_missing', 'bundle_blindspot'],
         weight: 0.9,
@@ -659,7 +659,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_01',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['supplier_doc_gap', 'compliance_shock'],
         weight: 1.2,
@@ -669,7 +669,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_02',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['counterfeit_exposure'],
         weight: 1.3,
@@ -679,7 +679,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_03',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Chemicals', 'Vet Supplies', 'Fertilizer', 'Seeds'],
         signal_tags: ['safe_handling_gap', 'liability_landmine'],
         weight: 1.1,
@@ -689,7 +689,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_04',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['expiry_compliance_risk'],
         weight: 1.1,
@@ -699,7 +699,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_05',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['policy_vagueness'],
         weight: 0.9,
@@ -709,7 +709,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_06',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['credit_contract_gap'],
         weight: 1.0,
@@ -719,7 +719,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_07',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['traceability_gap'],
         weight: 1.1,
@@ -729,7 +729,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_08',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['data_security_gap'],
         weight: 0.8,
@@ -739,7 +739,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_09',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Chemicals', 'Vet Supplies', 'Fertilizer', 'Seeds'],
         signal_tags: ['liability_landmine'],
         weight: 1.0,
@@ -749,7 +749,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_SHIELD_10',
         industry: 'agri_input',
-        pillar: 'Shield',
+        pillar: 'Risk',
         line_type: ['Chemicals', 'Vet Supplies', 'Fertilizer', 'Seeds'],
         signal_tags: ['compliance_shock'],
         weight: 1.0,
@@ -760,7 +760,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_01',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['onboarding_gap', 'training_gap'],
         weight: 1.0,
@@ -770,7 +770,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_02',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['sales_without_standards'],
         weight: 1.0,
@@ -780,7 +780,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_03',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['fear_silence'],
         weight: 0.9,
@@ -790,7 +790,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_04',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Chemicals', 'Vet Supplies', 'Fertilizer', 'Seeds'],
         signal_tags: ['ethics_drift'],
         weight: 1.1,
@@ -800,7 +800,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_05',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['hero_staff_dependence'],
         weight: 1.0,
@@ -810,7 +810,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_06',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['cross_team_friction'],
         weight: 0.9,
@@ -820,7 +820,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_07',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['service_inconsistency'],
         weight: 0.9,
@@ -830,7 +830,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_08',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['peak_season_burnout'],
         weight: 0.8,
@@ -840,7 +840,7 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_09',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Seeds', 'Fertilizer', 'Chemicals', 'Vet Supplies'],
         signal_tags: ['accountability_soft'],
         weight: 0.8,
@@ -850,11 +850,274 @@ export const questions: QuestionDefinition[] = [
     {
         qid: 'DS_TRIBE_10',
         industry: 'agri_input',
-        pillar: 'Tribe',
+        pillar: 'People',
         line_type: ['Chemicals', 'Vet Supplies', 'Fertilizer', 'Seeds'],
         signal_tags: ['training_gap', 'liability_landmine'],
         weight: 1.1,
         textA: "Guidance is mostly based on experience and what customers request.",
         textB: "Guidance is based on experience plus simple reference cards to reduce mistakes."
+    },
+    // --- FARM MACHINERY & SERVICES QUESTIONS (Mechanization, Irrigation, Repair, Sales, Training) ---
+    // QUICK SCAN
+    {
+        qid: 'QS_MACH_OPS_01',
+        industry: 'agri_input',
+        pillar: 'Operations',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['dispatch_chaos'],
+        weight: 1.0,
+        textA: "We schedule jobs as requests come in and adjust daily.",
+        textB: "We schedule jobs using a visible dispatch plan and confirmed slots."
+    },
+    {
+        qid: 'QS_MACH_OPS_02',
+        industry: 'agri_input',
+        pillar: 'Operations',
+        line_type: ['Mechanization Hire', 'Repair & Maintenance Services', 'Farm Equipment', 'Equipment Sales & Spares'],
+        signal_tags: ['reactive_maintenance'],
+        weight: 1.2,
+        textA: "Maintenance is handled when a machine starts misbehaving.",
+        textB: "Maintenance is handled using a planned routine to prevent breakdowns."
+    },
+    {
+        qid: 'QS_MACH_MONEY_01',
+        industry: 'agri_input',
+        pillar: 'Money',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Operator Training & Advisory'],
+        signal_tags: ['underpricing_trap'],
+        weight: 1.2,
+        textA: "Pricing is mostly based on what competitors charge.",
+        textB: "Pricing is based on our costs, risks, and target margin."
+    },
+    {
+        qid: 'QS_MACH_MONEY_02',
+        industry: 'agri_input',
+        pillar: 'Money',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['deposit_discipline_gap'],
+        weight: 1.1,
+        textA: "We often mobilize equipment before deposits to secure the job.",
+        textB: "Deposits are standard to protect cash and commitment."
+    },
+    {
+        qid: 'QS_MACH_MKT_01',
+        industry: 'agri_input',
+        pillar: 'Market',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['trust_collapse_moment'],
+        weight: 1.0,
+        textA: "Customers choose us mainly when we are available.",
+        textB: "Customers choose us because we are consistently reliable and proven."
+    },
+    {
+        qid: 'QS_MACH_MKT_02',
+        industry: 'agri_input',
+        pillar: 'Market',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Equipment Sales & Spares'],
+        signal_tags: ['followup_gap'],
+        weight: 1.0,
+        textA: "We follow up when we remember or when a customer complains.",
+        textB: "We follow up as part of a routine to generate repeat bookings."
+    },
+    {
+        qid: 'QS_MACH_LEAD_01',
+        industry: 'agri_input',
+        pillar: 'Leadership',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Equipment Sales & Spares', 'Operator Training & Advisory'],
+        signal_tags: ['hero_owner_syndrome'],
+        weight: 1.1,
+        textA: "Most issues reach me before they get resolved.",
+        textB: "Issues are resolved through clear owners and routines."
+    },
+    {
+        qid: 'QS_MACH_LEAD_02',
+        industry: 'agri_input',
+        pillar: 'Leadership',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Equipment Sales & Spares'],
+        signal_tags: ['management_by_whatsapp'],
+        weight: 1.0,
+        textA: "We measure performance mainly by effort and busyness.",
+        textB: "We measure performance mainly by KPIs and job outcomes."
+    },
+    {
+        qid: 'QS_MACH_INN_01',
+        industry: 'agri_input',
+        pillar: 'Innovation',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Equipment Sales & Spares'],
+        signal_tags: ['offer_stagnation'],
+        weight: 1.0,
+        textA: "We focus on the core services we already know well.",
+        textB: "We package and test new offers that increase value and loyalty."
+    },
+    {
+        qid: 'QS_MACH_INN_02',
+        industry: 'agri_input',
+        pillar: 'Innovation',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['data_driven_upsell_gap'],
+        weight: 0.9,
+        textA: "We rarely change our process unless forced.",
+        textB: "We improve the process regularly using job data and feedback."
+    },
+    {
+        qid: 'QS_MACH_RISK_01',
+        industry: 'agri_input',
+        pillar: 'Risk',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['contract_exposure'],
+        weight: 1.2,
+        textA: "Most jobs are agreed verbally; trust usually works.",
+        textB: "Jobs are confirmed with simple written terms to prevent disputes."
+    },
+    {
+        qid: 'QS_MACH_RISK_02',
+        industry: 'agri_input',
+        pillar: 'Risk',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['liability_landmine'],
+        weight: 1.2,
+        textA: "Safety is handled through common sense and experience.",
+        textB: "Safety is handled using basic procedures and incident learning."
+    },
+    {
+        qid: 'QS_MACH_PPL_01',
+        industry: 'agri_input',
+        pillar: 'People',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Operator Training & Advisory'],
+        signal_tags: ['operator_drift'],
+        weight: 1.1,
+        textA: "Operators learn mainly by doing and experience over time.",
+        textB: "Operators learn through training, checklists, and standards."
+    },
+    {
+        qid: 'QS_MACH_PPL_02',
+        industry: 'agri_input',
+        pillar: 'People',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services', 'Equipment Sales & Spares'],
+        signal_tags: ['service_inconsistency'],
+        weight: 1.0,
+        textA: "Each staff member has their own way of serving customers.",
+        textB: "Customer service follows a shared standard so trust is consistent."
+    },
+    // DEEP SCAN (Sample of high impact ones due to length limits, prioritizing 2-3 per pillar)
+    {
+        qid: 'DS_MACH_OPS_01',
+        industry: 'agri_input',
+        pillar: 'Operations',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        signal_tags: ['dispatch_chaos'],
+        weight: 1.1,
+        textA: "We accept bookings without confirming capacity first.",
+        textB: "We confirm capacity before committing."
+    },
+    {
+        qid: 'DS_MACH_OPS_02',
+        industry: 'agri_input',
+        pillar: 'Operations',
+        line_type: ['Mechanization Hire', 'Repair & Maintenance Services'],
+        signal_tags: ['downtime_debt'],
+        weight: 1.2,
+        textA: "We don’t log downtime in hours/minutes.",
+        textB: "We log downtime and causes consistently."
+    },
+    {
+        qid: 'DS_MACH_OPS_03',
+        industry: 'agri_input',
+        pillar: 'Operations',
+        line_type: ['Mechanization Hire', 'Repair & Maintenance Services'],
+        signal_tags: ['spare_parts_blackhole'],
+        weight: 1.1,
+        textA: "Spares are bought when something breaks.",
+        textB: "Spares are stocked based on failure patterns."
+    },
+    {
+        qid: 'DS_MACH_MON_01',
+        industry: 'agri_input',
+        pillar: 'Money',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        signal_tags: ['costing_gap'],
+        weight: 1.1,
+        textA: "We estimate costs loosely when quoting.",
+        textB: "We calculate costs (fuel, time, depreciation, spares)."
+    },
+    {
+        qid: 'DS_MACH_MON_02',
+        industry: 'agri_input',
+        pillar: 'Money',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Equipment Sales & Spares'],
+        signal_tags: ['discount_addiction'],
+        weight: 1.0,
+        textA: "Discounts are used to close fast.",
+        textB: "Discounts are tracked and approved strategically."
+    },
+    {
+        qid: 'DS_MACH_MKT_01',
+        industry: 'agri_input',
+        pillar: 'Market',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        signal_tags: ['quotation_to_cash_lag'],
+        weight: 1.0,
+        textA: "Quotes are sent when we have time.",
+        textB: "Quotes are sent quickly as a standard."
+    },
+    {
+        qid: 'DS_MACH_MKT_02',
+        industry: 'agri_input',
+        pillar: 'Market',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['trust_leak'],
+        weight: 1.0,
+        textA: "We don’t capture job proof consistently.",
+        textB: "We capture proof to build trust and referrals."
+    },
+    {
+        qid: 'DS_MACH_LEAD_01',
+        industry: 'agri_input',
+        pillar: 'Leadership',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['priority_whiplash'],
+        weight: 1.0,
+        textA: "Decisions flow through the owner/manager.",
+        textB: "Decisions are delegated with clear limits."
+    },
+    {
+        qid: 'DS_MACH_LEAD_02',
+        industry: 'agri_input',
+        pillar: 'Leadership',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        signal_tags: ['no_owner_problem'],
+        weight: 1.0,
+        textA: "Problems repeat because they’re “normal.”",
+        textB: "Problems repeat until solved permanently."
+    },
+    {
+        qid: 'DS_MACH_INN_01',
+        industry: 'agri_input',
+        pillar: 'Innovation',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        signal_tags: ['bundle_blindspot'],
+        weight: 1.0,
+        textA: "We sell services as single jobs.",
+        textB: "We package services into tiers and bundles."
+    },
+    {
+        qid: 'DS_MACH_RISK_01',
+        industry: 'agri_input',
+        pillar: 'Risk',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install', 'Repair & Maintenance Services'],
+        signal_tags: ['contract_exposure'],
+        weight: 1.2,
+        textA: "Terms are mostly verbal.",
+        textB: "Terms are written and signed."
+    },
+    {
+        qid: 'DS_MACH_PPL_01',
+        industry: 'agri_input',
+        pillar: 'People',
+        line_type: ['Mechanization Hire', 'Irrigation Supply & Install'],
+        signal_tags: ['operator_drift'],
+        weight: 1.1,
+        textA: "Operator skills vary by experience.",
+        textB: "Operator skills are standardized by training."
     }
 ];

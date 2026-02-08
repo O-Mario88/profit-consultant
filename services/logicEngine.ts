@@ -12,8 +12,8 @@ export const calculatePillarScores = (
   rawAnswers: Record<string, number>,
   questionMap: Record<string, { pillar: string; isSwapped: boolean }>
 ): PillarScores => {
-  const scores: Record<string, number> = { Engine: 0, Fuel: 0, Voice: 0, Brain: 0, Pulse: 0, Shield: 0, Tribe: 0 };
-  const counts: Record<string, number> = { Engine: 0, Fuel: 0, Voice: 0, Brain: 0, Pulse: 0, Shield: 0, Tribe: 0 };
+  const scores: Record<string, number> = { Operations: 0, Money: 0, Market: 0, Leadership: 0, Innovation: 0, Risk: 0, People: 0 };
+  const counts: Record<string, number> = { Operations: 0, Money: 0, Market: 0, Leadership: 0, Innovation: 0, Risk: 0, People: 0 };
 
   Object.entries(rawAnswers).forEach(([qId, val]) => {
     const q = questionMap[qId];
@@ -48,11 +48,11 @@ export const calculatePillarScores = (
  * Deterministic assignment based on Heat vs Wallet scores.
  */
 export const determineArchetype = (scores: PillarScores): Archetype => {
-  // "Heart" Pillars: Voice, Brain, Pulse, Tribe
-  const heartScore = (scores.voice + scores.brain + scores.pulse + scores.tribe) / 4;
-  
-  // "Wallet" Pillars: Engine, Fuel, Shield
-  const walletScore = (scores.engine + scores.fuel + scores.shield) / 3;
+  // "Heart" Pillars: Market, Leadership, Innovation, People
+  const heartScore = (scores.market + scores.leadership + scores.innovation + scores.people) / 4;
+
+  // "Wallet" Pillars: Operations, Money, Risk
+  const walletScore = (scores.operations + scores.money + scores.risk) / 3;
 
   const THRESHOLD = 50;
 
@@ -71,7 +71,7 @@ export const extractDrivers = (
   driverMap: Record<string, string> // QuestionID -> DriverTag
 ): string[] => {
   const detectedDrivers: string[] = [];
-  
+
   // Simple logic: if answer is extreme (1-2 or 6-7) towards risk, flag the driver
   Object.entries(rawAnswers).forEach(([qId, val]) => {
     const driver = driverMap[qId];
@@ -80,9 +80,9 @@ export const extractDrivers = (
     // Assuming high/low values indicate strong preference/risk depending on question orientation
     // For demo, we just check if it's extreme
     if (val <= 2 || val >= 6) {
-        if (!detectedDrivers.includes(driver)) {
-            detectedDrivers.push(driver);
-        }
+      if (!detectedDrivers.includes(driver)) {
+        detectedDrivers.push(driver);
+      }
     }
   });
 

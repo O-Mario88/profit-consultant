@@ -1,7 +1,7 @@
 
 import { KPI } from "../types";
 
-export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'other';
+export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'produce' | 'other';
 
 export interface Lexicon {
   customer: string;
@@ -196,11 +196,25 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Sprout',
     lexiconKey: 'agriculture',
     subIndustries: [
-      'Seeds',
-      'Fertilizer',
-      'Crop Chemicals',
-      'Vet Supplies',
-      'Farm Equipment'
+      'Mechanization Hire',
+      'Irrigation Supply & Install',
+      'Repair & Maintenance Services',
+      'Equipment Sales & Spares',
+      'Operator Training & Advisory'
+    ]
+  },
+  {
+    id: 'produce_aggregation',
+    label: 'Produce Aggregation & Trading',
+    iconName: 'Store', // Using Store icon as it fits trading/markets
+    lexiconKey: 'produce',
+    subIndustries: [
+      'Farmgate Aggregator (Local)',
+      'Wholesale Market Trader',
+      'Institutional Supplier',
+      'Exporter / Cross-border Trader',
+      'Digital Broker / Agent',
+      'Warehouse + Bulking Hub'
     ]
   },
 
@@ -462,48 +476,48 @@ export interface QuickScanVariant {
 }
 
 export const AQUACULTURE_HOOKS = {
-  Fuel: "Feed Black Hole",
-  Engine: "Oxygen Debt",
-  Shield: "Silent Mortality Tax",
-  Voice: "Harvest Panic Discount",
-  Pulse: "Growth Curve Collapse",
-  Brain: "Management-by-Memory Trap",
-  Tribe: "Approval Bottleneck"
+  Money: "Feed Black Hole",
+  Operations: "Oxygen Debt",
+  Risk: "Silent Mortality Tax",
+  Market: "Harvest Panic Discount",
+  Innovation: "Growth Curve Collapse",
+  Leadership: "Management-by-Memory Trap",
+  People: "Approval Bottleneck"
 };
 
 export const AQUACULTURE_QUIZ_COPY = {
-  Brain: { detection: "management-by-memory + weak batch targets", cost: "late decisions, repeat mistakes, and unpredictable cycles", cliffhanger: "Deep Scan will build a weekly farm dashboard and show which metric is drifting first." },
-  Voice: { detection: "price-taker position + weak grading/proof", cost: "forced discounts, delayed payments, and low bargaining power", cliffhanger: "Deep Scan will map your buyer strategy + grade-mix pricing to recover margin." },
-  Engine: { detection: "feeding + water routines not fully standardized", cost: "slow growth, uneven sizes, and hidden stress loss", cliffhanger: "Deep Scan will pinpoint whether your leak is oxygen windows, feeding rhythm, or stocking pressure." },
-  Fuel: { detection: "conversion blind spot (FCR drift) + unclear cost/kg", cost: "feed black hole + profit disappearing even when sales look good", cliffhanger: "Deep Scan calculates your cost/kg gain and identifies the exact wastage point." },
-  Pulse: { detection: "growth curve drift + time-to-market slippage", cost: "extra feeding days, stunting, and delayed harvest cash", cliffhanger: "Deep Scan will identify the fastest lever to shorten cycle time." },
-  Shield: { detection: "biosecurity gaps + weak outage resilience", cost: "outbreak roulette + one event can erase months of profit", cliffhanger: "Deep Scan generates your biosecurity map + outage survival plan." },
-  Tribe: { detection: "approval-first culture + inconsistent routines", cost: "slow response to water/health issues, quality drift across shifts", cliffhanger: "Deep Scan defines decision boundaries + SOP ownership so your farm runs without bottlenecks." }
+  Leadership: { detection: "management-by-memory + weak batch targets", cost: "late decisions, repeat mistakes, and unpredictable cycles", cliffhanger: "Deep Scan will build a weekly farm dashboard and show which metric is drifting first." },
+  Market: { detection: "price-taker position + weak grading/proof", cost: "forced discounts, delayed payments, and low bargaining power", cliffhanger: "Deep Scan will map your buyer strategy + grade-mix pricing to recover margin." },
+  Operations: { detection: "feeding + water routines not fully standardized", cost: "slow growth, uneven sizes, and hidden stress loss", cliffhanger: "Deep Scan will pinpoint whether your leak is oxygen windows, feeding rhythm, or stocking pressure." },
+  Money: { detection: "conversion blind spot (FCR drift) + unclear cost/kg", cost: "feed black hole + profit disappearing even when sales look good", cliffhanger: "Deep Scan calculates your cost/kg gain and identifies the exact wastage point." },
+  Innovation: { detection: "growth curve drift + time-to-market slippage", cost: "extra feeding days, stunting, and delayed harvest cash", cliffhanger: "Deep Scan will identify the fastest lever to shorten cycle time." },
+  Risk: { detection: "biosecurity gaps + weak outage resilience", cost: "outbreak roulette + one event can erase months of profit", cliffhanger: "Deep Scan generates your biosecurity map + outage survival plan." },
+  People: { detection: "approval-first culture + inconsistent routines", cost: "slow response to water/health issues, quality drift across shifts", cliffhanger: "Deep Scan defines decision boundaries + SOP ownership so your farm runs without bottlenecks." }
 };
 
 export const AGRO_PROCESSING_HOOKS = {
-  Fuel: "Yield Bleed",
-  Engine: "Downtime Drain",
-  Shield: "Intake Quality Roulette",
-  Voice: "Spec Drift Discount",
-  Pulse: "SKU Complexity Tax",
-  Brain: "Batch-to-Batch Chaos",
-  Tribe: "Hero Operator Dependence"
+  Money: "Yield Bleed",
+  Operations: "Downtime Drain",
+  Risk: "Intake Quality Roulette",
+  Market: "Spec Drift Discount",
+  Innovation: "SKU Complexity Tax",
+  Leadership: "Batch-to-Batch Chaos",
+  People: "Hero Operator Dependence"
 };
 
 export const AGRO_PROCESSING_QUIZ_COPY = {
-  Brain: { detection: "reactive scheduling + firefighting", cost: "expensive changeovers and overtime to fix plan gaps", cliffhanger: "Deep Scan will build a Fixed Repeating Schedule." },
-  Voice: { detection: "spec drift + buyer rejections/deductions", cost: "selling premium product at discount prices due to variance", cliffhanger: "Deep Scan will build a Spec Shield to lock in your margin." },
-  Engine: { detection: "frequent downtime + undefined changeover protocols", cost: "capacity tax (paying for 100% time, getting 60% output)", cliffhanger: "Deep Scan will reveal your OEE gap and pinpoint micro-stops." },
-  Fuel: { detection: "yield bleed + mass balance unknown", cost: "invisible profit loss (buying bulk, selling unit, losing the difference)", cliffhanger: "Deep Scan will perform a Mass Balance audit to find the leak." },
-  Pulse: { detection: "stagnant SKU list + slow innovation", cost: "market share loss to faster competitors", cliffhanger: "Deep Scan will identify Tail SKUs to cut and new winners to launch." },
-  Shield: { detection: "food safety via 'carefulness' instead of systems", cost: "recall risk that could bankrupt the brand", cliffhanger: "Deep Scan will install the Compliance Lock." },
-  Tribe: { detection: "hero dependence + undefined roles", cost: "factory stops/slows when you aren't there", cliffhanger: "Deep Scan will build Role Cards to decentralize execution." }
+  Leadership: { detection: "reactive scheduling + firefighting", cost: "expensive changeovers and overtime to fix plan gaps", cliffhanger: "Deep Scan will build a Fixed Repeating Schedule." },
+  Market: { detection: "spec drift + buyer rejections/deductions", cost: "selling premium product at discount prices due to variance", cliffhanger: "Deep Scan will build a Spec Shield to lock in your margin." },
+  Operations: { detection: "frequent downtime + undefined changeover protocols", cost: "capacity tax (paying for 100% time, getting 60% output)", cliffhanger: "Deep Scan will reveal your OEE gap and pinpoint micro-stops." },
+  Money: { detection: "yield bleed + mass balance unknown", cost: "invisible profit loss (buying bulk, selling unit, losing the difference)", cliffhanger: "Deep Scan will perform a Mass Balance audit to find the leak." },
+  Innovation: { detection: "stagnant SKU list + slow innovation", cost: "market share loss to faster competitors", cliffhanger: "Deep Scan will identify Tail SKUs to cut and new winners to launch." },
+  Risk: { detection: "food safety via 'carefulness' instead of systems", cost: "recall risk that could bankrupt the brand", cliffhanger: "Deep Scan will install the Compliance Lock." },
+  People: { detection: "hero dependence + undefined roles", cost: "factory stops/slows when you aren't there", cliffhanger: "Deep Scan will build Role Cards to decentralize execution." }
 };
 
 export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
   {
-    pillar: 'Engine',
+    pillar: 'Operations',
     variants: {
       retail: { a: "I personally handle issues at the counter to keep things moving.", b: "We have a simple routine so issues don't repeat." },
       tech: { a: "I jump in to fix delivery problems myself to meet deadlines.", b: "We improve the workflow tickets so the same issues don't return." },
@@ -515,7 +529,7 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
     }
   },
   {
-    pillar: 'Fuel',
+    pillar: 'Money',
     variants: {
       retail: { a: "I judge a good month by sales volume and stock movement.", b: "I judge a good month by profit margin + cash left after expenses." },
       tech: { a: "I feel successful when we sign projects and get work coming in.", b: "I feel successful when projects leave profit after delivery costs." },
@@ -527,7 +541,7 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
     }
   },
   {
-    pillar: 'Voice',
+    pillar: 'Market',
     variants: {
       retail: { a: "We rely mostly on walk-ins and referrals.", b: "We consistently run a lead system (ads/offers) even when busy." },
       tech: { a: "We rely on referrals and 'who knows us'.", b: "We run a consistent pipeline (content, outreach, proposals)." },
@@ -539,7 +553,7 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
     }
   },
   {
-    pillar: 'Brain',
+    pillar: 'Leadership',
     variants: {
       retail: { a: "People do whatever is urgent that day.", b: "People know their responsibilities and what 'good performance' looks like." },
       tech: { a: "Work priorities change based on the loudest client message.", b: "We use clear priorities, owners, and weekly targets." },
@@ -551,7 +565,7 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
     }
   },
   {
-    pillar: 'Pulse',
+    pillar: 'Innovation',
     variants: {
       retail: { a: "We sell what has always sold; we adjust slowly.", b: "We regularly improve offers/stock based on demand data." },
       tech: { a: "We deliver the same service package; improvements are occasional.", b: "We upgrade our offers quarterly based on results + feedback." },
@@ -563,7 +577,7 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
     }
   },
   {
-    pillar: 'Shield',
+    pillar: 'Risk',
     variants: {
       retail: { a: "We run mostly on trust and common sense.", b: "We enforce protections (contracts, access control, 2FA)." },
       tech: { a: "We start work fast and trust the relationship.", b: "We protect delivery with scope, change requests, and 2FA." },
@@ -575,7 +589,7 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
     }
   },
   {
-    pillar: 'Tribe',
+    pillar: 'People',
     variants: {
       retail: { a: "Staff wait for approval to avoid making mistakes.", b: "Staff solve common issues confidently using guidelines." },
       tech: { a: "People ask for approval before acting to stay safe.", b: "People act within decision rights and report outcomes." },
@@ -588,43 +602,43 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
   },
   // --- SECOND SET (Agriculture Specific) ---
   {
-    pillar: 'Engine',
+    pillar: 'Operations',
     variants: {
       agriculture: { a: "Harvest usually starts before drying/storage/logistics are fully ready.", b: "Harvest starts only when drying/storage/logistics are ready." }
     }
   },
   {
-    pillar: 'Fuel',
+    pillar: 'Money',
     variants: {
       agriculture: { a: "We sell quickly after harvest because cash needs are urgent.", b: "We sell with a plan (and buffer) so we don’t accept the worst price." }
     }
   },
   {
-    pillar: 'Voice',
+    pillar: 'Market',
     variants: {
       agriculture: { a: "I accept deductions/grades from buyers because that’s “market reality.”", b: "I verify quality/moisture/grades so deductions are fair." }
     }
   },
   {
-    pillar: 'Brain',
+    pillar: 'Leadership',
     variants: {
       agriculture: { a: "When I’m away, operations slow down noticeably.", b: "The farm keeps moving because roles and routines are clear." }
     }
   },
   {
-    pillar: 'Pulse',
+    pillar: 'Innovation',
     variants: {
       agriculture: { a: "Post-harvest loss and downgrade feels unavoidable.", b: "We treat loss and downgrade as controllable money leaks." }
     }
   },
   {
-    pillar: 'Shield',
+    pillar: 'Risk',
     variants: {
       agriculture: { a: "If a major shock happens (rain delays, pests, transport issues), we improvise.", b: "We have backup options for predictable shocks." }
     }
   },
   {
-    pillar: 'Tribe',
+    pillar: 'People',
     variants: {
       agriculture: { a: "Instructions are mostly verbal and flexible.", b: "Instructions are clear enough that people don’t have to guess." }
     }
@@ -635,91 +649,91 @@ export const QUICK_SCAN_QUESTIONS: QuickScanVariant[] = [
 QUICK_SCAN_QUESTIONS.push(
   // Brain
   {
-    pillar: 'Brain',
+    pillar: 'Leadership',
     variants: {
       aquaculture: { a: "We run the farm mostly from experience and memory.", b: "We run the farm using simple targets and records that guide decisions." }
     }
   },
   {
-    pillar: 'Brain',
+    pillar: 'Leadership',
     variants: {
       aquaculture: { a: "We review performance only when something goes wrong.", b: "We review performance weekly to catch drift early (before it becomes expensive)." }
     }
   },
-  // Voice
+  // Market
   {
-    pillar: 'Voice',
+    pillar: 'Market',
     variants: {
       aquaculture: { a: "We sell mainly to whoever buys fast and nearest.", b: "We sell through planned buyer channels that reward consistency and quality." }
     }
   },
   {
-    pillar: 'Voice',
+    pillar: 'Market',
     variants: {
       aquaculture: { a: "Price is mostly “market price,” we take what’s offered.", b: "Price improves because we bring proof (size/grade, reliability, handling discipline)." }
     }
   },
-  // Engine
+  // Operations
   {
-    pillar: 'Engine',
+    pillar: 'Operations',
     variants: {
       aquaculture: { a: "Feeding is adjusted by feel depending on the day.", b: "Feeding follows a measured plan tied to biomass and growth targets." }
     }
   },
   {
-    pillar: 'Engine',
+    pillar: 'Operations',
     variants: {
       aquaculture: { a: "Water quality checks happen mainly when fish look stressed.", b: "Water quality checks happen on a routine schedule, with clear action thresholds." }
     }
   },
-  // Fuel
+  // Money
   {
-    pillar: 'Fuel',
+    pillar: 'Money',
     variants: {
       aquaculture: { a: "A good cycle means we sold many fish.", b: "A good cycle means we sold profitably after feed, mortality, and time costs." }
     }
   },
   {
-    pillar: 'Fuel',
+    pillar: 'Money',
     variants: {
       aquaculture: { a: "We don’t calculate feed cost per kg gain (we just manage expenses).", b: "We track conversion (FCR / cost per kg gain) because it decides profit." }
     }
   },
-  // Pulse
+  // Innovation
   {
-    pillar: 'Pulse',
+    pillar: 'Innovation',
     variants: {
       aquaculture: { a: "Growth differences and slow cycles are normal in this business.", b: "Growth curve and time-to-market are measurable and improvable." }
     }
   },
   {
-    pillar: 'Pulse',
+    pillar: 'Innovation',
     variants: {
       aquaculture: { a: "We rarely test changes—we stick to what we know.", b: "We run small controlled improvements each cycle and keep what works." }
     }
   },
-  // Shield
+  // Risk
   {
-    pillar: 'Shield',
+    pillar: 'Risk',
     variants: {
       aquaculture: { a: "New stock is introduced quickly to keep operations moving.", b: "New stock follows a quarantine/observation routine to protect the whole system." }
     }
   },
   {
-    pillar: 'Shield',
+    pillar: 'Risk',
     variants: {
       aquaculture: { a: "Backup plans (oxygen/aeration/power) are “nice-to-have.”", b: "Backup plans are mandatory because one outage can erase months of profit." }
     }
   },
-  // Tribe
+  // People
   {
-    pillar: 'Tribe',
+    pillar: 'People',
     variants: {
       aquaculture: { a: "Staff prefer to wait for approval to avoid mistakes.", b: "Staff act confidently within clear boundaries to protect speed and outcomes." }
     }
   },
   {
-    pillar: 'Tribe',
+    pillar: 'People',
     variants: {
       aquaculture: { a: "Problems are reported when they become serious.", b: "Problems are reported early because it’s safe and expected to speak up." }
     }
@@ -729,72 +743,72 @@ QUICK_SCAN_QUESTIONS.push(
 QUICK_SCAN_QUESTIONS.push(
   // Brain
   {
-    pillar: 'Brain',
+    pillar: 'Leadership',
     variants: {
       agro_processing: { a: "We run the plant mostly from experience and quick decisions.", b: "We run the plant using targets and weekly KPI reviews." }
     }
   },
   {
-    pillar: 'Brain',
+    pillar: 'Leadership',
     variants: {
       agro_processing: { a: "Problems are discussed when they become painful.", b: "Problems are tracked early so drift is caught before money leaks." }
     }
   },
-  // Voice
+  // Market
   {
-    pillar: 'Voice',
+    pillar: 'Market',
     variants: {
       agro_processing: { a: "We sell mainly at market price and accept buyer terms.", b: "We sell using specs + reliability to protect margin and terms." }
     }
   },
   {
-    pillar: 'Voice',
+    pillar: 'Market',
     variants: {
       agro_processing: { a: "A good month means high sales volume.", b: "A good month means protected margin and predictable cash collection." }
     }
   },
-  // Engine
+  // Operations
   {
-    pillar: 'Engine',
+    pillar: 'Operations',
     variants: {
       agro_processing: { a: "Downtime and changeovers are “part of production.”", b: "Downtime and changeovers are measured and reduced deliberately." }
     }
   },
   {
-    pillar: 'Engine',
+    pillar: 'Operations',
     variants: {
       agro_processing: { a: "Quality is checked mainly at the end.", b: "Quality is controlled during processing, not only at the end." }
     }
   },
-  // Fuel
+  // Money
   {
-    pillar: 'Fuel',
+    pillar: 'Money',
     variants: {
       agro_processing: { a: "We focus on costs generally (expenses) more than unit economics.", b: "We track cost per unit and yield % to protect profit." }
     }
   },
   {
-    pillar: 'Fuel',
+    pillar: 'Money',
     variants: {
       agro_processing: { a: "Shrinkage (spillage/underweight/scrap) is hard to measure precisely.", b: "Shrinkage is measured enough to control and reduce." }
     }
   },
-  // Pulse
+  // Innovation
   {
-    pillar: 'Pulse',
+    pillar: 'Innovation',
     variants: {
       agro_processing: { a: "We keep products stable and avoid changing the line often.", b: "We improve products/processes through small controlled tests." }
     }
   },
   {
-    pillar: 'Pulse',
+    pillar: 'Innovation',
     variants: {
       agro_processing: { a: "We respond to customer complaints case-by-case.", b: "We convert complaints into process/product improvements." }
     }
   },
-  // Shield
+  // Risk
   {
-    pillar: 'Shield',
+    pillar: 'Risk',
     variants: {
       agro_processing: { a: "Food safety is handled by “being careful” and common sense.", b: "Food safety is handled with checklists, traceability, and verification." }
     }

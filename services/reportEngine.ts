@@ -33,21 +33,21 @@ const getRiskProfile = (systemScore: number): { riskScore: number, band: PillarS
 
 export const calculateLeakIndices = (scores: PillarScores): LeakIndices => {
   const timeLeak = Math.round(
-    (100 - scores.engine) * 0.5 +
-    (100 - scores.tribe) * 0.3 +
-    (100 - scores.brain) * 0.2
+    (100 - scores.operations) * 0.5 +
+    (100 - scores.people) * 0.3 +
+    (100 - scores.leadership) * 0.2
   );
 
   const cashLeak = Math.round(
-    (100 - scores.fuel) * 0.55 +
-    (100 - scores.voice) * 0.35 +
-    (100 - scores.pulse) * 0.10
+    (100 - scores.money) * 0.55 +
+    (100 - scores.market) * 0.35 +
+    (100 - scores.innovation) * 0.10
   );
 
   const riskExposure = Math.round(
-    (100 - scores.shield) * 0.7 +
-    (100 - scores.tribe) * 0.2 +
-    (100 - scores.fuel) * 0.1
+    (100 - scores.risk) * 0.7 +
+    (100 - scores.people) * 0.2 +
+    (100 - scores.money) * 0.1
   );
 
   return { timeLeak, cashLeak, riskExposure };
@@ -320,7 +320,50 @@ export const generateSignalBasedReport = async (
       owner: 'Owner',
       kpi: kpiItem?.text || 'Efficiency',
       evidenceFlags: res.topSignals,
-      deepInsight: missionBriefItem?.text || `${hookItem?.text || 'Insight'}: ${leakItem?.text || 'Analysis pending.'}`,
+      // deepInsight: missionBriefItem?.text || `${hookItem?.text || 'Insight'}: ${leakItem?.text || 'Analysis pending.'}`,
+      // DYNAMIC TEMPLATE INJECTION
+      deepInsight: (() => {
+        let text = missionBriefItem?.text || `${hookItem?.text || 'Insight'}: ${leakItem?.text || 'Analysis pending.'}`;
+        if (!text.includes('{')) return text;
+
+        // 1. STATUS
+        text = text.replace(/{STATUS}/g, status === 'Emergency' || status === 'Critical' ? 'Critical Leak' : status === 'Watch' ? 'Warning' : 'Stable');
+
+        // 2. DETECTED SIGNALS
+        // Get Top 2 Leaks + Top 1 Strength
+        const topLeakTags = res.topSignals.slice(0, 2);
+        // @ts-ignore
+        const topStrengthTags = res.topStrength || [];
+
+        const leakTexts = topLeakTags.map((tag: any) => {
+          const item = pack.library.find(i => i.signal_tags.includes(tag) && i.type === 'leak');
+          return item?.text || tag.replace(/_/g, ' ');
+        });
+
+        const strengthTexts = topStrengthTags.map((tag: any) => {
+          const item = pack.library.find(i => i.signal_tags.includes(tag) && i.type === 'strength');
+          return item?.text || "Standard control detected.";
+        });
+
+        const signalsText = [...leakTexts, ...strengthTexts].join(' ');
+        text = text.replace(/{DETECTED_SIGNALS}/g, signalsText || "performance variance");
+
+        // 3. COST IMPACT
+        // Find cost text from the top leak signal
+        const topLeakItem = pack.library.find(i => i.signal_tags.includes(topSignal as SignalTag) && i.type === 'leak');
+        const costText = topLeakItem?.cost_text || leakItem?.text || "inefficiencies reducing margin.";
+        text = text.replace(/{COST_IMPACT}/g, costText);
+
+        // 4. KPI
+        const kpiText = topLeakItem?.kpi_text || kpiItem?.text || "Efficiency";
+        text = text.replace(/{KPI}/g, kpiText);
+
+        // 5. NEXT STEP (Cliffhanger)
+        const cliffhangerText = topLeakItem?.cliffhanger_text || "The Deep Scan will reveal root causes.";
+        text = text.replace(/{NEXT_STEP}/g, cliffhangerText);
+
+        return text;
+      })(),
       whyItMatters: "Agro-processing requires tight control of yield and flow.",
       drivers: [],
       costBands: {

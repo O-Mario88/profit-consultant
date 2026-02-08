@@ -1,10 +1,10 @@
 
-import { 
-  CurrencyCode, 
-  LanguageCode, 
-  PricingTier, 
-  PillarScores, 
-  Archetype 
+import {
+  CurrencyCode,
+  LanguageCode,
+  PricingTier,
+  PillarScores,
+  Archetype
 } from "../types";
 
 // --- TYPES (Spec 1.1) ---
@@ -134,7 +134,7 @@ export const getQuestions = async (sessionId: string) => {
       questions: [
         {
           question_id: "q_engine_01",
-          pillar: "engine",
+          pillar: "operations",
           type: "paired",
           prompt: "When problems happen, what usually occurs?",
           options: {
@@ -176,10 +176,10 @@ export const getResults = async (sessionId: string) => {
       session_id: sessionId,
       archetype: { id: "The Uncrowned King", name: "The Uncrowned King" },
       pillar_scores: {
-        brain: 61, voice: 48, engine: 55, fuel: 32,
-        pulse: 44, shield: 58, tribe: 47
+        leadership: 61, market: 48, operations: 55, money: 32,
+        innovation: 44, risk: 58, people: 47
       },
-      cliffhanger: "Your vision is strong, but Fuel is critical. You're likely losing ~30% revenue.",
+      cliffhanger: "Your vision is strong, but Money is critical. You're likely losing ~30% revenue.",
       top_drivers: [
         { tag: "overdue_invoices", strength: 0.82 },
         { tag: "discounting_pressure", strength: 0.66 }
@@ -233,7 +233,7 @@ export const getLeadsFeed = async () => {
           lead_id: "lead_77",
           title: "SME needs help fixing cash flow",
           country: "UG",
-          critical_pillar: "fuel",
+          critical_pillar: "money",
           severity: "critical",
           lead_size: "M",
           credit_cost: 5,
@@ -260,7 +260,7 @@ export const unlockLead = async (leadId: string) => {
       },
       report_access: { report_id: "rep_900", web_url: "..." },
       suggested_openers: [
-        { channel: "whatsapp", text: "Hi... I reviewed your Fuel bottleneck..." }
+        { channel: "whatsapp", text: "Hi... I reviewed your Money bottleneck..." }
       ]
     }
   };
@@ -289,13 +289,13 @@ export const getPartnerDashboard = async () => {
           alert_id: "pa_901",
           severity: "critical",
           title: "Client X is at risk of bankruptcy",
-          detail: "Fuel score: 10%. Primary leak: overdue invoices.",
+          detail: "Money score: 10%. Primary leak: overdue invoices.",
           cta: { type: "open_client", client_user_id: "u_999" }
         }
       ],
       health_map: {
         items: [
-          { client_user_id: "u_999", name: "Client X", overall: 34, critical_pillar: "fuel", fuel: 10 }
+          { client_user_id: "u_999", name: "Client X", overall: 34, critical_pillar: "money", money: 10 }
         ]
       }
     }
