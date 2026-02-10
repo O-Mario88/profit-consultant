@@ -24,7 +24,10 @@ import { FASHION_PACK } from "../data/fashion";
 import { HARDWARE_PACK } from "../data/hardware";
 import { ELECTRONICS_PACK } from "../data/electronics";
 import { FMCG_PACK } from "../data/fmcg";
-import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES } from "../data/retailSubIndustries";
+import { STATIONERY_PACK } from "../data/stationery";
+import { SPARE_PARTS_PACK } from "../data/spareParts";
+import { getSparePartsToneVariant, SparePartsTone } from "../data/spareParts/toneVariants";
+import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES, SPARE_PARTS_SUB_INDUSTRIES, STATIONERY_SUB_INDUSTRIES } from "../data/retailSubIndustries";
 import {
   ASSEMBLY_PACK,
   ASSEMBLY_CLIFFHANGER_STARTERS,
@@ -129,6 +132,105 @@ const mapEffort = (effort?: 'S' | 'M' | 'L'): 'Low' | 'Med' | 'High' | undefined
     case 'L': return 'High';
     default: return undefined;
   }
+};
+
+const getConsultantPriorityLine = (pillar: string, band: PillarStatus): string => {
+  switch (band) {
+    case 'Profit Leak':
+      return `Priority action: start a 7-day containment sprint in ${pillar} and assign one owner for closure.`;
+    case 'Bottleneck Forming':
+      return `Priority action: harden the current ${pillar} controls before scale increases variance.`;
+    case 'Controlled':
+      return `Priority action: optimize ${pillar} for speed and remove remaining manual friction.`;
+    case 'Profit Lever':
+      return `Priority action: codify this ${pillar} playbook and transfer it into weaker pillars.`;
+    default:
+      return `Priority action: review ${pillar} controls weekly with KPI ownership.`;
+  }
+};
+
+const extractQuickScanText = (rawQuickScan: unknown): string => {
+  if (typeof rawQuickScan === 'string') return rawQuickScan;
+  if (!rawQuickScan || typeof rawQuickScan !== 'object') return '';
+  const maybeInsight = (rawQuickScan as any).insight;
+  if (typeof maybeInsight === 'string') return maybeInsight;
+  return '';
+};
+
+const normalizeQuickScanTone = (
+  rawQuickScan: unknown,
+  pillar: string,
+  band: PillarStatus,
+  industry: string
+): string => {
+  const fallback = generateQuickScanAnalysis(pillar, band, industry);
+  const candidate = extractQuickScanText(rawQuickScan).trim();
+  const merged = (candidate || fallback).replace(/\s+/g, ' ').trim();
+  if (/priority action:/i.test(merged)) return merged;
+  return `${merged} ${getConsultantPriorityLine(pillar, band)}`;
+};
+
+const normalizeDeepScanSection = (
+  section: 'theory' | 'diagnosis' | 'psychology' | 'financials',
+  text: string,
+  pillar: string,
+  score: number
+): string => {
+  const clean = text.trim();
+  if (!clean) return '';
+  if (/^\s*###/m.test(clean)) return clean;
+
+  const headings = {
+    theory: `### Consultant Lens`,
+    diagnosis: `### Diagnostic View (${score}/100)`,
+    psychology: `### Execution Behavior Pattern`,
+    financials: `### Commercial Impact And Priority Actions`
+  } as const;
+
+  return `${headings[section]}\n${clean}`;
+};
+
+const normalizeDeepScanTone = (
+  rawDeepDive: unknown,
+  pillar: string,
+  score: number,
+  industry: string
+) => {
+  const fallback = generateDeepScanChapter(pillar, score, industry);
+  const source = rawDeepDive && typeof rawDeepDive === 'object'
+    ? rawDeepDive as Record<string, unknown>
+    : {};
+
+  const getText = (key: string, fallbackText: string): string => {
+    const value = source[key];
+    return typeof value === 'string' && value.trim() ? value.trim() : fallbackText;
+  };
+
+  const rawTheory = getText('theory', fallback.theory);
+  const rawDiagnosis = getText('diagnosis', fallback.diagnosis);
+  const rawPsychology = getText('psychology', fallback.psychology);
+  const rawFinancials = getText('financials', fallback.financials);
+  const rawPrescription = typeof source['prescription'] === 'string' ? source['prescription'].trim() : '';
+  const mergedFinancials = [rawFinancials, rawPrescription].filter(Boolean).join('\n\n');
+
+  return {
+    theory: normalizeDeepScanSection('theory', rawTheory, pillar, score),
+    diagnosis: normalizeDeepScanSection('diagnosis', rawDiagnosis, pillar, score),
+    psychology: normalizeDeepScanSection('psychology', rawPsychology, pillar, score),
+    financials: normalizeDeepScanSection('financials', mergedFinancials || fallback.financials, pillar, score)
+  };
+};
+
+const getSparePartsTone = (profile: BusinessProfile): SparePartsTone => {
+  if (profile.reportTone === 'street') return 'street';
+  if (profile.reportTone === 'executive') return 'executive';
+
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem('spare_parts_report_tone');
+    if (stored === 'street' || stored === 'executive') return stored;
+  }
+
+  return 'executive';
 };
 
 const hashSeed = (input: string): number => {
@@ -362,8 +464,18 @@ export const generateStrategicReport = async (
 
     // Use AI content if available, fallback to static generators
     const aiPillarData = aiData?.pillars?.[pillarName];
-    const quickScanAnalysis = aiPillarData?.quickScan || generateQuickScanAnalysis(pillarName, band, industry);
-    const deepScanChapter = aiPillarData?.deepDive || generateDeepScanChapter(pillarName, score, industry);
+    const quickScanAnalysis = normalizeQuickScanTone(
+      aiPillarData?.quickScan,
+      pillarName,
+      band,
+      industry
+    );
+    const deepScanChapter = normalizeDeepScanTone(
+      aiPillarData?.deepDive,
+      pillarName,
+      score,
+      industry
+    );
 
     return {
       name: pillarName,
@@ -538,6 +650,8 @@ export const generateSignalBasedReport = async (
   const isHardwareRetail = profile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isElectronicsRetail = profile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isFmcgRetail = profile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isStationeryRetail = profile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isSparePartsRetail = profile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isAssemblyManufacturing = profile.industry === 'manufacturing' && assemblySubIndustries.includes(profile.subIndustry);
   const pack = isFnbManufacturing
     ? FNB_PACK
@@ -563,6 +677,10 @@ export const generateSignalBasedReport = async (
                     ? ELECTRONICS_PACK
                   : isFmcgRetail
                     ? FMCG_PACK
+                  : isStationeryRetail
+                    ? STATIONERY_PACK
+                  : isSparePartsRetail
+                    ? SPARE_PARTS_PACK
                   : isAssemblyManufacturing
                     ? ASSEMBLY_PACK
             : (packByIndustry[profile.industry] || AGRO_PACK);
@@ -615,6 +733,15 @@ export const generateSignalBasedReport = async (
     const hookItem = getLibraryItem('hook');
     const kpiItem = getLibraryItem('kpi');
     const missionBriefItem = getLibraryItem('mission_brief');
+    const topLeakItemForTone = pack.library.find(i =>
+      i.type === 'leak' &&
+      matchesLineType(i.line_type) &&
+      i.signal_tags.includes(topSignal as SignalTag)
+    ) || pack.library.find(i => i.type === 'leak' && i.signal_tags.includes(topSignal as SignalTag));
+    const sparePartsTone = isSparePartsRetail ? getSparePartsTone(profile) : null;
+    const sparePartsToneVariant = isSparePartsRetail && topLeakItemForTone?.hook_text && sparePartsTone
+      ? getSparePartsToneVariant(topLeakItemForTone.hook_text, sparePartsTone)
+      : null;
 
     // Retrieve Actions
     const mapEffort = (e: 'S' | 'M' | 'L'): 'Low' | 'Med' | 'High' => {
@@ -662,11 +789,42 @@ export const generateSignalBasedReport = async (
         };
       });
 
+    const normalizedBand: PillarStatus =
+      status === 'Emergency' || status === 'Critical'
+        ? 'Profit Leak'
+        : status === 'Watch'
+          ? 'Bottleneck Forming'
+          : 'Controlled';
+
+    const quickScanBase = normalizeQuickScanTone(
+      undefined,
+      res.pillar,
+      normalizedBand,
+      profile.industry
+    );
+    const deepScanBase = normalizeDeepScanTone(
+      undefined,
+      res.pillar,
+      score,
+      profile.industry
+    );
+    const quickScanAnalysis = sparePartsToneVariant
+      ? sparePartsToneVariant.mission
+      : quickScanBase;
+    const deepScanChapter = sparePartsToneVariant
+      ? {
+        theory: `### ${topLeakItemForTone?.hook_text || res.pillar} (${sparePartsTone === 'street' ? 'Street Tone' : 'Executive Tone'})\n${sparePartsToneVariant.mission}`,
+        diagnosis: `### Deep Scan Diagnostic\n${sparePartsToneVariant.deep}`,
+        psychology: deepScanBase.psychology,
+        financials: `${deepScanBase.financials}\n\n### Recommended Action Packs\n${sparePartsToneVariant.actionPacks.join(', ')}`
+      }
+      : deepScanBase;
+
     return {
       name: res.pillar,
       score: score,
       riskScore: 100 - score,
-      band: status === 'Emergency' || status === 'Critical' ? 'Profit Leak' : status === 'Watch' ? 'Bottleneck Forming' : 'Controlled',
+      band: normalizedBand,
       tilt: 'A-Lean',
       strength: status === 'Stable' ? 'Detailed Control' : 'Process Weakness',
       hiddenCost: leakItem?.text || "Inefficiencies are creating drag.",
@@ -726,11 +884,7 @@ export const generateSignalBasedReport = async (
 
         // 3. COST IMPACT
         // Find cost text from the top leak signal
-        const topLeakItem = pack.library.find(i =>
-          i.type === 'leak' &&
-          matchesLineType(i.line_type) &&
-          i.signal_tags.includes(topSignal as SignalTag)
-        ) || pack.library.find(i => i.type === 'leak' && i.signal_tags.includes(topSignal as SignalTag));
+        const topLeakItem = topLeakItemForTone;
         const primaryIntel = isAssemblyManufacturing && topLeakTags[0]
           ? getAssemblySignalIntel(topLeakTags[0])
           : undefined;
@@ -826,6 +980,10 @@ export const generateSignalBasedReport = async (
                               ? 'Electronics and phone-shop margin depends on stock truth, repair QC discipline, pricing control, and trust-safe after-sales execution.'
                             : isFmcgRetail
                               ? 'FMCG distribution margin depends on stock discipline, route reliability, credit control, and repeat-order consistency.'
+                            : isStationeryRetail
+                              ? 'Stationery and bookstore margin depends on fast-mover readiness, SKU truth, queue discipline, and retention-led repeat demand.'
+                            : isSparePartsRetail
+                              ? 'Spare-parts margin depends on fitment accuracy, fast-mover readiness, pricing discipline, and trust-safe warranty and dispute controls.'
                             : isAssemblyManufacturing
                               ? 'Assembly and OEM margin depends on first-pass yield discipline, traceability control, and stable cross-functional execution.'
           : profile.industry === 'agri_input'
@@ -840,7 +998,9 @@ export const generateSignalBasedReport = async (
       },
       confidence: 'High',
       evidenceSnapshots: [],
-      fixLever: { action: 'Fix', metric: 'Profit', owner: 'You', effort: 'M', timeline: 'Week' }
+      fixLever: { action: 'Fix', metric: 'Profit', owner: 'You', effort: 'M', timeline: 'Week' },
+      quickScanAnalysis,
+      deepScanChapter
     };
   });
 

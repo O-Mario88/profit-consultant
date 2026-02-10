@@ -58,3 +58,18 @@ export const STATIONERY_SUB_INDUSTRIES = [
   'Exam-Season Pop-Up / Seasonal Kiosk'
 ];
 
+export const SPARE_PARTS_SUB_INDUSTRIES = [
+  'Spare parts & accessories shop',
+  'Spare Parts & Accessories Shop',
+  'Motorcycle parts (boda boda)',
+  'Car parts (general)',
+  'Truck/bus/commercial vehicle parts',
+  'Tyres & batteries specialty',
+  'Lubricants/filters/consumables',
+  'Electronics & sensors (ECU, relays, bulbs, wiring)',
+  'Body parts & paint accessories',
+  'Tools & garage accessories',
+  'Wholesale spare parts distributor',
+  'Online-first (WhatsApp/Delivery)',
+  'Garage-linked shop (attached to mechanic workshop)'
+];

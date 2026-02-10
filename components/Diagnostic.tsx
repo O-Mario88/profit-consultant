@@ -28,11 +28,13 @@ import { FASHION_PACK } from '../data/fashion';
 import { HARDWARE_PACK } from '../data/hardware';
 import { ELECTRONICS_PACK } from '../data/electronics';
 import { FMCG_PACK } from '../data/fmcg';
+import { STATIONERY_PACK } from '../data/stationery';
+import { SPARE_PARTS_PACK } from '../data/spareParts';
 import { ASSEMBLY_PACK } from '../data/assembly';
 import { PRODUCE_PACK } from '../data/produce';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
-import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY } from '../data/industryContext';
-import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES } from '../data/retailSubIndustries';
+import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY } from '../data/industryContext';
+import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES, SPARE_PARTS_SUB_INDUSTRIES, STATIONERY_SUB_INDUSTRIES } from '../data/retailSubIndustries';
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
 
 interface DiagnosticProps {
@@ -256,6 +258,12 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const isFmcgRetail =
          businessProfile.industry === 'retail' &&
          FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isStationeryRetail =
+         businessProfile.industry === 'retail' &&
+         STATIONERY_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
+      const isSparePartsRetail =
+         businessProfile.industry === 'retail' &&
+         SPARE_PARTS_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
       const isAssemblyManufacturing =
          businessProfile.industry === 'manufacturing' &&
          ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
@@ -457,6 +465,28 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             }));
       } else if (isFmcgRetail) {
          quickScanQs = toQuickScanSet(FMCG_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isStationeryRetail) {
+         quickScanQs = toQuickScanSet(STATIONERY_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isSparePartsRetail) {
+         quickScanQs = toQuickScanSet(SPARE_PARTS_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q) => ({
                id: q.qid,
@@ -1229,6 +1259,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                   : businessProfile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? HARDWARE_QUIZ_COPY
                   : businessProfile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ELECTRONICS_QUIZ_COPY
                   : businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FMCG_QUIZ_COPY
+                  : businessProfile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? STATIONERY_QUIZ_COPY
+                  : businessProfile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? SPARE_PARTS_QUIZ_COPY
                : businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FNB_QUIZ_COPY
                : businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? TEXTILE_QUIZ_COPY
                : businessProfile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FURNITURE_QUIZ_COPY

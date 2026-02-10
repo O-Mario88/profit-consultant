@@ -239,6 +239,7 @@ export interface BusinessProfile {
   userTitle: string;
   industry: string;
   subIndustry: string;
+  reportTone?: 'consultant' | 'executive' | 'street';
   model: 'b2b' | 'b2c' | 'both';
   size: 'solo' | 'micro' | 'small' | 'small_med' | 'medium' | 'large' | 'enterprise';
   hasManagers: boolean;

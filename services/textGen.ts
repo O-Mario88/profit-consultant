@@ -1,116 +1,181 @@
 
 import { PillarStatus } from "../data/missionBriefLibrary";
 
-// Helper to get industry specific flavor
-const getIndustryFlavor = (industry: string, pillar: string): string => {
-  const map: Record<string, Record<string, string>> = {
-    retail: {
-      Engine: "In a high-volume retail environment, operational drag isn't just annoying—it kills net margin. Every minute a staff member spends guessing a price or looking for stock is a minute not selling.",
-      Fuel: "Retail survives on cash conversion cycles. If inventory is stuck or margins are slipping due to un-tracked discounts, you are essentially financing your customers.",
-      Voice: "Retail traffic is binary: you either have footfall/clicks or you don't. Inconsistent marketing in retail leads to the 'empty store' syndrome.",
-    },
-    tech: {
-      Engine: "In SaaS and Tech, 'Engine' is your deployment and support velocity. If this lags, you accumulate technical debt and churn.",
-      Fuel: "Burn rate is the enemy. In tech, 'Fuel' leaks often look like over-hiring or expensive tool subscriptions that don't drive ROI.",
-      Voice: "Tech buyers need education. If your 'Voice' is inconsistent, you lose trust and your CAC (Customer Acquisition Cost) skyrockets.",
-    }
-  };
-  
-  const ind = industry.toLowerCase();
-  if (map[ind] && map[ind][pillar]) return map[ind][pillar];
-  
-  // Default/Generic
-  return `In the ${industry} sector, ${pillar} is the backbone of stability. Weakness here exposes you to unnecessary market volatility.`;
+type PillarDetail = {
+  systemRole: string;
+  typicalSymptom: string;
+  leverageMove: string;
+  coreKpi: string;
 };
 
-// Generates the ~200 word Quick Scan narrative
+const PILLAR_DETAILS: Record<string, PillarDetail> = {
+  operations: {
+    systemRole: "execution reliability and throughput discipline",
+    typicalSymptom: "teams stay busy but output quality and lead time keep drifting",
+    leverageMove: "lock standard work, handoffs, and first-pass quality controls",
+    coreKpi: "first-pass yield / on-time execution"
+  },
+  money: {
+    systemRole: "unit economics, cash velocity, and margin protection",
+    typicalSymptom: "revenue grows faster than cash and retained profit",
+    leverageMove: "tighten pricing guardrails, cost visibility, and collection cadence",
+    coreKpi: "gross margin / DSO / cash conversion"
+  },
+  market: {
+    systemRole: "demand quality, repeat purchase, and price power",
+    typicalSymptom: "new sales require high effort while repeat behavior stays fragile",
+    leverageMove: "stabilize proposition clarity, proof assets, and account cadence",
+    coreKpi: "repeat rate / conversion / win rate"
+  },
+  leadership: {
+    systemRole: "decision speed, accountability, and execution cadence",
+    typicalSymptom: "decisions escalate upward and the same issues recur weekly",
+    leverageMove: "set ownership, review rhythm, and closure discipline",
+    coreKpi: "action closure / decision latency"
+  },
+  innovation: {
+    systemRole: "controlled learning, offer evolution, and complexity governance",
+    typicalSymptom: "changes are reactive and improvement cycles are inconsistent",
+    leverageMove: "run small tested iterations and scale only proven winners",
+    coreKpi: "test-to-scale ratio / new offer contribution"
+  },
+  risk: {
+    systemRole: "containment readiness, compliance, and loss prevention",
+    typicalSymptom: "incidents are handled ad hoc and repeat under pressure",
+    leverageMove: "institutionalize traceability, policy enforcement, and audit routines",
+    coreKpi: "incident recurrence / traceability completeness"
+  },
+  people: {
+    systemRole: "capability consistency, role ownership, and behavior alignment",
+    typicalSymptom: "performance quality varies by shift or by who is present",
+    leverageMove: "certify critical steps and align incentives to quality outcomes",
+    coreKpi: "error variance by staff / certification coverage"
+  }
+};
+
+const LEGACY_PILLAR_ALIASES: Record<string, string> = {
+  engine: "operations",
+  fuel: "money",
+  voice: "market",
+  brain: "leadership",
+  pulse: "innovation",
+  shield: "risk",
+  tribe: "people",
+  "innovation & creativity": "innovation"
+};
+
+const normalizePillarKey = (pillar: string): string => {
+  const raw = pillar.toLowerCase();
+  return LEGACY_PILLAR_ALIASES[raw] || raw;
+};
+
+const getPillarDetail = (pillar: string): PillarDetail => {
+  const key = normalizePillarKey(pillar);
+  return PILLAR_DETAILS[key] || {
+    systemRole: "operating discipline and decision quality",
+    typicalSymptom: "execution feels reactive and outcomes vary by week",
+    leverageMove: "standardize controls and tighten ownership",
+    coreKpi: "execution consistency"
+  };
+};
+
+const getIndustryLens = (industry: string): string => {
+  const map: Record<string, string> = {
+    retail: "In retail, small execution errors convert immediately into margin loss and churn.",
+    manufacturing: "In manufacturing, weak controls compound through rework, delays, and warranty exposure.",
+    services: "In services, inconsistency erodes trust faster than acquisition can replace it.",
+    tech: "In tech, process drift quickly becomes churn, rework, and expensive firefighting.",
+    construction: "In construction, operational discipline determines whether growth creates profit or claims.",
+    agriculture: "In agriculture, timing and quality discipline directly control cash conversion and waste.",
+    agro_processing: "In agro-processing, variability in flow and yield drives most hidden losses."
+  };
+  return map[industry.toLowerCase()] || `In ${industry}, this pillar directly influences cost-to-serve, reliability, and growth quality.`;
+};
+
+const getStatusDiagnosis = (status: PillarStatus): string => {
+  switch (status) {
+    case 'Profit Leak':
+      return "This pillar is an active leak and is currently reducing your execution quality and economic output.";
+    case 'Bottleneck Forming':
+      return "This pillar is functional but unstable; performance depends too much on manual intervention.";
+    case 'Controlled':
+      return "This pillar is stable, but it is still operating below its leverage potential.";
+    case 'Profit Lever':
+      return "This pillar is a strategic advantage and can be used to accelerate weaker areas.";
+    default:
+      return "This pillar needs structured attention to sustain performance.";
+  }
+};
+
+const getStatusPriority = (status: PillarStatus, pillar: string): string => {
+  switch (status) {
+    case 'Profit Leak':
+      return `Priority: deploy a 7-day containment sprint on ${pillar} before scaling any new initiative.`;
+    case 'Bottleneck Forming':
+      return `Priority: harden controls now so growth does not convert this into a full leak.`;
+    case 'Controlled':
+      return `Priority: move from basic control to optimization and remove remaining manual drag.`;
+    case 'Profit Lever':
+      return `Priority: codify this playbook and transfer methods into your next weakest pillar.`;
+    default:
+      return "Priority: assign ownership and set a weekly KPI review cadence.";
+  }
+};
+
 export const generateQuickScanAnalysis = (pillar: string, status: PillarStatus, industry: string): string => {
-  const flavor = getIndustryFlavor(industry, pillar);
-  
-  const statusDescriptions = {
-    'Profit Leak': `Your diagnostic indicates a critical failure in the ${pillar} system. This is not a minor inefficiency; it is an active drain on your resources. We detected patterns suggesting that core processes are manual, reactive, or entirely missing. ${flavor} The immediate symptom is likely a feeling of 'constant firefighting'—you are solving the same problems today that you solved last month.`,
-    'Bottleneck Forming': `The ${pillar} system is functional but fragile. You rely heavily on specific individuals (likely yourself) to bridge gaps in the process. ${flavor} While you are currently delivering results, the cost of doing so is rising. You are paying a 'complexity tax' on every dollar earned.`,
-    'Controlled': `Your ${pillar} operations are stable. You have successfully installed baselines that prevent catastrophe. ${flavor} However, stability is not optimization. The opportunity cost here is speed—you could be moving faster if you moved from 'controlled' to 'automated'.`,
-    'Profit Lever': `This is a superpower. Your ${pillar} score is in the top percentile. ${flavor} You should be using this strength to subsidize weaknesses in other areas. Do not touch this system right now; let it run and focus your energy elsewhere.`
-  };
+  const detail = getPillarDetail(pillar);
+  const diagnosis = getStatusDiagnosis(status);
+  const industryLens = getIndustryLens(industry);
+  const priority = getStatusPriority(status, pillar);
 
-  const impact = `Financially, this specific profile usually correlates with a 15-25% reduction in potential net margin due to hidden inefficiencies and lost opportunity cost.`;
-
-  return `${statusDescriptions[status]} ${impact}`;
+  return `${diagnosis} Consultant view: ${pillar} governs ${detail.systemRole}, and the current pattern suggests ${detail.typicalSymptom}. ${industryLens} Priority metric: ${detail.coreKpi}. ${priority}`;
 };
 
-// Generates the ~1200+ word Deep Scan Chapter
 export const generateDeepScanChapter = (pillar: string, score: number, industry: string) => {
-  const status = score < 50 ? 'Profit Leak' : score < 75 ? 'Bottleneck' : 'Stable';
-  
+  const detail = getPillarDetail(pillar);
+  const status: PillarStatus =
+    score < 40 ? 'Profit Leak' :
+      score < 60 ? 'Bottleneck Forming' :
+        score < 80 ? 'Controlled' : 'Profit Lever';
+
+  const diagnosis = getStatusDiagnosis(status);
+  const priority = getStatusPriority(status, pillar);
+
+  const executionRiskBand =
+    score < 40 ? "High instability: recurring firefighting and value leakage are likely active." :
+      score < 60 ? "Elevated fragility: output can hold, but only with sustained management effort." :
+        score < 80 ? "Moderate risk: controls are present, but variability still taxes speed." :
+          "Low risk: this pillar is stable enough to be used as a scaling asset.";
+
   return {
-    title: `Forensic Audit: ${pillar} Architecture`,
-    theory: `
-      ### The Theory of ${pillar}
-      In high-performance organizations, the ${pillar} pillar acts as the central nervous system for ${pillar === 'Engine' ? 'execution' : pillar === 'Fuel' ? 'resource allocation' : 'market signaling'}. 
-      
-      Ideally, this system should operate invisibly. It should be a background utility that simply works. When we analyze ${industry} businesses at your stage, we look for a specific ratio of 'Input Effort' to 'Output Value'. 
-      
-      In a perfect state, ${pillar} creates leverage: you put $1 or 1 hour in, and you get $10 or 10 hours of value out. In a broken state, it acts as a tax: you put effort in, and friction consumes 40% of that energy before it reaches the customer.
-      
-      The goal of this audit is not to make you 'perfect' at ${pillar}. It is to remove the friction that is currently stealing your profit.
-    `,
-    diagnosis: `
-      ### Forensic Diagnosis
-      Your score of ${score}/100 indicates a ${status} status. Let's break down exactly what our algorithms detected in your response pattern.
-      
-      **1. Structural Integrity:**
-      We detected significant gaps in the foundational rules of your ${pillar}. Specifically, decisions appear to be made based on "gut feel" or "historical habit" rather than live data or written standard. In ${industry}, this is dangerous because market conditions change faster than habits do.
-      
-      **2. The 'Hero' Dependency:**
-      Your answers suggest that ${pillar} success currently depends on high-effort interventions by key leaders. If you or your top manager were to step away for 30 days, this pillar would likely collapse or significantly degrade. This is not a business system; this is a personality-dependent workflow.
-      
-      **3. Signal-to-Noise Ratio:**
-      Information regarding ${pillar} performance is not flowing clearly to the top. You are likely discovering problems *after* they have impacted the P&L, rather than seeing leading indicators.
-    `,
-    psychology: `
-      ### The Psychology of the Leak
-      Why has this leak persisted? It is rarely due to incompetence. It is usually due to **tolerance**.
-      
-      Founders in the ${industry} space often tolerate ${pillar} friction because it feels "normal" or because fixing it feels like "bureaucracy". 
-      
-      You may be telling yourself:
-      * "I'll fix this when we hire the next person."
-      * "It's just faster if I do it myself."
-      * "We are too small for a formal process here."
-      
-      These beliefs are the root cause of the leak. You are trading short-term speed for long-term drag. Every time you manually intervene in ${pillar}, you validate the broken system and train your team to rely on you.
-    `,
-    financials: `
-      ### Financial Impact Analysis
-      Let's quantify the cost of this ${score}/100 score.
-      
-      **The Direct Cost:**
-      Inefficiencies in ${pillar} are consuming approximately 15-20% of the payroll hours allocated to this function. You are paying for execution, but getting remediation.
-      
-      **The Opportunity Cost:**
-      Because ${pillar} requires management attention, you are unable to invest that attention in growth. If we assume your hourly value is $200+, and you spend 5 hours a week fixing ${pillar} issues, that is a $50,000/year leak in leadership capital alone.
-      
-      **The Valuation Hit:**
-      Investors and buyers discount businesses with weak ${pillar} scores. By stabilizing this, you don't just increase cash flow; you increase the multiple on your equity.
-    `,
-    prescription: `
-      ### 90-Day Remediation Roadmap
-      
-      **Phase 1: Stabilization (Days 0-30)**
-      We need to stop the bleeding immediately.
-      1. **The Stop-Loss Rule:** Implement a generic rule today that prevents the most common ${pillar} error. (e.g., "No work starts without a deposit" or "No code ships without a peer review").
-      2. **The Daily Standup:** Institute a 15-minute daily check specifically on ${pillar} metrics to force visibility.
-      
-      **Phase 2: Systemization (Days 31-60)**
-      Remove the personality dependency.
-      1. **Document the Core:** Create the "Golden Path" SOP for the primary ${pillar} workflow.
-      2. **Train the Deputy:** Assign a specific owner to this SOP. They are now responsible for the metric, not just the task.
-      
-      **Phase 3: Optimization (Days 61-90)**
-      Make it efficient.
-      1. **Automate the Handshake:** Use technology to move data into/out of this pillar without human entry.
-      2. **Review & Refine:** Monthly review of the ${pillar} scorecard to raise the bar.
-    `
+    theory: `### Consultant Lens
+${pillar} is the operating system for ${detail.systemRole}. When this system is healthy, decisions are repeatable, ownership is clear, and execution quality is predictable.
+
+${getIndustryLens(industry)}
+
+Primary control objective: convert effort into reliable output, not heroic recovery work.`,
+    diagnosis: `### What The Score Signals (${score}/100)
+${diagnosis}
+
+Risk band: ${executionRiskBand}
+
+Observed operating pattern: ${detail.typicalSymptom}. This is usually a control design issue, not a talent issue.
+
+Primary KPI to stabilize first: **${detail.coreKpi}**.`,
+    psychology: `### Leadership Pattern Behind The Result
+Teams usually tolerate this leak because short-term fixes feel faster than system redesign. Over time, that creates dependency on a few people and normalizes inconsistency.
+
+The shift required now is managerial: enforce one way of working for critical steps, measure adherence weekly, and close repeat failures to root cause.
+
+Until this pillar is systemized, growth will amplify noise instead of margin.`,
+    financials: `### Economic Impact And 30-Day Priority
+Current impact profile:
+- Time leakage through rework, exceptions, and delayed decisions.
+- Margin compression from preventable operational variance.
+- Trust risk when delivery quality is inconsistent.
+
+Expected upside from disciplined remediation: improved conversion of effort into cash, lower incident cost, and higher planning confidence.
+
+Recommended next move: ${detail.leverageMove}. ${priority}`
   };
 };

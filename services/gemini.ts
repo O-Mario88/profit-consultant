@@ -56,7 +56,14 @@ export const generateReportAnalysis = async (
     if (!ai) return null;
 
     const prompt = `
-      Act as an expert elite business consultant. Analyze this business profile and diagnostic scores.
+      You are a senior management consultant writing an executive diagnostic memo.
+      Tone requirements:
+      - Direct, evidence-led, no hype language.
+      - Use consultant phrasing: diagnosis, impact, and priority action.
+      - Do not use motivational filler, buzzwords, or vague reassurance.
+      - Keep each paragraph decision-oriented and commercially grounded.
+
+      Analyze this business profile and diagnostic scores.
       
       Business: ${profile.businessName || 'Unnamed'}
       Industry: ${profile.industry} (${profile.subIndustry})
@@ -67,15 +74,18 @@ export const generateReportAnalysis = async (
       ${JSON.stringify(scores)}
       
       Generate a strategic analysis report in JSON format.
-      1. Executive Summary: A high-impact, brutal but encouraging 3-4 sentence summary of their current state, identifying the critical bottleneck.
+      1. Executive Summary: 3-4 sentences, executive tone, identifying the primary bottleneck and immediate decision priority.
       2. For each of the 7 pillars (Operations, Money, Market, Leadership, Innovation, Risk, People), provide:
-         - quickScan: A ~50 word punchy analysis of their score in this area.
+         - quickScan: ~50-80 words in consultant tone with:
+           (a) concise diagnosis,
+           (b) likely business impact,
+           (c) priority next move.
          - deepDive: An object containing detailed sections (approx 100-200 words each):
            - theory: What this pillar represents in their specific industry (${profile.industry}).
            - diagnosis: Why they scored this way based on the score value.
-           - psychology: The mindset block likely causing this.
-           - financials: The estimated cost of this inefficiency (speculate based on industry).
-           - prescription: A strategic fix path (immediate and long term).
+           - psychology: The operating behavior or leadership pattern sustaining the issue.
+           - financials: Estimated commercial impact (margin, cash, risk, or throughput).
+           - prescription: A practical remediation path (7-day containment + 30-day control build).
     `;
 
     const response = await ai.models.generateContent({
