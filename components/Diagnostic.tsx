@@ -34,7 +34,7 @@ import { ASSEMBLY_PACK } from '../data/assembly';
 import { PRODUCE_PACK } from '../data/produce';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
 import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY } from '../data/industryContext';
-import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES, SPARE_PARTS_SUB_INDUSTRIES, STATIONERY_SUB_INDUSTRIES } from '../data/retailSubIndustries';
+
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
 
 interface DiagnosticProps {
@@ -72,101 +72,25 @@ const TEAM_SIZES = [
    { id: 'enterprise', label: 'Enterprise', sub: '1k+' },
 ];
 
-const FNB_SUB_INDUSTRIES = [
-   'Food & beverage manufacturing',
-   'Bakery / Flour / Grain-based processing',
-   'Dairy processing (milk, yoghurt, cheese)',
-   'Beverages (juice, soda, water)',
-   'Meat processing',
-   'Snacks & packaged foods',
-   'Edible oils (sunflower, palm, groundnut, etc.)'
-];
-
-const TEXTILE_SUB_INDUSTRIES = [
-   'Textile & garment manufacturing',
-   'CMT Factory (Cut-Make-Trim for buyers)',
-   'Uniforms & Workwear Manufacturing',
-   'Fashion / Retail Brand (own brand)',
-   'Knitwear / T-shirts / Casualwear (high volume)',
-   'Tailoring / Bespoke / Small Batch (custom)'
-];
-
-const FURNITURE_SUB_INDUSTRIES = [
-   'Furniture & carpentry production',
-   'Custom Residential Furniture (beds, wardrobes, kitchens)',
-   'Commercial Fit-Out & Office Furniture',
-   'Doors, Windows & Building Joinery',
-   'Mass/Batch Production (standard designs)',
-   'Upholstered Furniture (sofas, chairs)'
-];
-
-const METAL_SUB_INDUSTRIES = [
-   'Metal works / fabrication',
-   'Structural Steel & Construction Fabrication (frames, beams, gates, stairs)',
-   'Doors, Windows, Grills & Security Products',
-   'Industrial Fabrication (tanks, platforms, racks, hoppers)',
-   'Automotive Fabrication (trailers, bodies, repairs/mods)',
-   'Aluminum Fabrication (doors, partitions, glazing frames)',
-   'Stainless Steel Works (kitchen, hospital, food-grade)'
-];
-
-const PLASTICS_SUB_INDUSTRIES = [
-   'Plastics & packaging manufacturing',
-   'Film & Bag Manufacturing (poly bags, shrink film, liners)',
-   'Rigid Packaging (bottles, jerrycans, containers)',
-   'Injection Molding (caps, parts, household items)',
-   'Printing & Lamination (labels, flexible packs, pouches)',
-   'Recycled Plastics (regrind, washing, pelletizing)',
-   'Industrial Packaging (drums, crates, bulk packaging accessories)'
-];
-
-const SOAP_SUB_INDUSTRIES = [
-   'Soap / detergents / cosmetics production',
-   'Laundry Detergent & Multipurpose Cleaners (powder/liquid)',
-   'Bar Soap & Bath Soap (beauty/medicated)',
-   'Personal Care & Cosmetics (lotions, creams, oils, hair products)',
-   'Institutional / Bulk Supply (hotels, hospitals, schools)',
-   'Natural/Organic & Sensitive-Skin Brands',
-   'Distributors / Private Label Manufacturing'
-];
-
-const BRICKS_SUB_INDUSTRIES = [
-   'Bricks / blocks / cement products',
-   'Manual Yard Bricks (small-scale clay bricks / hand-mold)',
-   'Concrete Blocks (hollow/solid blocks, machine-vibro)',
-   'Pavers / Kerbs / Precast (high mix + high QC demand)',
-   'Cement Tiles / Terrazzo / Floor Tiles',
-   'Roofing Tiles (concrete tiles, decorative roofing pieces)',
-   'Multi-Product Yard (blocks + pavers + tiles + custom orders)'
-];
-
-const WATER_SUB_INDUSTRIES = [
-   'Bottled water / ice production',
-   'Small Plant Bottled Water (manual/semi-automatic)',
-   'Automated Bottling Line (higher volume)',
-   'Sachet Water (high volume, price-sensitive)',
-   'Ice Blocks / Ice Cubes (standalone)',
-   'Bottled Water + Ice (combined plant)',
-   'Institutional Supply (schools, hospitals, offices, events)',
-   'Distributor / Private Label Bottling'
-];
-
-const ASSEMBLY_SUB_INDUSTRIES = [
-   'Assembly / OEM',
-   'Assembly / OEM (electronics, components)',
-   'EMS Contract Manufacturer (PCBA + Box Build)',
-   'PCBA-Only (SMT + Reflow + AOI + Test)',
-   'Cable / Harness / Connector Assembly',
-   'High-Mix Low-Volume Custom Builds (Industrial, Lab, Prototypes)',
-   'White-Label / Multi-Variant OEM (Many clients, similar products)',
-   'Repair / Refurb / Rework Center (Reverse Logistics)',
-   'Precision Electronics / Medical / High-Compliance Assembly',
-   'Contract Electronics Assembly (EMS) — boards & devices',
-   'Component Assembly OEM (connectors, harnesses, modules)',
-   'Final Device Assembly (phones, gadgets, appliances sub-assemblies)',
-   'Private Label / White Label OEM (multiple variants for buyers)',
-   'High-Mix Low-Volume (custom builds)'
-];
+import {
+   FNB_SUB_INDUSTRIES,
+   TEXTILE_SUB_INDUSTRIES,
+   FURNITURE_SUB_INDUSTRIES,
+   METAL_SUB_INDUSTRIES,
+   PLASTICS_SUB_INDUSTRIES,
+   SOAP_SUB_INDUSTRIES,
+   BRICKS_SUB_INDUSTRIES,
+   WATER_SUB_INDUSTRIES,
+   ASSEMBLY_SUB_INDUSTRIES
+} from '../data/manufacturingSubIndustries';
+import {
+   FASHION_SUB_INDUSTRIES,
+   HARDWARE_SUB_INDUSTRIES,
+   ELECTRONICS_SHOP_SUB_INDUSTRIES,
+   FMCG_SUB_INDUSTRIES,
+   STATIONERY_SUB_INDUSTRIES,
+   SPARE_PARTS_SUB_INDUSTRIES
+} from '../data/retailSubIndustries';
 
 const getIcon = (name: string) => {
    const map: Record<string, any> = {
@@ -1252,25 +1176,25 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const selectedPlan = 'basic';
 
       const quizCopy = businessProfile.industry === 'aquaculture' ? AQUACULTURE_QUIZ_COPY
-            : businessProfile.industry === 'agro_processing' ? AGRO_PROCESSING_QUIZ_COPY
-               : businessProfile.industry === 'mining' ? MINING_QUIZ_COPY
-                  : businessProfile.industry === 'oil_gas_services' ? OIL_GAS_QUIZ_COPY
+         : businessProfile.industry === 'agro_processing' ? AGRO_PROCESSING_QUIZ_COPY
+            : businessProfile.industry === 'mining' ? MINING_QUIZ_COPY
+               : businessProfile.industry === 'oil_gas_services' ? OIL_GAS_QUIZ_COPY
                   : businessProfile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FASHION_QUIZ_COPY
-                  : businessProfile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? HARDWARE_QUIZ_COPY
-                  : businessProfile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ELECTRONICS_QUIZ_COPY
-                  : businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FMCG_QUIZ_COPY
-                  : businessProfile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? STATIONERY_QUIZ_COPY
-                  : businessProfile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? SPARE_PARTS_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FNB_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? TEXTILE_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FURNITURE_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? METAL_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? PLASTICS_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? SOAP_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? BRICKS_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? WATER_QUIZ_COPY
-               : businessProfile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ASSEMBLY_QUIZ_COPY
-            : null;
+                     : businessProfile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? HARDWARE_QUIZ_COPY
+                        : businessProfile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ELECTRONICS_QUIZ_COPY
+                           : businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FMCG_QUIZ_COPY
+                              : businessProfile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? STATIONERY_QUIZ_COPY
+                                 : businessProfile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? SPARE_PARTS_QUIZ_COPY
+                                    : businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FNB_QUIZ_COPY
+                                       : businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? TEXTILE_QUIZ_COPY
+                                          : businessProfile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? FURNITURE_QUIZ_COPY
+                                             : businessProfile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? METAL_QUIZ_COPY
+                                                : businessProfile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? PLASTICS_QUIZ_COPY
+                                                   : businessProfile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? SOAP_QUIZ_COPY
+                                                      : businessProfile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? BRICKS_QUIZ_COPY
+                                                         : businessProfile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? WATER_QUIZ_COPY
+                                                            : businessProfile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry) ? ASSEMBLY_QUIZ_COPY
+                                                               : null;
 
       const specificHook = quizCopy ? (quizCopy as any)[results.silentKiller] : null;
 

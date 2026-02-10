@@ -38,6 +38,17 @@ import {
   deriveAssemblyAutoTags,
   getAssemblySignalIntel
 } from "../data/assembly";
+import {
+  FNB_SUB_INDUSTRIES,
+  TEXTILE_SUB_INDUSTRIES,
+  FURNITURE_SUB_INDUSTRIES,
+  METAL_SUB_INDUSTRIES,
+  PLASTICS_SUB_INDUSTRIES,
+  SOAP_SUB_INDUSTRIES,
+  BRICKS_SUB_INDUSTRIES,
+  WATER_SUB_INDUSTRIES,
+  ASSEMBLY_SUB_INDUSTRIES
+} from '../data/manufacturingSubIndustries';
 import { PillarId, QuestionDefinition, SignalTag } from "../types";
 
 // Helper: Map System Score to Risk Band
@@ -551,108 +562,22 @@ export const generateSignalBasedReport = async (
     mining: MINING_PACK,
     oil_gas_services: OIL_GAS_PACK
   };
-  const fnbSubIndustries = [
-    'Food & beverage manufacturing',
-    'Bakery / Flour / Grain-based processing',
-    'Dairy processing (milk, yoghurt, cheese)',
-    'Beverages (juice, soda, water)',
-    'Meat processing',
-    'Snacks & packaged foods',
-    'Edible oils (sunflower, palm, groundnut, etc.)'
-  ];
-  const textileSubIndustries = [
-    'Textile & garment manufacturing',
-    'CMT Factory (Cut-Make-Trim for buyers)',
-    'Uniforms & Workwear Manufacturing',
-    'Fashion / Retail Brand (own brand)',
-    'Knitwear / T-shirts / Casualwear (high volume)',
-    'Tailoring / Bespoke / Small Batch (custom)'
-  ];
-  const furnitureSubIndustries = [
-    'Furniture & carpentry production',
-    'Custom Residential Furniture (beds, wardrobes, kitchens)',
-    'Commercial Fit-Out & Office Furniture',
-    'Doors, Windows & Building Joinery',
-    'Mass/Batch Production (standard designs)',
-    'Upholstered Furniture (sofas, chairs)'
-  ];
-  const metalSubIndustries = [
-    'Metal works / fabrication',
-    'Structural Steel & Construction Fabrication (frames, beams, gates, stairs)',
-    'Doors, Windows, Grills & Security Products',
-    'Industrial Fabrication (tanks, platforms, racks, hoppers)',
-    'Automotive Fabrication (trailers, bodies, repairs/mods)',
-    'Aluminum Fabrication (doors, partitions, glazing frames)',
-    'Stainless Steel Works (kitchen, hospital, food-grade)'
-  ];
-  const plasticsSubIndustries = [
-    'Plastics & packaging manufacturing',
-    'Film & Bag Manufacturing (poly bags, shrink film, liners)',
-    'Rigid Packaging (bottles, jerrycans, containers)',
-    'Injection Molding (caps, parts, household items)',
-    'Printing & Lamination (labels, flexible packs, pouches)',
-    'Recycled Plastics (regrind, washing, pelletizing)',
-    'Industrial Packaging (drums, crates, bulk packaging accessories)'
-  ];
-  const soapSubIndustries = [
-    'Soap / detergents / cosmetics production',
-    'Laundry Detergent & Multipurpose Cleaners (powder/liquid)',
-    'Bar Soap & Bath Soap (beauty/medicated)',
-    'Personal Care & Cosmetics (lotions, creams, oils, hair products)',
-    'Institutional / Bulk Supply (hotels, hospitals, schools)',
-    'Natural/Organic & Sensitive-Skin Brands',
-    'Distributors / Private Label Manufacturing'
-  ];
-  const bricksSubIndustries = [
-    'Bricks / blocks / cement products',
-    'Manual Yard Bricks (small-scale clay bricks / hand-mold)',
-    'Concrete Blocks (hollow/solid blocks, machine-vibro)',
-    'Pavers / Kerbs / Precast (high mix + high QC demand)',
-    'Cement Tiles / Terrazzo / Floor Tiles',
-    'Roofing Tiles (concrete tiles, decorative roofing pieces)',
-    'Multi-Product Yard (blocks + pavers + tiles + custom orders)'
-  ];
-  const waterSubIndustries = [
-    'Bottled water / ice production',
-    'Small Plant Bottled Water (manual/semi-automatic)',
-    'Automated Bottling Line (higher volume)',
-    'Sachet Water (high volume, price-sensitive)',
-    'Ice Blocks / Ice Cubes (standalone)',
-    'Bottled Water + Ice (combined plant)',
-    'Institutional Supply (schools, hospitals, offices, events)',
-    'Distributor / Private Label Bottling'
-  ];
-  const assemblySubIndustries = [
-    'Assembly / OEM',
-    'Assembly / OEM (electronics, components)',
-    'EMS Contract Manufacturer (PCBA + Box Build)',
-    'PCBA-Only (SMT + Reflow + AOI + Test)',
-    'Cable / Harness / Connector Assembly',
-    'High-Mix Low-Volume Custom Builds (Industrial, Lab, Prototypes)',
-    'White-Label / Multi-Variant OEM (Many clients, similar products)',
-    'Repair / Refurb / Rework Center (Reverse Logistics)',
-    'Precision Electronics / Medical / High-Compliance Assembly',
-    'Contract Electronics Assembly (EMS) — boards & devices',
-    'Component Assembly OEM (connectors, harnesses, modules)',
-    'Final Device Assembly (phones, gadgets, appliances sub-assemblies)',
-    'Private Label / White Label OEM (multiple variants for buyers)',
-    'High-Mix Low-Volume (custom builds)'
-  ];
-  const isFnbManufacturing = profile.industry === 'manufacturing' && fnbSubIndustries.includes(profile.subIndustry);
-  const isTextileManufacturing = profile.industry === 'manufacturing' && textileSubIndustries.includes(profile.subIndustry);
-  const isFurnitureManufacturing = profile.industry === 'manufacturing' && furnitureSubIndustries.includes(profile.subIndustry);
-  const isMetalManufacturing = profile.industry === 'manufacturing' && metalSubIndustries.includes(profile.subIndustry);
-  const isPlasticsManufacturing = profile.industry === 'manufacturing' && plasticsSubIndustries.includes(profile.subIndustry);
-  const isSoapManufacturing = profile.industry === 'manufacturing' && soapSubIndustries.includes(profile.subIndustry);
-  const isBricksManufacturing = profile.industry === 'manufacturing' && bricksSubIndustries.includes(profile.subIndustry);
-  const isWaterManufacturing = profile.industry === 'manufacturing' && waterSubIndustries.includes(profile.subIndustry);
+
+  const isFnbManufacturing = profile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isTextileManufacturing = profile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isFurnitureManufacturing = profile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isMetalManufacturing = profile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isPlasticsManufacturing = profile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isSoapManufacturing = profile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isBricksManufacturing = profile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(profile.subIndustry);
+  const isWaterManufacturing = profile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isFashionRetail = profile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isHardwareRetail = profile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isElectronicsRetail = profile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isFmcgRetail = profile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isStationeryRetail = profile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(profile.subIndustry);
   const isSparePartsRetail = profile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isAssemblyManufacturing = profile.industry === 'manufacturing' && assemblySubIndustries.includes(profile.subIndustry);
+  const isAssemblyManufacturing = profile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(profile.subIndustry);
   const pack = isFnbManufacturing
     ? FNB_PACK
     : isTextileManufacturing
@@ -671,19 +596,19 @@ export const generateSignalBasedReport = async (
                   ? WATER_PACK
                   : isFashionRetail
                     ? FASHION_PACK
-                  : isHardwareRetail
-                    ? HARDWARE_PACK
-                  : isElectronicsRetail
-                    ? ELECTRONICS_PACK
-                  : isFmcgRetail
-                    ? FMCG_PACK
-                  : isStationeryRetail
-                    ? STATIONERY_PACK
-                  : isSparePartsRetail
-                    ? SPARE_PARTS_PACK
-                  : isAssemblyManufacturing
-                    ? ASSEMBLY_PACK
-            : (packByIndustry[profile.industry] || AGRO_PACK);
+                    : isHardwareRetail
+                      ? HARDWARE_PACK
+                      : isElectronicsRetail
+                        ? ELECTRONICS_PACK
+                        : isFmcgRetail
+                          ? FMCG_PACK
+                          : isStationeryRetail
+                            ? STATIONERY_PACK
+                            : isSparePartsRetail
+                              ? SPARE_PARTS_PACK
+                              : isAssemblyManufacturing
+                                ? ASSEMBLY_PACK
+                                : (packByIndustry[profile.industry] || AGRO_PACK);
   const selectedLineType = (profile.agroSubSector as string | undefined) || profile.subIndustry;
   const matchesLineType = (lineType: string[]) =>
     lineType.includes('all') || !selectedLineType || lineType.includes(selectedLineType);
@@ -974,21 +899,21 @@ export const generateSignalBasedReport = async (
                             ? 'Bottled water and ice margin depends on hygiene discipline, fill and seal control, and route-level cash control.'
                             : isFashionRetail
                               ? 'Fashion boutique margin depends on size and SKU truth, markdown discipline, repeat-demand systems, and shrink-safe floor execution.'
-                            : isHardwareRetail
-                              ? 'Hardware and building-material margin depends on stock truth, dispatch accuracy, pricing discipline, and dispute-safe contractor service.'
-                            : isElectronicsRetail
-                              ? 'Electronics and phone-shop margin depends on stock truth, repair QC discipline, pricing control, and trust-safe after-sales execution.'
-                            : isFmcgRetail
-                              ? 'FMCG distribution margin depends on stock discipline, route reliability, credit control, and repeat-order consistency.'
-                            : isStationeryRetail
-                              ? 'Stationery and bookstore margin depends on fast-mover readiness, SKU truth, queue discipline, and retention-led repeat demand.'
-                            : isSparePartsRetail
-                              ? 'Spare-parts margin depends on fitment accuracy, fast-mover readiness, pricing discipline, and trust-safe warranty and dispute controls.'
-                            : isAssemblyManufacturing
-                              ? 'Assembly and OEM margin depends on first-pass yield discipline, traceability control, and stable cross-functional execution.'
-          : profile.industry === 'agri_input'
-            ? 'Agri-input businesses win when stock, advisory quality, and cash discipline are systemized.'
-            : 'Agro-processing requires tight control of yield and flow.'
+                              : isHardwareRetail
+                                ? 'Hardware and building-material margin depends on stock truth, dispatch accuracy, pricing discipline, and dispute-safe contractor service.'
+                                : isElectronicsRetail
+                                  ? 'Electronics and phone-shop margin depends on stock truth, repair QC discipline, pricing control, and trust-safe after-sales execution.'
+                                  : isFmcgRetail
+                                    ? 'FMCG distribution margin depends on stock discipline, route reliability, credit control, and repeat-order consistency.'
+                                    : isStationeryRetail
+                                      ? 'Stationery and bookstore margin depends on fast-mover readiness, SKU truth, queue discipline, and retention-led repeat demand.'
+                                      : isSparePartsRetail
+                                        ? 'Spare-parts margin depends on fitment accuracy, fast-mover readiness, pricing discipline, and trust-safe warranty and dispute controls.'
+                                        : isAssemblyManufacturing
+                                          ? 'Assembly and OEM margin depends on first-pass yield discipline, traceability control, and stable cross-functional execution.'
+                                          : profile.industry === 'agri_input'
+                                            ? 'Agri-input businesses win when stock, advisory quality, and cash discipline are systemized.'
+                                            : 'Agro-processing requires tight control of yield and flow.'
       ),
       drivers: [],
       costBands: {
