@@ -4,15 +4,15 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Hero from './components/Hero';
 import Dashboard from './components/Dashboard';
-import Diagnostic from './components/Diagnostic'; 
+import Diagnostic from './components/Diagnostic';
 import ActionPlanGenerator from './components/ActionPlanGenerator';
-import Catalog from './components/Marketplace'; 
-import ConsultantMarketplace from './components/ConsultantMarketplace'; 
+import Catalog from './components/Marketplace';
+import ConsultantMarketplace from './components/ConsultantMarketplace';
 import CategoryPage from './components/CategoryPage';
 import SprintDetail from './components/SprintDetail';
 import SearchPage from './components/SearchPage';
 import Onboarding from './components/Onboarding';
-import SecondBrain from './components/SecondBrain'; 
+import SecondBrain from './components/SecondBrain';
 import LearningLocker from './components/LearningLocker';
 import TrainerStudio from './components/TrainerStudio';
 import TrainerStudents from './components/TrainerStudents';
@@ -30,15 +30,17 @@ import BlogFeed from './components/BlogFeed';
 import BlogEditor from './components/BlogEditor';
 import PaymentModal from './components/PaymentModal';
 import AIAdStudio from './components/AIAdStudio';
-import ReportView from './components/ReportView'; 
-import HRReportView from './components/HRReportView'; 
+import ReportView from './components/ReportView';
+import HRReportView from './components/HRReportView';
 import PricingPage from './components/PricingPage';
-import PartnerLanding from './components/PartnerLanding'; 
+import PartnerLanding from './components/PartnerLanding';
 import PartnerDashboard from './components/PartnerDashboard';
 import PartnerPricing from './components/PartnerPricing';
 import FixMode from './components/FixMode';
-import MissionBrief from './components/MissionBrief'; // New
-import { ViewState, User, BlogPost, Course, Category, CheckoutItem, Archetype, GeneratedReport, FixPlan } from './types';
+import MissionBrief from './components/MissionBrief';
+import DeepScanAssessment from './components/DeepScanAssessment';
+import DeepScanResult from './components/DeepScanResult';
+import { ViewState, User, BlogPost, Course, Category, CheckoutItem, Archetype, GeneratedReport, FixPlan, DeepScanChapter } from './types';
 import { LocalizationProvider } from './contexts/LocalizationContext';
 
 // Mock Data
@@ -60,60 +62,64 @@ const App: React.FC = () => {
   const [currentView, setView] = useState<ViewState>('landing');
   const [lang] = useState({ code: 'en', name: 'English', flag: '🇺🇸' });
   const [user, setUser] = useState<User | null>(null);
-  
+
   // Navigation State
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [checkoutItem, setCheckoutItem] = useState<CheckoutItem | null>(null);
+  const [quickScanUnlocked, setQuickScanUnlocked] = useState(false);
+  const [deepScanUnlocked, setDeepScanUnlocked] = useState(false);
+  const [deepScanChapters, setDeepScanChapters] = useState<Record<string, DeepScanChapter> | null>(null);
+  const [deepScanExecSummary, setDeepScanExecSummary] = useState('');
 
   // Router Logic
   const handleAuthSuccess = (loggedInUser: User) => {
-     setUser(loggedInUser);
-     if (currentView === 'diagnostic_result') setView('dashboard');
-     else if (loggedInUser.role === 'partner') setView('partner_dashboard');
-     else setView('dashboard');
+    setUser(loggedInUser);
+    if (currentView === 'diagnostic_result') setView('dashboard');
+    else if (loggedInUser.role === 'partner') setView('partner_dashboard');
+    else setView('dashboard');
   };
 
   const handleLogout = () => {
-     setUser(null);
-     setView('landing');
+    setUser(null);
+    setView('landing');
   };
 
   const handleDiagnosticComplete = (archetype: Archetype, scores: any, planType: 'basic' | 'premium', report?: GeneratedReport) => {
-     if (user) {
-        setUser({ ...user, archetype, pillarScores: scores, planType, latestReport: report });
-        // Go to Mission Brief first instead of full report
-        if (report) setView('mission_brief');
-        else setView('dashboard');
-     } else {
-        const tempUser: User = {
-           id: 'temp_user',
-           name: 'Guest User',
-           role: 'student',
-           avatar: 'https://ui-avatars.com/api/?name=Guest',
-           archetype,
-           pillarScores: scores,
-           status: 'approved',
-           planType, 
-           latestReport: report
-        };
-        setUser(tempUser);
-        if (report) setView('mission_brief');
-        else setView('dashboard');
-     }
+    if (user) {
+      setUser({ ...user, archetype, pillarScores: scores, planType, latestReport: report });
+      // Go to Mission Brief first instead of full report
+      if (report) setView('mission_brief');
+      else setView('dashboard');
+    } else {
+      const tempUser: User = {
+        id: 'temp_user',
+        name: 'Guest User',
+        role: 'student',
+        avatar: 'https://ui-avatars.com/api/?name=Guest',
+        archetype,
+        pillarScores: scores,
+        status: 'approved',
+        planType,
+        latestReport: report
+      };
+      setUser(tempUser);
+      if (report) setView('mission_brief');
+      else setView('dashboard');
+    }
   };
 
   const handleStartFixPlan = (plan: FixPlan) => {
-     if (user) {
-        setUser({ ...user, activeFixPlan: plan });
-        setView('fix_mode');
-     }
+    if (user) {
+      setUser({ ...user, activeFixPlan: plan });
+      setView('fix_mode');
+    }
   };
 
   const renderView = () => {
     if (!user && ['auth', 'login', 'signup'].includes(currentView)) {
-       return <Auth onLogin={handleAuthSuccess} initialMode={currentView === 'signup' ? 'signup' : 'login'} />;
+      return <Auth onLogin={handleAuthSuccess} initialMode={currentView === 'signup' ? 'signup' : 'login'} />;
     }
 
     switch (currentView) {
@@ -126,7 +132,7 @@ const App: React.FC = () => {
       case 'course': return selectedCourse ? <SprintDetail course={selectedCourse} onEnroll={handleCheckout} user={user} onBack={() => setView('catalog')} /> : null;
       case 'search': return <SearchPage query={searchQuery} onCourseClick={handleCourseSelect} />;
       case 'pricing': return <PricingPage onStartScan={() => setView('diagnostic')} onRequestDemo={() => setView('company_profile')} onCheckout={handleCheckout} />;
-      case 'blog_feed': return <BlogFeed onRead={() => {}} posts={[]} user={user} onCreatePost={() => setView('blog_editor')} />;
+      case 'blog_feed': return <BlogFeed onRead={() => { }} posts={[]} user={user} onCreatePost={() => setView('blog_editor')} />;
       case 'blog_editor':
         return user
           ? <BlogEditor onBack={() => setView('blog_feed')} onPublish={(_post) => setView('blog_feed')} />
@@ -142,8 +148,10 @@ const App: React.FC = () => {
 
     switch (currentView) {
       case 'dashboard': return <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
-      case 'report_view': return user.latestReport ? <ReportView report={user.latestReport} onBack={() => setView('dashboard')} onStartFix={handleStartFixPlan} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
-      case 'mission_brief': return user.latestReport ? <MissionBrief report={user.latestReport} onUnlock={handleCheckout} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
+      case 'report_view': return user.latestReport ? <ReportView report={user.latestReport} onBack={() => setView('dashboard')} onStartFix={handleStartFixPlan} isUnlocked={deepScanUnlocked} onUnlockDeepScan={handleCheckout} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
+      case 'mission_brief': return user.latestReport ? <MissionBrief report={user.latestReport} onUnlock={handleCheckout} isUnlocked={quickScanUnlocked} onStartDeepScan={() => setView('deep_scan_assessment')} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
+      case 'deep_scan_assessment': return user.latestReport ? <DeepScanAssessment report={user.latestReport} onComplete={(chapters, execSummary) => { setDeepScanChapters(chapters); setDeepScanExecSummary(execSummary); setView('deep_scan_result'); }} onBack={() => setView('mission_brief')} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
+      case 'deep_scan_result': return user.latestReport && deepScanChapters ? <DeepScanResult report={user.latestReport} deepScanChapters={deepScanChapters} deepScanExecSummary={deepScanExecSummary} isUnlocked={deepScanUnlocked} onUnlock={handleCheckout} onBack={() => setView('dashboard')} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
       case 'fix_mode': return user.activeFixPlan ? <FixMode user={user} onUpdateUser={setUser} onBack={() => setView('dashboard')} /> : <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
       case 'hr_report': return <HRReportView onBack={() => setView('dashboard')} />;
       case 'consultant_dashboard': return <ConsultantDashboard />;
@@ -161,7 +169,7 @@ const App: React.FC = () => {
       case 'blog_editor': return <BlogEditor onBack={() => setView('blog_feed')} onPublish={(_post) => setView('blog_feed')} />;
       case 'live_session': return <LiveSessionRoom user={user} onExit={() => setView('live_schedule')} />;
       case 'action_lab': return <ActionPlanGenerator />;
-      case 'second_brain': return <SecondBrain />; 
+      case 'second_brain': return <SecondBrain />;
       case 'ai_ad_studio': return <AIAdStudio user={user} />;
       case 'locker': return <LearningLocker />;
       case 'settings': return <Settings />;
@@ -171,22 +179,22 @@ const App: React.FC = () => {
   };
 
   const handleSearch = (q: string) => { setSearchQuery(q); setView('search'); };
-  const handleCategorySelect = (k: string) => { 
-     if(k==='all') { setView('catalog'); } else { const c = CATEGORIES.find(cat=>cat.key===k); if(c){setSelectedCategory(c); setView('category');} }
+  const handleCategorySelect = (k: string) => {
+    if (k === 'all') { setView('catalog'); } else { const c = CATEGORIES.find(cat => cat.key === k); if (c) { setSelectedCategory(c); setView('category'); } }
   };
-  const handleCourseSelect = (slug: string) => { const c = EXTENDED_COURSES.find(x=>x.slug===slug); if(c){setSelectedCourse(c); setView('course');} };
-  const handleCheckout = (i: CheckoutItem) => { if(!user) setView('login'); else setCheckoutItem(i); };
+  const handleCourseSelect = (slug: string) => { const c = EXTENDED_COURSES.find(x => x.slug === slug); if (c) { setSelectedCourse(c); setView('course'); } };
+  const handleCheckout = (i: CheckoutItem) => { if (!user) setView('login'); else setCheckoutItem(i); };
 
-  const isPublicLayout = !user || ['landing', 'auth', 'login', 'signup', 'diagnostic', 'tribe_diagnostic', 'catalog', 'pricing', 'search', 'consultant_profile', 'report_view', 'hr_report', 'partner_landing', 'partner_pricing', 'fix_mode', 'mission_brief'].includes(currentView);
+  const isPublicLayout = !user || ['landing', 'auth', 'login', 'signup', 'diagnostic', 'tribe_diagnostic', 'catalog', 'pricing', 'search', 'consultant_profile', 'report_view', 'hr_report', 'partner_landing', 'partner_pricing', 'fix_mode', 'mission_brief', 'deep_scan_assessment', 'deep_scan_result'].includes(currentView);
 
   return (
     <LocalizationProvider>
       <div className="h-full bg-surface-container flex flex-col font-sans text-on-surface">
-        {currentView !== 'live_session' && currentView !== 'diagnostic' && currentView !== 'tribe_diagnostic' && currentView !== 'report_view' && currentView !== 'hr_report' && currentView !== 'partner_landing' && currentView !== 'fix_mode' && currentView !== 'mission_brief' && (
-          <Navbar 
-            currentView={currentView} 
-            setView={setView} 
-            lang={lang} 
+        {currentView !== 'live_session' && currentView !== 'diagnostic' && currentView !== 'tribe_diagnostic' && currentView !== 'report_view' && currentView !== 'hr_report' && currentView !== 'partner_landing' && currentView !== 'fix_mode' && currentView !== 'mission_brief' && currentView !== 'deep_scan_assessment' && currentView !== 'deep_scan_result' && (
+          <Navbar
+            currentView={currentView}
+            setView={setView}
+            lang={lang}
             user={user}
             onLogout={handleLogout}
             categories={CATEGORIES}
@@ -194,34 +202,38 @@ const App: React.FC = () => {
             onCategorySelect={handleCategorySelect}
           />
         )}
-        
+
         <div className="flex flex-1 max-w-[100%] mx-auto w-full overflow-hidden">
           {!isPublicLayout && user && (
-            <Sidebar 
-              currentView={currentView} 
-              setView={setView} 
-              userRole={user.role} 
+            <Sidebar
+              currentView={currentView}
+              setView={setView}
+              userRole={user.role}
             />
           )}
-          
+
           <main className={`flex-1 w-full overflow-y-auto ${!isPublicLayout ? 'bg-surface-container' : ''}`}>
             {renderView()}
           </main>
         </div>
 
         {checkoutItem && (
-           <PaymentModal 
-              item={checkoutItem} 
-              isOpen={!!checkoutItem} 
-              onClose={() => setCheckoutItem(null)} 
-              onConfirm={() => {
-                 setCheckoutItem(null);
-                 if (checkoutItem.id === 'report_unlock') {
-                    setView('report_view'); // Unlock success -> go to full report
-                 }
-              }} 
-              user={user} 
-           />
+          <PaymentModal
+            item={checkoutItem}
+            isOpen={!!checkoutItem}
+            onClose={() => setCheckoutItem(null)}
+            onConfirm={() => {
+              setCheckoutItem(null);
+              if (checkoutItem.id === 'quick_scan_unlock') {
+                setQuickScanUnlocked(true);
+              } else if (checkoutItem.id === 'deep_scan_unlock') {
+                setDeepScanUnlocked(true);
+              } else if (checkoutItem.id === 'report_unlock') {
+                setView('report_view');
+              }
+            }}
+            user={user}
+          />
         )}
       </div>
     </LocalizationProvider>

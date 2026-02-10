@@ -176,6 +176,17 @@ Current impact profile:
 
 Expected upside from disciplined remediation: improved conversion of effort into cash, lower incident cost, and higher planning confidence.
 
-Recommended next move: ${detail.leverageMove}. ${priority}`
+Recommended next move: ${detail.leverageMove}. ${priority}`,
+    prescription: `### Remediation Prescription
+**Week 1 — Containment:**
+1. Audit current ${pillar.toLowerCase()} workflows and identify the top 3 failure points.
+2. Assign a single owner per failure point with daily status reporting.
+3. Document the current process and identify manual overrides.
+
+**Days 8-30 — System Build:**
+Design a standardized process for ${detail.systemRole}. Implement ${detail.coreKpi} tracking with weekly review cadence. Target: reduce variance by 30% within 30 days.
+
+**Days 31-90 — Embed & Measure:**
+Track ${detail.coreKpi} weekly. Target: ${score < 50 ? 'move from red to amber zone' : 'stabilize in green zone'}. Review process adherence monthly. Expected ROI: 5-15% improvement in ${pillar.toLowerCase()}-driven margin within 90 days.`
   };
 };

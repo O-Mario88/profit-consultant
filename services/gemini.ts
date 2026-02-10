@@ -1,6 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ActionPlan, ActionStep, Quiz, QuizQuestion, BusinessProfile, PillarScores, Archetype } from "../types";
+import { ActionPlan, ActionStep, Quiz, QuizQuestion, BusinessProfile, PillarScores, Archetype, GeneratedReport, DeepScanChapter } from "../types";
+import { generateDeepScanChapter } from "./textGen";
 
 const RUNTIME_GEMINI_KEY = 'gemini_api_key';
 
@@ -89,7 +90,7 @@ export const generateReportAnalysis = async (
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-pro",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -123,6 +124,170 @@ export const generateReportAnalysis = async (
   } catch (error) {
     console.error("AI Report Gen Error:", error);
     return null;
+  }
+};
+
+// ---- DEEP SCAN REPORT (Gemini 1.5 Pro) ----
+export interface DeepScanAssessmentAnswer {
+  pillar: string;
+  question: string;
+  answer: string;
+}
+
+export const generateDeepScanReport = async (
+  quickScanReport: GeneratedReport,
+  deepScanAnswers: DeepScanAssessmentAnswer[]
+): Promise<{ chapters: Record<string, DeepScanChapter>; executiveSummary: string } | null> => {
+  try {
+    const ai = await getGeminiClient({ promptForKey: true });
+    if (!ai) {
+      // Fallback to non-LLM text generation
+      console.warn('No Gemini API key. Using fallback text generation.');
+      const fallback: Record<string, DeepScanChapter> = {};
+      for (const pillar of quickScanReport.pillars) {
+        const industry = quickScanReport.profileContext?.industry || 'general';
+        fallback[pillar.name] = generateDeepScanChapter(pillar.name, pillar.score, industry);
+      }
+      return { chapters: fallback, executiveSummary: quickScanReport.executiveSummary || '' };
+    }
+
+    const profile = quickScanReport.profileContext;
+    const pillarSummaries = quickScanReport.pillars.map(p =>
+      `${p.name}: Score ${p.score}/100 (${p.band}). Strength: ${p.strength}. Hidden Cost: ${p.hiddenCost}.`
+    ).join('\n');
+
+    // Group assessment answers by pillar for prompt clarity
+    const pillarAnswers: Record<string, { question: string; answer: string }[]> = {};
+    for (const a of deepScanAnswers) {
+      if (!pillarAnswers[a.pillar]) pillarAnswers[a.pillar] = [];
+      pillarAnswers[a.pillar].push({ question: a.question, answer: a.answer });
+    }
+    const assessmentContext = Object.entries(pillarAnswers).map(([pillar, qas]) =>
+      `=== ${pillar.toUpperCase()} ===\n${qas.map((qa, i) => `  Q${i + 1}: ${qa.question}\n  A${i + 1}: ${qa.answer}`).join('\n')}`
+    ).join('\n\n');
+
+    const prompt = `
+You are a senior management consultant at a top-tier firm (McKinsey/BCG caliber) writing a detailed diagnostic report for a paying client.
+
+CRITICAL INSTRUCTIONS:
+- Write as if this is a $15,000 consulting engagement deliverable.
+- Every sentence must reference SPECIFIC details from the client's assessment answers below. Do NOT write generic advice.
+- Use precise business language: "We observe that...", "The data suggests...", "Based on your response regarding..."
+- Quote or paraphrase the client's own words back to them to demonstrate you understood their situation.
+- Include specific metrics, percentages, timeframes, and dollar-impact estimates wherever possible.
+- No motivational filler. No buzzwords. No "leverage synergies" or "empower teams". Write like a partner presenting findings to a CEO.
+- Each section must feel like it was written specifically for THIS business — if the company name and industry were removed, the advice should still clearly NOT be generic.
+
+CLIENT PROFILE:
+- Company: ${profile?.businessName || 'Unnamed Business'}
+- Industry: ${profile?.industry || 'General'} (Sub-sector: ${profile?.subIndustry || 'General'})  
+- Company Size: ${profile?.size || 'Unknown'}
+- Diagnostic Archetype: ${quickScanReport.archetype}
+
+--- QUICK SCAN PILLAR SCORES (0-100) ---
+${pillarSummaries}
+
+--- CLIENT DEEP SCAN ASSESSMENT RESPONSES ---
+These are the client's own words describing their current operations. Use these responses as the PRIMARY evidence base for your analysis. Reference them directly.
+
+${assessmentContext}
+
+--- OUTPUT REQUIREMENTS ---
+
+1. EXECUTIVE_SUMMARY (250-400 words):
+Write a board-ready executive summary that:
+- Opens with the single most critical finding across all pillars
+- Identifies the 2-3 interconnected root causes creating the biggest profit leakage
+- Quantifies the estimated total annual revenue/margin at risk
+- Names the #1 priority action for the next 7 days
+- Closes with a 90-day outlook: what happens if nothing changes vs. if the prescriptions are followed
+
+2. For EACH of these pillars: ${quickScanReport.pillars.map(p => p.name).join(', ')}
+
+Generate a deep-dive chapter with these exact sections:
+
+theory (200-350 words): 
+- What this pillar means specifically in the ${profile?.industry || 'their'} industry, not generically
+- Reference real industry benchmarks, competitive dynamics, or regulatory context
+- Explain why this pillar matters MORE or LESS for their specific sub-sector (${profile?.subIndustry || 'general'})
+- Connect to their company size (${profile?.size || 'unknown'}) — a 5-person operation faces different pillar challenges than a 500-person one
+
+diagnosis (200-350 words):
+- DIRECTLY reference the client's assessment answers for this pillar
+- Use phrases like "You mentioned that..." or "Your response about [X] reveals..."
+- Explain the ROOT CAUSE of their score, not just the symptoms
+- Compare their current state to industry best practice
+- Identify what they're doing right (based on their answers) and what's creating drag
+
+psychology (150-250 words):
+- Identify the specific behavioral pattern or leadership habit sustaining the problem
+- Reference their own words to show how their thinking may be contributing to the issue
+- Name the cognitive bias or organizational pattern at play (e.g., "founder's trap", "firefighting culture", "revenue-at-all-costs mindset")
+- Be direct but respectful — a consultant speaking truth to power
+
+financials (150-300 words):
+- Estimate the specific dollar impact or margin erosion this pillar weakness is causing
+- Use industry benchmarks to ground estimates (e.g., "retailers in your segment typically see 2-4% margin erosion from...")
+- Calculate opportunity cost: what revenue or margin improvement is available if fixed
+- Include a simple cost-benefit statement for addressing this pillar
+
+prescription (250-400 words):
+- WEEK 1 (Days 1-7) — CONTAINMENT: 3 specific, immediately actionable steps. No vague advice. Each step should name WHO does it, WHAT they do, and WHAT the measurable output is.
+- DAYS 8-30 — SYSTEM BUILD: Design the process, tool, or structure that permanently resolves the root cause. Include specific tool/method recommendations.
+- DAYS 31-90 — EMBED & MEASURE: How to ensure the fix sticks. Include 2-3 specific KPIs to track with target values.
+- ESTIMATED ROI: A concrete estimate of the financial return from implementing this prescription.
+`;
+
+    const pillarNames = quickScanReport.pillars.map(p => p.name);
+    const pillarProperties: Record<string, any> = {};
+    for (const name of pillarNames) {
+      pillarProperties[name] = {
+        type: Type.OBJECT,
+        properties: {
+          theory: { type: Type.STRING },
+          diagnosis: { type: Type.STRING },
+          psychology: { type: Type.STRING },
+          financials: { type: Type.STRING },
+          prescription: { type: Type.STRING }
+        }
+      };
+    }
+
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-pro",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            executiveSummary: { type: Type.STRING },
+            pillars: {
+              type: Type.OBJECT,
+              properties: pillarProperties
+            }
+          }
+        }
+      }
+    });
+
+    if (response.text) {
+      const parsed = JSON.parse(response.text);
+      return {
+        chapters: parsed.pillars || parsed,
+        executiveSummary: parsed.executiveSummary || quickScanReport.executiveSummary || ''
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Deep Scan AI Generation Error:', error);
+    // Fallback to non-LLM generation
+    const fallback: Record<string, DeepScanChapter> = {};
+    for (const pillar of quickScanReport.pillars) {
+      const industry = quickScanReport.profileContext?.industry || 'general';
+      fallback[pillar.name] = generateDeepScanChapter(pillar.name, pillar.score, industry);
+    }
+    return { chapters: fallback, executiveSummary: quickScanReport.executiveSummary || '' };
   }
 };
 

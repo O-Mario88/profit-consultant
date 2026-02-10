@@ -46,6 +46,7 @@ export interface DeepScanChapter {
     diagnosis: string;
     psychology: string;
     financials: string;
+    prescription: string;
 }
 
 // Standard Archetypes

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { GeneratedReport, PillarReport, ViewState } from '../types';
+import { GeneratedReport, PillarReport, ViewState, CheckoutItem } from '../types';
 import {
    ArrowLeft, Printer, Share2, AlertTriangle, CheckCircle2,
    Activity, Zap, Shield, Megaphone, Brain, HeartPulse, Users,
    TrendingUp, Clock, Calendar, Target, LayoutDashboard, Flag,
    ChevronDown, ChevronUp, AlertOctagon, Download, PlusCircle, PlayCircle, BarChart3, HelpCircle,
-   FileText, Link as LinkIcon, ArrowRight, BookOpen
+   FileText, Link as LinkIcon, ArrowRight, BookOpen, Lock
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { generateFixPlan } from '../services/fixEngine';
@@ -17,11 +17,28 @@ interface ReportViewProps {
    report: GeneratedReport;
    onBack: () => void;
    onStartFix: (plan: any) => void;
+   isUnlocked?: boolean;
+   onUnlockDeepScan?: (item: CheckoutItem) => void;
 }
 
-const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix }) => {
+const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix, isUnlocked = false, onUnlockDeepScan }) => {
    const [activeTab, setActiveTab] = useState<'dashboard' | 'deep_dive' | 'roadmap' | 'action_plan'>('dashboard');
    const [expandedPillar, setExpandedPillar] = useState<string | null>(null);
+
+   const lockedTabs = ['deep_dive', 'roadmap', 'action_plan'];
+   const isTabLocked = (tab: string) => !isUnlocked && lockedTabs.includes(tab);
+
+   const handleDeepScanUnlock = () => {
+      if (onUnlockDeepScan) {
+         onUnlockDeepScan({
+            id: 'deep_scan_unlock',
+            title: 'Unlock Full Deep Scan Report',
+            description: `Get the complete deep scan analysis with per-pillar chapters, 90-day roadmap, and execution protocol for ${report.profileContext?.businessName || 'your business'}.`,
+            price: 30,
+            type: 'one_time'
+         });
+      }
+   };
 
    const handlePrint = () => {
       window.print();
@@ -501,9 +518,16 @@ const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix }) =
                {['dashboard', 'deep_dive', 'roadmap', 'action_plan'].map(tab => (
                   <button
                      key={tab}
-                     onClick={() => setActiveTab(tab as any)}
-                     className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-all ${activeTab === tab ? 'bg-white shadow-sm text-black' : 'text-gray-500 hover:text-black'}`}
+                     onClick={() => {
+                        if (isTabLocked(tab)) {
+                           handleDeepScanUnlock();
+                        } else {
+                           setActiveTab(tab as any);
+                        }
+                     }}
+                     className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-all flex items-center gap-1.5 ${activeTab === tab ? 'bg-white shadow-sm text-black' : isTabLocked(tab) ? 'text-gray-400 hover:text-gray-500' : 'text-gray-500 hover:text-black'}`}
                   >
+                     {isTabLocked(tab) && <Lock className="w-3 h-3" />}
                      {tab.replace('_', ' ')}
                   </button>
                ))}
@@ -514,16 +538,55 @@ const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix }) =
                   <Zap className="w-4 h-4" /> Start Fix
                </button>
                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-bold hover:bg-gray-50">
-                  <Printer className="w-4 h-4" /> PDF
+                  <Download className="w-4 h-4" /> Download PDF
                </button>
             </div>
          </div>
 
          <div className="max-w-6xl mx-auto p-8 print:hidden">
             {activeTab === 'dashboard' && <ExecutiveDashboard />}
-            {activeTab === 'deep_dive' && <PillarDeepDives />}
-            {activeTab === 'roadmap' && <RoadmapView />}
-            {activeTab === 'action_plan' && renderActionGenerator()}
+            {activeTab === 'deep_dive' && (isUnlocked ? <PillarDeepDives /> : (
+               <div className="flex flex-col items-center justify-center py-24 space-y-6 animate-fade-in">
+                  <div className="w-20 h-20 bg-gradient-to-br from-brand-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+                     <Lock className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-black text-gray-900">Unlock Deep Scan Analysis</h3>
+                  <p className="text-gray-500 max-w-md text-center leading-relaxed">Get the complete chapter-by-chapter breakdown for each pillar, including theory, diagnosis, psychology insights, and a detailed execution protocol.</p>
+                  <button onClick={handleDeepScanUnlock} className="bg-gradient-to-r from-brand-500 to-brand-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-brand-400 hover:to-brand-500 transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2 group">
+                     Unlock Full Report <span className="text-brand-200 font-normal">— $30</span>
+                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <p className="text-xs text-gray-400">One-time payment • Instant access</p>
+               </div>
+            ))}
+            {activeTab === 'roadmap' && (isUnlocked ? <RoadmapView /> : (
+               <div className="flex flex-col items-center justify-center py-24 space-y-6 animate-fade-in">
+                  <div className="w-20 h-20 bg-gradient-to-br from-brand-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+                     <Lock className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-black text-gray-900">Unlock 90-Day Roadmap</h3>
+                  <p className="text-gray-500 max-w-md text-center leading-relaxed">Access the structured execution timeline: Stabilize (0-30), Systemize (31-60), and Scale (61-90).</p>
+                  <button onClick={handleDeepScanUnlock} className="bg-gradient-to-r from-brand-500 to-brand-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-brand-400 hover:to-brand-500 transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2 group">
+                     Unlock Full Report <span className="text-brand-200 font-normal">— $30</span>
+                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <p className="text-xs text-gray-400">One-time payment • Instant access</p>
+               </div>
+            ))}
+            {activeTab === 'action_plan' && (isUnlocked ? renderActionGenerator() : (
+               <div className="flex flex-col items-center justify-center py-24 space-y-6 animate-fade-in">
+                  <div className="w-20 h-20 bg-gradient-to-br from-brand-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+                     <Lock className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-black text-gray-900">Unlock Action Plan</h3>
+                  <p className="text-gray-500 max-w-md text-center leading-relaxed">Get a prioritized, printable checklist to fix your critical risks across all pillars.</p>
+                  <button onClick={handleDeepScanUnlock} className="bg-gradient-to-r from-brand-500 to-brand-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-brand-400 hover:to-brand-500 transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2 group">
+                     Unlock Full Report <span className="text-brand-200 font-normal">— $30</span>
+                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <p className="text-xs text-gray-400">One-time payment • Instant access</p>
+               </div>
+            ))}
          </div>
 
          {/* --- PRINT ONLY REPORT --- */}
