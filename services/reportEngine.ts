@@ -1,35 +1,12 @@
 
-import { PillarScores, Archetype, GeneratedReport, PillarReport, ActionItem, LeakIndices, PillarDriver, ImpactBand, BusinessProfile } from "../types";
-import { PILLAR_BRIEFS, PillarStatus, EVIDENCE_COPY, COST_COPY, SYSTEM_COST_MAPPING, getPillarBrief, getCostCopy } from "../data/missionBriefLibrary";
-import { PILLAR_FIX_PLANS, getFixPlan } from "../data/fixPlans";
-import { INDUSTRY_LEXICONS, IndustryKey } from "../data/industryContext";
+import { PillarScores, Archetype, GeneratedReport, PillarReport, ActionItem, ImpactBand, BusinessProfile } from "../types";
+import { PillarStatus, SYSTEM_COST_MAPPING, getPillarBrief, getCostCopy } from "../data/missionBriefLibrary";
+import { getFixPlan } from "../data/fixPlans";
 import { getTopIndices, calculateDeepScanScores } from "../data/agroProcessingData";
-import { generateQuickScanAnalysis, generateDeepScanChapter } from "./textGen";
 import { generateReportAnalysis } from "./gemini";
-// Note: calculateSignalScores import moved to top or consolidated
 import { calculateSignalScores, PillarResult } from "./scoringEngine";
-import { AGRO_PACK } from "../data/agro";
-import { AGRI_PACK } from "../data/agri";
-import { MINING_PACK } from "../data/mining";
-import { OIL_GAS_PACK } from "../data/oilGas";
-import { FNB_PACK } from "../data/fnb";
-import { TEXTILE_PACK } from "../data/textile";
-import { FURNITURE_PACK } from "../data/furniture";
-import { METAL_PACK } from "../data/metal";
-import { PLASTICS_PACK } from "../data/plastics";
-import { SOAP_PACK } from "../data/soap";
-import { BRICKS_PACK } from "../data/bricks";
-import { WATER_PACK } from "../data/water";
-import { FASHION_PACK } from "../data/fashion";
-import { HARDWARE_PACK } from "../data/hardware";
-import { ELECTRONICS_PACK } from "../data/electronics";
-import { FMCG_PACK } from "../data/fmcg";
-import { STATIONERY_PACK } from "../data/stationery";
-import { SPARE_PARTS_PACK } from "../data/spareParts";
-import { getSparePartsToneVariant, SparePartsTone } from "../data/spareParts/toneVariants";
-import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES, SPARE_PARTS_SUB_INDUSTRIES, STATIONERY_SUB_INDUSTRIES } from "../data/retailSubIndustries";
+import { getSparePartsToneVariant } from "../data/spareParts/toneVariants";
 import {
-  ASSEMBLY_PACK,
   ASSEMBLY_CLIFFHANGER_STARTERS,
   ASSEMBLY_COST_FRAMING_STYLES,
   buildAssemblyCostNarrative,
@@ -38,372 +15,24 @@ import {
   deriveAssemblyAutoTags,
   getAssemblySignalIntel
 } from "../data/assembly";
-import {
-  FNB_SUB_INDUSTRIES,
-  TEXTILE_SUB_INDUSTRIES,
-  FURNITURE_SUB_INDUSTRIES,
-  METAL_SUB_INDUSTRIES,
-  PLASTICS_SUB_INDUSTRIES,
-  SOAP_SUB_INDUSTRIES,
-  BRICKS_SUB_INDUSTRIES,
-  WATER_SUB_INDUSTRIES,
-  ASSEMBLY_SUB_INDUSTRIES
-} from '../data/manufacturingSubIndustries';
 import { PillarId, QuestionDefinition, SignalTag } from "../types";
 
-// Helper: Map System Score to Risk Band
-const getRiskProfile = (systemScore: number): { riskScore: number, band: PillarStatus } => {
-  const riskScore = 100 - systemScore;
-  let band: PillarStatus;
+// Extracted service imports
+import { getRiskProfile, calculateLeakIndices, calculateCostBand, deriveSignalArchetype } from "./scoring";
+import {
+  getRandom, injectLexicon, generateDrivers, mapEffort,
+  normalizeQuickScanTone, normalizeDeepScanTone,
+  getSparePartsTone, hashSeed, pickBySeed, humanizeSignalTag
+} from "./reportHelpers";
+import {
+  AssemblySeverityStatus, getAssemblySeverityStatus,
+  getAssemblySymptom, buildAssemblyNextStep,
+  renderAssemblySeverityVariant
+} from "./assemblyEngine";
+import { resolveIndustryFlags, resolveIndustryPack, getWhyItMatters } from "./packResolver";
 
-  if (riskScore <= 29) band = 'Controlled';
-  else if (riskScore <= 49) band = 'Controlled';
-  else if (riskScore <= 69) band = 'Bottleneck Forming';
-  else band = 'Profit Leak';
-
-  // Override for Lever (High Score)
-  if (systemScore >= 70) band = 'Profit Lever';
-  else if (systemScore <= 29) band = 'Profit Leak';
-  else if (systemScore <= 44) band = 'Bottleneck Forming';
-  else band = 'Controlled';
-
-  return { riskScore, band };
-};
-
-export const calculateLeakIndices = (scores: PillarScores): LeakIndices => {
-  const timeLeak = Math.round(
-    (100 - scores.operations) * 0.5 +
-    (100 - scores.people) * 0.3 +
-    (100 - scores.leadership) * 0.2
-  );
-
-  const cashLeak = Math.round(
-    (100 - scores.money) * 0.55 +
-    (100 - scores.market) * 0.35 +
-    (100 - scores.innovation) * 0.10
-  );
-
-  const riskExposure = Math.round(
-    (100 - scores.risk) * 0.7 +
-    (100 - scores.people) * 0.2 +
-    (100 - scores.money) * 0.1
-  );
-
-  return { timeLeak, cashLeak, riskExposure };
-};
-
-const getRandom = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
-
-const injectLexicon = (text: string, industry: string): string => {
-  const keyMap: Record<string, IndustryKey> = {
-    'retail': 'retail', 'tech': 'tech', 'agriculture': 'agriculture',
-    'hospitality': 'hospitality', 'transport': 'transport',
-    'services': 'services', 'manufacturing': 'manufacturing',
-    'construction': 'construction', 'mining': 'mining', 'oil_gas_services': 'oil_gas_services', 'finance': 'services',
-    'education': 'services', 'health': 'services', 'media': 'services', 'ngo': 'services'
-  };
-  const lexKey = keyMap[industry] || 'other';
-  const lexicon = INDUSTRY_LEXICONS[lexKey] || INDUSTRY_LEXICONS['other'];
-
-  let res = text;
-  Object.entries(lexicon).forEach(([token, value]) => {
-    const regex = new RegExp(`{${token}}`, 'gi');
-    res = res.replace(regex, value);
-  });
-  return res;
-};
-
-const generateDrivers = (pillarName: string, mainScore: number): PillarDriver[] => {
-  const plan = PILLAR_FIX_PLANS[pillarName];
-  const driverNames = plan?.drivers || ['Execution', 'Strategy', 'People'];
-
-  return driverNames.map(name => {
-    const variance = Math.floor(Math.random() * 30) - 15;
-    let score = Math.max(5, Math.min(95, mainScore + variance));
-
-    let status: 'Critical' | 'Weak' | 'Strong' = 'Strong';
-    if (score < 40) status = 'Critical';
-    else if (score < 70) status = 'Weak';
-
-    return { name, score, status };
-  });
-};
-
-const calculateCostBand = (score: number, leakIndex: number): { level: 'Low' | 'Medium' | 'High', label: string } => {
-  let level: 'Low' | 'Medium' | 'High' = 'Low';
-  if (leakIndex > 60) level = 'High';
-  else if (leakIndex > 30) level = 'Medium';
-  return { level, label: 'Estimated Impact' };
-};
-
-const mapEffort = (effort?: 'S' | 'M' | 'L'): 'Low' | 'Med' | 'High' | undefined => {
-  switch (effort) {
-    case 'S': return 'Low';
-    case 'M': return 'Med';
-    case 'L': return 'High';
-    default: return undefined;
-  }
-};
-
-const getConsultantPriorityLine = (pillar: string, band: PillarStatus): string => {
-  switch (band) {
-    case 'Profit Leak':
-      return `Priority action: start a 7-day containment sprint in ${pillar} and assign one owner for closure.`;
-    case 'Bottleneck Forming':
-      return `Priority action: harden the current ${pillar} controls before scale increases variance.`;
-    case 'Controlled':
-      return `Priority action: optimize ${pillar} for speed and remove remaining manual friction.`;
-    case 'Profit Lever':
-      return `Priority action: codify this ${pillar} playbook and transfer it into weaker pillars.`;
-    default:
-      return `Priority action: review ${pillar} controls weekly with KPI ownership.`;
-  }
-};
-
-const extractQuickScanText = (rawQuickScan: unknown): string => {
-  if (typeof rawQuickScan === 'string') return rawQuickScan;
-  if (!rawQuickScan || typeof rawQuickScan !== 'object') return '';
-  const maybeInsight = (rawQuickScan as any).insight;
-  if (typeof maybeInsight === 'string') return maybeInsight;
-  return '';
-};
-
-const normalizeQuickScanTone = (
-  rawQuickScan: unknown,
-  pillar: string,
-  band: PillarStatus,
-  industry: string
-): string => {
-  const fallback = generateQuickScanAnalysis(pillar, band, industry);
-  const candidate = extractQuickScanText(rawQuickScan).trim();
-  const merged = (candidate || fallback).replace(/\s+/g, ' ').trim();
-  if (/priority action:/i.test(merged)) return merged;
-  return `${merged} ${getConsultantPriorityLine(pillar, band)}`;
-};
-
-const normalizeDeepScanSection = (
-  section: 'theory' | 'diagnosis' | 'psychology' | 'financials',
-  text: string,
-  pillar: string,
-  score: number
-): string => {
-  const clean = text.trim();
-  if (!clean) return '';
-  if (/^\s*###/m.test(clean)) return clean;
-
-  const headings = {
-    theory: `### Consultant Lens`,
-    diagnosis: `### Diagnostic View (${score}/100)`,
-    psychology: `### Execution Behavior Pattern`,
-    financials: `### Commercial Impact And Priority Actions`
-  } as const;
-
-  return `${headings[section]}\n${clean}`;
-};
-
-const normalizeDeepScanTone = (
-  rawDeepDive: unknown,
-  pillar: string,
-  score: number,
-  industry: string
-) => {
-  const fallback = generateDeepScanChapter(pillar, score, industry);
-  const source = rawDeepDive && typeof rawDeepDive === 'object'
-    ? rawDeepDive as Record<string, unknown>
-    : {};
-
-  const getText = (key: string, fallbackText: string): string => {
-    const value = source[key];
-    return typeof value === 'string' && value.trim() ? value.trim() : fallbackText;
-  };
-
-  const rawTheory = getText('theory', fallback.theory);
-  const rawDiagnosis = getText('diagnosis', fallback.diagnosis);
-  const rawPsychology = getText('psychology', fallback.psychology);
-  const rawFinancials = getText('financials', fallback.financials);
-  const rawPrescription = typeof source['prescription'] === 'string' ? source['prescription'].trim() : '';
-  const mergedFinancials = [rawFinancials, rawPrescription].filter(Boolean).join('\n\n');
-
-  return {
-    theory: normalizeDeepScanSection('theory', rawTheory, pillar, score),
-    diagnosis: normalizeDeepScanSection('diagnosis', rawDiagnosis, pillar, score),
-    psychology: normalizeDeepScanSection('psychology', rawPsychology, pillar, score),
-    financials: normalizeDeepScanSection('financials', mergedFinancials || fallback.financials, pillar, score)
-  };
-};
-
-const getSparePartsTone = (profile: BusinessProfile): SparePartsTone => {
-  if (profile.reportTone === 'street') return 'street';
-  if (profile.reportTone === 'executive') return 'executive';
-
-  if (typeof window !== 'undefined') {
-    const stored = window.localStorage.getItem('spare_parts_report_tone');
-    if (stored === 'street' || stored === 'executive') return stored;
-  }
-
-  return 'executive';
-};
-
-const hashSeed = (input: string): number => {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
-  }
-  return hash;
-};
-
-const pickBySeed = <T,>(arr: readonly T[], seed: number): T =>
-  arr[Math.abs(seed) % arr.length];
-
-const deriveSignalArchetype = (pillarResults: Record<string, PillarResult>): Archetype => {
-  const score = (pillar: string) => pillarResults[pillar]?.score ?? 50;
-  const heartScore = (score('Market') + score('Leadership') + score('Innovation') + score('People')) / 4;
-  const walletScore = (score('Operations') + score('Money') + score('Risk')) / 3;
-  const THRESHOLD = 50;
-
-  if (heartScore >= THRESHOLD && walletScore >= THRESHOLD) return 'The Sovereign';
-  if (heartScore >= THRESHOLD && walletScore < THRESHOLD) return 'The Uncrowned King';
-  if (heartScore < THRESHOLD && walletScore >= THRESHOLD) return 'The Iron General';
-  return 'The Storm Survivor';
-};
-
-type AssemblySeverityStatus = 'Stable' | 'Watch' | 'Critical';
-
-const getAssemblySeverityStatus = (score: number): AssemblySeverityStatus => {
-  if (score >= 70) return 'Stable';
-  if (score >= 40) return 'Watch';
-  return 'Critical';
-};
-
-const humanizeSignalTag = (tag: SignalTag): string =>
-  tag.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-
-const ASSEMBLY_SIGNAL_SYMPTOMS: Partial<Record<SignalTag, string>> = {
-  yield_bleed: 'good units are being lost to rework and scrap before shipment',
-  quality_built_late: 'defects are being discovered after value has already been added',
-  planning_gap: 'stations pause because kits, parts, or priorities arrive late',
-  changeover_black_hole: 'variant switches are consuming hours and destabilizing flow',
-  wip_pileup: 'too much WIP is hiding defects and slowing completion',
-  bottleneck_bounce: 'one station is throttling overall throughput',
-  measurement_blindspot: 'calibration drift is creating inconsistent test outcomes',
-  traceability_gap: 'failures cannot be quickly linked to lot, station, and operator',
-  purchase_panic: 'expedites are replacing planning as a normal operating habit',
-  pricing_margin_blindspot: 'shipments are growing faster than contribution margin',
-  costing_gap: 'true SKU-level economics are unclear at quote and scheduling time',
-  payment_delay_chokehold: 'cash conversion is lagging despite ongoing output',
-  spec_drift_discount: 'requirements are shifting mid-build and creating avoidable rework',
-  complaint_handling_gap: 'customer escalations are recurring instead of closing permanently',
-  channel_dependency: 'dependency on a few accounts is increasing negotiation pressure',
-  decision_bottleneck: 'critical approvals are delaying execution and closure',
-  no_kpi_ownership: 'teams are operating without clear daily performance visibility',
-  no_variance_review: 'issues are getting patched but not prevented',
-  cross_function_breakdown: 'engineering, quality, and production are solving problems in silos',
-  sku_complexity_tax: 'variant load is rising faster than process control',
-  no_product_testing_rhythm: 'NPI and test strategy are not gated tightly enough',
-  slow_bug_fix: 'improvements are arriving slower than defect recurrence',
-  supplier_variance_risk: 'incoming lot variation is destabilizing yield',
-  compliance_blocker_risk: 'audit and compliance readiness is reactive, not controlled',
-  data_security_gap: 'firmware/version governance is vulnerable to mismatch risk',
-  training_gap: 'critical station skills are inconsistent across operators',
-  weak_shift_handover: 'shift changes are leaking context and defect history',
-  hero_operator_dependence: 'line stability depends on a few key people',
-  role_clarity_gap: 'ownership of FPY, escapes, and downtime is unclear',
-  low_psych_safety: 'issues are raised late because teams fear blame',
-  blame_culture: 'the same errors repeat because learning is suppressed',
-  hygiene_drift: 'ESD and discipline checks are inconsistent across shifts',
-  contract_gap: 'acceptance and return boundaries are unclear in execution',
-  disaster_recovery_gap: 'containment and recall readiness is not drill-tested'
-};
-
-const getAssemblySymptom = (topSignals: SignalTag[]): string => {
-  const symptoms = topSignals
-    .map((tag) => ASSEMBLY_SIGNAL_SYMPTOMS[tag])
-    .filter(Boolean) as string[];
-  if (symptoms.length === 0) {
-    return 'execution remains busy, but performance feels unpredictable and recovery-heavy';
-  }
-  if (symptoms.length === 1) return symptoms[0];
-  return `${symptoms[0]} and ${symptoms[1]}`;
-};
-
-const buildAssemblyNextStep = (
-  status: AssemblySeverityStatus,
-  pillar: PillarId,
-  kpi: string,
-  fallbackCliffhanger?: string
-): string => {
-  const ctaByStatus: Record<AssemblySeverityStatus, string> = {
-    Stable: `Unlock Optimization Pack and start Fix Plan (Lite) to lift ${kpi}.`,
-    Watch: `Unlock ${pillar} Deep Module and generate a 7-day stabilization sprint tied to ${kpi}.`,
-    Critical: `Start Fix Mode now: run a 7-day containment sprint and build a 30-day control system tied to ${kpi}.`
-  };
-  const base = ctaByStatus[status];
-  if (!fallbackCliffhanger) return base;
-  return `${base} ${fallbackCliffhanger}`;
-};
-
-const ASSEMBLY_SEVERITY_VARIANTS: Record<PillarId, Record<AssemblySeverityStatus, string>> = {
-  Operations: {
-    Stable: 'Operations is stable for a {SPECIES} environment. Signals {SIGNAL_1} and {SIGNAL_2} are currently controlled, so output is less dependent on hero recovery. Day-to-day it looks like predictable flow instead of constant firefighting. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'Operations is productive but showing early execution drag. We detected {SIGNAL_1} with traces of {SIGNAL_2}; this usually appears as {SYMPTOM}. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'Operations is now a primary profit leak. Signals {SIGNAL_1} and {SIGNAL_2} indicate unstable flow and repeat recovery loops. Day-to-day this looks like {SYMPTOM}. Cost profile: {COST}. Next: {NEXT_STEP}'
-  },
-  Money: {
-    Stable: 'Money controls are structurally sound for {SPECIES}. Signals {SIGNAL_1} and {SIGNAL_2} are contained, so margin is less dependent on luck cycles. Day-to-day this looks like better cash conversion and fewer emergency spend spikes. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'Money looks healthy on the surface but leak patterns are forming. Signals {SIGNAL_1} and {SIGNAL_2} usually mean hidden losses in rework, expedites, or weak unit economics. Day-to-day this appears as month-end margin surprises. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'Money is in high-risk leak mode. Signals {SIGNAL_1} and {SIGNAL_2} indicate revenue is not translating into cash or protected margin. Day-to-day this feels like tight cash and constant emergency spending. Cost profile: {COST}. Next: {NEXT_STEP}'
-  },
-  Market: {
-    Stable: 'Market execution is healthy for {SPECIES}. Signals {SIGNAL_1} and {SIGNAL_2} look controlled, and trust is being protected through delivery and proof consistency. Day-to-day this means fewer escalations and stronger repeat behavior. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'Market trust friction is forming. We detected {SIGNAL_1} with {SIGNAL_2}, which usually appears as {SYMPTOM}. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'Market risk is elevated. Signals {SIGNAL_1} and {SIGNAL_2} indicate confidence is being damaged through delivery, spec, or escalation failures. Day-to-day this looks like constant customer recovery work. Cost profile: {COST}. Next: {NEXT_STEP}'
-  },
-  Leadership: {
-    Stable: 'Leadership execution is structured: {SIGNAL_1} remains controlled and teams are closing issues before they recur. Day-to-day this means cadence over chaos. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'Leadership is functional but inconsistent. Signals {SIGNAL_1} and {SIGNAL_2} often show up as shifting priorities and action drift. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'Leadership is amplifying operational instability. Signals {SIGNAL_1} and {SIGNAL_2} indicate bottlenecks, silo conflict, or firefighting culture. Day-to-day this appears as repeating failures and execution variance by shift. Cost profile: {COST}. Next: {NEXT_STEP}'
-  },
-  Innovation: {
-    Stable: 'Innovation activity appears intentional and controlled for {SPECIES}. Signals {SIGNAL_1} and {SIGNAL_2} are contained, so improvements are landing without destabilizing flow. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'Innovation is active, but process stability is under pressure. Signals {SIGNAL_1} and {SIGNAL_2} usually indicate variant load or weak NPI gates. Day-to-day this appears as avoidable changeover and quality drag. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'Innovation is currently creating instability. Signals {SIGNAL_1} and {SIGNAL_2} show change velocity outpacing process control. Day-to-day this looks like scrap, rework, and missed commitments after changes. Cost profile: {COST}. Next: {NEXT_STEP}'
-  },
-  Risk: {
-    Stable: 'Risk posture is disciplined for {SPECIES}. Signals {SIGNAL_1} and {SIGNAL_2} suggest issues can be contained quickly with traceable evidence. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'Risk posture has survivable gaps, but exposure is rising. Signals {SIGNAL_1} and {SIGNAL_2} often indicate traceability or supplier control weaknesses. Day-to-day this appears as slow containment during incidents. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'Risk exposure is high. Signals {SIGNAL_1} and {SIGNAL_2} suggest one failure could trigger recall pressure, chargebacks, or contract loss. Day-to-day this feels like uncertainty under every incident. Cost profile: {COST}. Next: {NEXT_STEP}'
-  },
-  People: {
-    Stable: 'People systems look reliable. Signals {SIGNAL_1} and {SIGNAL_2} are controlled, and shift consistency is supporting quality. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Watch: 'People systems are working, but strain is visible. Signals {SIGNAL_1} and {SIGNAL_2} usually indicate training gaps or role ambiguity. Day-to-day this appears as uneven execution across teams. Cost profile: {COST}. Next: {NEXT_STEP}',
-    Critical: 'People is actively feeding the leak. Signals {SIGNAL_1} and {SIGNAL_2} indicate shift variance, burnout defects, or accountability fog. Day-to-day this appears as recurring rework and rising error volatility. Cost profile: {COST}. Next: {NEXT_STEP}'
-  }
-};
-
-const renderAssemblySeverityVariant = (params: {
-  pillar: PillarId;
-  status: AssemblySeverityStatus;
-  species: string;
-  signal1: string;
-  signal2: string;
-  signal3: string;
-  symptom: string;
-  cost: string;
-  kpi: string;
-  nextStep: string;
-}): string => {
-  const template = ASSEMBLY_SEVERITY_VARIANTS[params.pillar]?.[params.status];
-  if (!template) return '';
-  return template
-    .replace(/{SPECIES}/g, params.species)
-    .replace(/{SIGNAL_1}/g, params.signal1)
-    .replace(/{SIGNAL_2}/g, params.signal2)
-    .replace(/{SIGNAL_3}/g, params.signal3)
-    .replace(/{SYMPTOM}/g, params.symptom)
-    .replace(/{COST}/g, params.cost)
-    .replace(/{KPI}/g, params.kpi)
-    .replace(/{NEXT_STEP}/g, params.nextStep);
-};
+// Re-export for backward compat
+export { calculateLeakIndices } from "./scoring";
 
 export const generateStrategicReport = async (
   scores: PillarScores,
@@ -440,7 +69,7 @@ export const generateStrategicReport = async (
     const costTypes = SYSTEM_COST_MAPPING[pillarName] || ['cash'];
     const profitConsequence = costTypes.map(type => {
       // Use helper for industry-aware cost copy (passing subIndustry)
-      const templates = getCostCopy(industry, type as keyof typeof COST_COPY, profile?.subIndustry);
+      const templates = getCostCopy(industry, type as keyof typeof import("../data/missionBriefLibrary").COST_COPY, profile?.subIndustry);
       return getRandom(templates);
     });
 
@@ -555,60 +184,11 @@ export const generateSignalBasedReport = async (
   profile: BusinessProfile
 ): Promise<GeneratedReport> => {
 
-  // 1. Calculate Scores & Signals
-  const packByIndustry: Record<string, { questions: QuestionDefinition[]; library: any[]; actions: any[] }> = {
-    agri_input: AGRI_PACK,
-    agro_processing: AGRO_PACK,
-    mining: MINING_PACK,
-    oil_gas_services: OIL_GAS_PACK
-  };
+  // 1. Resolve industry pack and flags
+  const flags = resolveIndustryFlags(profile);
+  const pack = resolveIndustryPack(profile, flags);
+  const { isAssemblyManufacturing, isSparePartsRetail } = flags;
 
-  const isFnbManufacturing = profile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isTextileManufacturing = profile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isFurnitureManufacturing = profile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isMetalManufacturing = profile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isPlasticsManufacturing = profile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isSoapManufacturing = profile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isBricksManufacturing = profile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isWaterManufacturing = profile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isFashionRetail = profile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isHardwareRetail = profile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isElectronicsRetail = profile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isFmcgRetail = profile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isStationeryRetail = profile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isSparePartsRetail = profile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const isAssemblyManufacturing = profile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(profile.subIndustry);
-  const pack = isFnbManufacturing
-    ? FNB_PACK
-    : isTextileManufacturing
-      ? TEXTILE_PACK
-      : isFurnitureManufacturing
-        ? FURNITURE_PACK
-        : isMetalManufacturing
-          ? METAL_PACK
-          : isPlasticsManufacturing
-            ? PLASTICS_PACK
-            : isSoapManufacturing
-              ? SOAP_PACK
-              : isBricksManufacturing
-                ? BRICKS_PACK
-                : isWaterManufacturing
-                  ? WATER_PACK
-                  : isFashionRetail
-                    ? FASHION_PACK
-                    : isHardwareRetail
-                      ? HARDWARE_PACK
-                      : isElectronicsRetail
-                        ? ELECTRONICS_PACK
-                        : isFmcgRetail
-                          ? FMCG_PACK
-                          : isStationeryRetail
-                            ? STATIONERY_PACK
-                            : isSparePartsRetail
-                              ? SPARE_PARTS_PACK
-                              : isAssemblyManufacturing
-                                ? ASSEMBLY_PACK
-                                : (packByIndustry[profile.industry] || AGRO_PACK);
   const selectedLineType = (profile.agroSubSector as string | undefined) || profile.subIndustry;
   const matchesLineType = (lineType: string[]) =>
     lineType.includes('all') || !selectedLineType || lineType.includes(selectedLineType);
@@ -669,7 +249,7 @@ export const generateSignalBasedReport = async (
       : null;
 
     // Retrieve Actions
-    const mapEffort = (e: 'S' | 'M' | 'L'): 'Low' | 'Med' | 'High' => {
+    const localMapEffort = (e: 'S' | 'M' | 'L'): 'Low' | 'Med' | 'High' => {
       if (e === 'S') return 'Low';
       if (e === 'L') return 'High';
       return 'Med';
@@ -703,7 +283,7 @@ export const generateSignalBasedReport = async (
           description,
           type: a.days === 7 ? 'today' : 'month',
           owner: a.default_owner_by_size?.[profile.size] || 'Owner',
-          effort: mapEffort(a.effort),
+          effort: localMapEffort(a.effort),
           metric,
           signalTag: primarySignal,
           costType: intel?.cost_type,
@@ -766,7 +346,6 @@ export const generateSignalBasedReport = async (
             .map(tag => `${tag.tag_id} (${tag.severity})`)
         ]
         : res.topSignals,
-      // deepInsight: missionBriefItem?.text || `${hookItem?.text || 'Insight'}: ${leakItem?.text || 'Analysis pending.'}`,
       // DYNAMIC TEMPLATE INJECTION
       deepInsight: (() => {
         let text = missionBriefItem?.text || `${hookItem?.text || 'Insight'}: ${leakItem?.text || 'Analysis pending.'}`;
@@ -808,7 +387,6 @@ export const generateSignalBasedReport = async (
         text = text.replace(/{SIGNAL_3}/g, selectedSignalTexts[2] || selectedSignalTexts[1] || selectedSignalTexts[0] || "system friction");
 
         // 3. COST IMPACT
-        // Find cost text from the top leak signal
         const topLeakItem = topLeakItemForTone;
         const primaryIntel = isAssemblyManufacturing && topLeakTags[0]
           ? getAssemblySignalIntel(topLeakTags[0])
@@ -876,45 +454,7 @@ export const generateSignalBasedReport = async (
 
         return text;
       })(),
-      whyItMatters: (
-        profile.industry === 'mining'
-          ? 'Mining profitability is decided by recovery discipline, custody proof, and control of hidden losses.'
-          : profile.industry === 'oil_gas_services'
-            ? 'Oil and gas service margin is protected by execution readiness, commercial discipline, and compliance-grade proof.'
-            : isFnbManufacturing
-              ? 'Food and beverage margin is decided by yield control, first-pass quality, and traceable execution discipline.'
-              : isTextileManufacturing
-                ? 'Textile and garment margin is driven by line flow discipline, first-pass quality, and style-level costing control.'
-                : isFurnitureManufacturing
-                  ? 'Furniture and carpentry margin depends on measurement discipline, waste control, and reliable finishing and delivery execution.'
-                  : isMetalManufacturing
-                    ? 'Metal fabrication margin is protected by drawing discipline, fit-up quality, and job-level costing control.'
-                    : isPlasticsManufacturing
-                      ? 'Plastics and packaging margin is driven by yield stability, changeover discipline, and specification-grade consistency.'
-                      : isSoapManufacturing
-                        ? 'Soap and cosmetics margin depends on batch consistency, fill-weight control, and claim-safe quality discipline.'
-                        : isBricksManufacturing
-                          ? 'Bricks and cement-product margin is protected by mix control, curing discipline, and dispatch reliability.'
-                          : isWaterManufacturing
-                            ? 'Bottled water and ice margin depends on hygiene discipline, fill and seal control, and route-level cash control.'
-                            : isFashionRetail
-                              ? 'Fashion boutique margin depends on size and SKU truth, markdown discipline, repeat-demand systems, and shrink-safe floor execution.'
-                              : isHardwareRetail
-                                ? 'Hardware and building-material margin depends on stock truth, dispatch accuracy, pricing discipline, and dispute-safe contractor service.'
-                                : isElectronicsRetail
-                                  ? 'Electronics and phone-shop margin depends on stock truth, repair QC discipline, pricing control, and trust-safe after-sales execution.'
-                                  : isFmcgRetail
-                                    ? 'FMCG distribution margin depends on stock discipline, route reliability, credit control, and repeat-order consistency.'
-                                    : isStationeryRetail
-                                      ? 'Stationery and bookstore margin depends on fast-mover readiness, SKU truth, queue discipline, and retention-led repeat demand.'
-                                      : isSparePartsRetail
-                                        ? 'Spare-parts margin depends on fitment accuracy, fast-mover readiness, pricing discipline, and trust-safe warranty and dispute controls.'
-                                        : isAssemblyManufacturing
-                                          ? 'Assembly and OEM margin depends on first-pass yield discipline, traceability control, and stable cross-functional execution.'
-                                          : profile.industry === 'agri_input'
-                                            ? 'Agri-input businesses win when stock, advisory quality, and cash discipline are systemized.'
-                                            : 'Agro-processing requires tight control of yield and flow.'
-      ),
+      whyItMatters: getWhyItMatters(profile, flags),
       drivers: [],
       costBands: {
         time: { level: 'Medium', label: 'Time', symptom: 'Delay' },
