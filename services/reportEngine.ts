@@ -37,7 +37,8 @@ export { calculateLeakIndices } from "./scoring";
 export const generateStrategicReport = async (
   scores: PillarScores,
   archetype: Archetype,
-  profile?: BusinessProfile
+  profile?: BusinessProfile,
+  quickScanAnswers?: Record<string, string> // New param
 ): Promise<GeneratedReport | null> => {
 
   const indices = calculateLeakIndices(scores);
@@ -46,7 +47,7 @@ export const generateStrategicReport = async (
   // Try to get AI Analysis
   let aiData: any = null;
   if (profile) {
-    aiData = await generateReportAnalysis(profile, scores, archetype);
+    aiData = await generateReportAnalysis(profile, scores, archetype, quickScanAnswers);
   }
 
   const pillars: PillarReport[] = Object.entries(scores).map(([key, rawScore]) => {

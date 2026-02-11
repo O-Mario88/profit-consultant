@@ -6,6 +6,11 @@ import { generateDeepScanChapter } from "./textGen";
 const RUNTIME_GEMINI_KEY = 'gemini_api_key';
 
 const readServerEnvKey = (): string | undefined => {
+  // @ts-ignore
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    // @ts-ignore
+    return import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
+  }
   if (typeof process === 'undefined' || !process.env) return undefined;
   return process.env.GEMINI_API_KEY || process.env.API_KEY;
 };
@@ -50,11 +55,17 @@ export const getGeminiClient = async ({ promptForKey = false }: { promptForKey?:
 export const generateReportAnalysis = async (
   profile: BusinessProfile,
   scores: PillarScores,
-  archetype: Archetype
+  archetype: Archetype,
+  quickScanAnswers?: Record<string, string> // New parameter for raw answers
 ) => {
   try {
     const ai = await getGeminiClient();
     if (!ai) return null;
+
+    // Format answers for the prompt if available
+    const answersContext = quickScanAnswers
+      ? `\nUser's Quick Scan Responses (Use these to personalize the diagnosis):\n${Object.entries(quickScanAnswers).map(([q, a]) => `- ${q}: ${a}`).join('\n')}`
+      : '';
 
     const prompt = `
       You are a senior management consultant writing an executive diagnostic memo.
@@ -63,6 +74,7 @@ export const generateReportAnalysis = async (
       - Use consultant phrasing: diagnosis, impact, and priority action.
       - Do not use motivational filler, buzzwords, or vague reassurance.
       - Keep each paragraph decision-oriented and commercially grounded.
+      - STRICTLY ADHERE to the provided user responses. Do not hallucinate or assume details not present in the data.
 
       Analyze this business profile and diagnostic scores.
       
@@ -73,17 +85,19 @@ export const generateReportAnalysis = async (
       
       Scores (0-100):
       ${JSON.stringify(scores)}
+
+      ${answersContext}
       
       Generate a strategic analysis report in JSON format.
       1. Executive Summary: 3-4 sentences, executive tone, identifying the primary bottleneck and immediate decision priority.
       2. For each of the 7 pillars (Operations, Money, Market, Leadership, Innovation, Risk, People), provide:
          - quickScan: ~50-80 words in consultant tone with:
-           (a) concise diagnosis,
+           (a) concise diagnosis (referencing specific user answers where possible),
            (b) likely business impact,
            (c) priority next move.
          - deepDive: An object containing detailed sections (approx 100-200 words each):
            - theory: What this pillar represents in their specific industry (${profile.industry}).
-           - diagnosis: Why they scored this way based on the score value.
+           - diagnosis: Why they scored this way based on the score value and their specific answers.
            - psychology: The operating behavior or leadership pattern sustaining the issue.
            - financials: Estimated commercial impact (margin, cash, risk, or throughput).
            - prescription: A practical remediation path (7-day containment + 30-day control build).
@@ -166,6 +180,7 @@ export const generateDeepScanReport = async (
       `=== ${pillar.toUpperCase()} ===\n${qas.map((qa, i) => `  Q${i + 1}: ${qa.question}\n  A${i + 1}: ${qa.answer}`).join('\n')}`
     ).join('\n\n');
 
+
     const prompt = `
 You are a senior management consultant at a top-tier firm (McKinsey/BCG caliber) writing a detailed diagnostic report for a paying client.
 
@@ -177,6 +192,7 @@ CRITICAL INSTRUCTIONS:
 - Include specific metrics, percentages, timeframes, and dollar-impact estimates wherever possible.
 - No motivational filler. No buzzwords. No "leverage synergies" or "empower teams". Write like a partner presenting findings to a CEO.
 - Each section must feel like it was written specifically for THIS business — if the company name and industry were removed, the advice should still clearly NOT be generic.
+- NO HALLUCINATION: Only use the data provided in the CLIENT PROFILE, SCORES, and ASSESSMENT RESPONSES. Do not invent facts about the client's business that are not in the input.
 
 CLIENT PROFILE:
 - Company: ${profile?.businessName || 'Unnamed Business'}
@@ -194,17 +210,17 @@ ${assessmentContext}
 
 --- OUTPUT REQUIREMENTS ---
 
-1. EXECUTIVE_SUMMARY (250-400 words):
+1. EXECUTIVE_SUMMARY (300-450 words):
 Write a board-ready executive summary that:
-- Opens with the single most critical finding across all pillars
-- Identifies the 2-3 interconnected root causes creating the biggest profit leakage
-- Quantifies the estimated total annual revenue/margin at risk
-- Names the #1 priority action for the next 7 days
-- Closes with a 90-day outlook: what happens if nothing changes vs. if the prescriptions are followed
+- Opens with the single most critical finding across all pillars, citing specific evidence from their answers.
+- Identifies the 2-3 interconnected root causes creating the biggest profit leakage, referencing specific operational or leadership gaps they admitted to.
+- Quantifies the estimated total annual revenue/margin at risk based on their industry and size.
+- Names the #1 priority action for the next 7 days.
+- Closes with a 90-day outlook: what happens if nothing changes vs. if the prescriptions are followed.
 
 2. For EACH of these pillars: ${quickScanReport.pillars.map(p => p.name).join(', ')}
 
-Generate a deep-dive chapter with these exact sections:
+Generate a deep-dive chapter with these exact sections. STRICTLY adherence to the user's responses is required.
 
 theory (200-350 words): 
 - What this pillar means specifically in the ${profile?.industry || 'their'} industry, not generically
@@ -213,20 +229,20 @@ theory (200-350 words):
 - Connect to their company size (${profile?.size || 'unknown'}) — a 5-person operation faces different pillar challenges than a 500-person one
 
 diagnosis (200-350 words):
-- DIRECTLY reference the client's assessment answers for this pillar
+- DIRECTLY reference the client's assessment answers for this pillar. Quote them.
 - Use phrases like "You mentioned that..." or "Your response about [X] reveals..."
 - Explain the ROOT CAUSE of their score, not just the symptoms
-- Compare their current state to industry best practice
+- Compare their current state to industry best practice based on what they said
 - Identify what they're doing right (based on their answers) and what's creating drag
 
 psychology (150-250 words):
-- Identify the specific behavioral pattern or leadership habit sustaining the problem
+- Identify the specific behavioral pattern or leadership habit sustaining the problem, inferred from their choices (e.g., avoiding conflict, micromanagement, fear of spending).
 - Reference their own words to show how their thinking may be contributing to the issue
 - Name the cognitive bias or organizational pattern at play (e.g., "founder's trap", "firefighting culture", "revenue-at-all-costs mindset")
 - Be direct but respectful — a consultant speaking truth to power
 
 financials (150-300 words):
-- Estimate the specific dollar impact or margin erosion this pillar weakness is causing
+- Estimate the specific dollar impact or margin erosion this pillar weakness is causing.
 - Use industry benchmarks to ground estimates (e.g., "retailers in your segment typically see 2-4% margin erosion from...")
 - Calculate opportunity cost: what revenue or margin improvement is available if fixed
 - Include a simple cost-benefit statement for addressing this pillar

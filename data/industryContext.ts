@@ -189,81 +189,27 @@ export interface IndustryCategory {
 
 export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
   {
-    id: 'aquaculture',
-    label: 'Fisheries & Aquaculture',
-    iconName: 'CloudRain',
-    lexiconKey: 'aquaculture',
-    subIndustries: [
-      'Tilapia Farming',
-      'Catfish Farming',
-      'Shrimp Farming',
-      'Salmon & Trout Farming'
-    ]
-  },
-  {
-    id: 'agro_processing',
-    label: 'Agro-Processing & Value Addition',
-    iconName: 'Factory',
-    lexiconKey: 'agro_processing',
-    subIndustries: [
-      'Milling (maize, wheat, rice, animal feed)',
-      'Drying & Storage (grains, coffee, fruits)',
-      'Packaging (foods, grains, consumer goods)',
-      'Juices & Beverages',
-      'Oils (sunflower, sesame, groundnut, palm)'
-    ]
-  },
-  {
-    id: 'agri_input',
-    label: 'Agri-Input Supplier',
-    iconName: 'Sprout',
-    lexiconKey: 'agriculture',
-    subIndustries: [
-      'Mechanization Hire',
-      'Irrigation Supply & Install',
-      'Repair & Maintenance Services',
-      'Equipment Sales & Spares',
-      'Operator Training & Advisory'
-    ]
-  },
-  {
-    id: 'produce_aggregation',
-    label: 'Produce Aggregation & Trading',
-    iconName: 'Store', // Using Store icon as it fits trading/markets
-    lexiconKey: 'produce',
-    subIndustries: [
-      'Farmgate Aggregator (Local)',
-      'Wholesale Market Trader',
-      'Institutional Supplier',
-      'Exporter / Cross-border Trader',
-      'Digital Broker / Agent',
-      'Warehouse + Bulking Hub'
-    ]
-  },
-
-  {
-    id: 'livestock',
-    label: 'Livestock & Animal Husbandry',
-    iconName: 'Sprout',
-    lexiconKey: 'livestock',
-    subIndustries: [
-      'Dairy Cattle',
-      'Beef Cattle',
-      'Goats & Sheep',
-      'Piggery',
-      'Poultry (Broilers)',
-      'Poultry (Layers)'
-    ]
-  },
-  {
     id: 'agriculture',
     label: 'Agriculture, Livestock & Agribusiness',
     iconName: 'Sprout',
     lexiconKey: 'agriculture',
     subIndustries: [
-      'Crop farming', 'Livestock', 'Dairy & milk collection', 'Fisheries & aquaculture',
-      'Beekeeping & apiculture', 'Agro-processing', 'Input supplier', 'Farm machinery & services',
-      'Produce aggregation & trading', 'Export / cross-border produce trade', 'Storage & warehousing',
+
+      'Crop farming (grains, legumes, cash crops, horticulture)',
+      'Cattle ranching & feedlot',
+      'Goat farming',
+      'Sheep farming',
+      'Poultry farming',
+      'Pig farming',
+      'Dairy & milk collection',
+      'Fisheries & aquaculture',
+      'Beekeeping & apiculture',
+      'Agro-processing (milling, drying, packaging, juices, oils)',
+      'Input supplier (seeds, fertilizer, chemicals, vet supplies)',
+      'Farm machinery & services (irrigation, mechanization)',
+      'Produce aggregation & trading',
+      'Export / cross-border produce trade',
+      'Storage & warehousing (cold chain, silos)',
       'Forestry & timber production'
     ]
   },
@@ -273,22 +219,11 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Pickaxe',
     lexiconKey: 'mining',
     subIndustries: [
-      'Artisanal Gold',
-      'Gemstones',
-      '3Ts (Tin/Tantalum/Coltan)',
-      'Quarrying (stone/sand/aggregates)'
-    ]
-  },
-  {
-    id: 'oil_gas_services',
-    label: 'Oil & Gas Services',
-    iconName: 'Wrench',
-    lexiconKey: 'oil_gas_services',
-    subIndustries: [
-      'Maintenance & Shutdown Services',
-      'Logistics & Transport Services',
-      'Inspection, Testing & QA Services',
-      'Civil Works / Fabrication / Welding Services'
+      'Artisanal mining',
+      'Mining services & supplies',
+      'Quarry / aggregates / stone',
+      'Sand mining',
+      'Oil & gas services (where applicable)'
     ]
   },
   {
@@ -297,43 +232,16 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Factory',
     lexiconKey: 'manufacturing',
     subIndustries: [
-      'Food & beverage manufacturing', 'Bakery / Flour / Grain-based processing', 'Dairy processing (milk, yoghurt, cheese)',
-      'Beverages (juice, soda, water)', 'Meat processing', 'Snacks & packaged foods',
-      'Edible oils (sunflower, palm, groundnut, etc.)', 'Textile & garment manufacturing',
-      'CMT Factory (Cut-Make-Trim for buyers)', 'Uniforms & Workwear Manufacturing',
-      'Fashion / Retail Brand (own brand)', 'Knitwear / T-shirts / Casualwear (high volume)',
-      'Tailoring / Bespoke / Small Batch (custom)', 'Furniture & carpentry production',
-      'Custom Residential Furniture (beds, wardrobes, kitchens)', 'Commercial Fit-Out & Office Furniture',
-      'Doors, Windows & Building Joinery', 'Mass/Batch Production (standard designs)',
-      'Upholstered Furniture (sofas, chairs)',
-      'Metal works / fabrication', 'Structural Steel & Construction Fabrication (frames, beams, gates, stairs)',
-      'Doors, Windows, Grills & Security Products', 'Industrial Fabrication (tanks, platforms, racks, hoppers)',
-      'Automotive Fabrication (trailers, bodies, repairs/mods)', 'Aluminum Fabrication (doors, partitions, glazing frames)',
-      'Stainless Steel Works (kitchen, hospital, food-grade)',
-      'Plastics & packaging manufacturing', 'Film & Bag Manufacturing (poly bags, shrink film, liners)',
-      'Rigid Packaging (bottles, jerrycans, containers)', 'Injection Molding (caps, parts, household items)',
-      'Printing & Lamination (labels, flexible packs, pouches)', 'Recycled Plastics (regrind, washing, pelletizing)',
-      'Industrial Packaging (drums, crates, bulk packaging accessories)', 'Soap / detergents / cosmetics production',
-      'Laundry Detergent & Multipurpose Cleaners (powder/liquid)', 'Bar Soap & Bath Soap (beauty/medicated)',
-      'Personal Care & Cosmetics (lotions, creams, oils, hair products)', 'Institutional / Bulk Supply (hotels, hospitals, schools)',
-      'Natural/Organic & Sensitive-Skin Brands', 'Distributors / Private Label Manufacturing',
-      'Bricks / blocks / cement products', 'Manual Yard Bricks (small-scale clay bricks / hand-mold)',
-      'Concrete Blocks (hollow/solid blocks, machine-vibro)', 'Pavers / Kerbs / Precast (high mix + high QC demand)',
-      'Cement Tiles / Terrazzo / Floor Tiles', 'Roofing Tiles (concrete tiles, decorative roofing pieces)',
-      'Multi-Product Yard (blocks + pavers + tiles + custom orders)',
-      'Bottled water / ice production', 'Small Plant Bottled Water (manual/semi-automatic)',
-      'Automated Bottling Line (higher volume)', 'Sachet Water (high volume, price-sensitive)',
-      'Ice Blocks / Ice Cubes (standalone)', 'Bottled Water + Ice (combined plant)',
-      'Institutional Supply (schools, hospitals, offices, events)', 'Distributor / Private Label Bottling',
-      'Pharmaceuticals / medical supplies manufacturing',
-      'Chemical/light industrial production', 'Assembly / OEM', 'Assembly / OEM (electronics, components)',
-      'EMS Contract Manufacturer (PCBA + Box Build)',
-      'PCBA-Only (SMT + Reflow + AOI + Test)',
-      'Cable / Harness / Connector Assembly',
-      'High-Mix Low-Volume Custom Builds (Industrial, Lab, Prototypes)',
-      'White-Label / Multi-Variant OEM (Many clients, similar products)',
-      'Repair / Refurb / Rework Center (Reverse Logistics)',
-      'Precision Electronics / Medical / High-Compliance Assembly'
+      'Food & beverage manufacturing',
+      'Textile & garment manufacturing',
+      'Furniture & carpentry production',
+      'Metal works / fabrication',
+      'Plastics & packaging manufacturing',
+      'Soap / detergents / cosmetics production',
+      'Bricks / blocks / cement products',
+      'Bottled water / ice production',
+      'Chemical / light industrial production',
+      'Assembly / OEM (electronics, components)'
     ]
   },
   {
@@ -342,16 +250,17 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'ShoppingBag',
     lexiconKey: 'retail',
     subIndustries: [
-      'Supermarket / mini-mart', 'Kiosk / market vendor',
-      ...ELECTRONICS_SHOP_SUB_INDUSTRIES,
-      ...FMCG_SUB_INDUSTRIES,
+      'Supermarket / mini-mart',
+      'FMCG wholesale & distribution',
       'Pharmacy / drug shop',
-      ...HARDWARE_SUB_INDUSTRIES,
-      ...FASHION_SUB_INDUSTRIES,
-      ...STATIONERY_SUB_INDUSTRIES,
-      ...SPARE_PARTS_SUB_INDUSTRIES,
+      'Electronics & phone shop',
+      'Hardware & building materials shop',
+      'Fashion & boutique',
       'Cosmetics / beauty supplies',
-      'Import/export trading', 'E-commerce store / online retail'
+      'Stationery & bookstore',
+      'Spare parts & accessories shop',
+      'Import/export trading',
+      'E-commerce store / online retail'
     ]
   },
   {
@@ -360,10 +269,18 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'HardHat',
     lexiconKey: 'construction',
     subIndustries: [
-      'General contracting', 'Civil works', 'Architecture & design',
-      'Quantity surveying & estimating', 'Land surveying & mapping', 'Plumbing / electrical / HVAC services',
-      'Interior design & fit-out', 'Real estate brokerage/agency', 'Property management',
-      'Facilities management', 'Real estate development', 'Building materials supply'
+      'General contracting (residential/commercial)',
+      'Civil works (roads, bridges, drainage)',
+      'Architecture & design',
+      'Quantity surveying & estimating',
+      'Land surveying & mapping',
+      'Plumbing / electrical / HVAC services',
+      'Interior design & fit-out',
+      'Real estate brokerage/agency',
+      'Property management',
+      'Facilities management',
+      'Real estate development',
+      'Building materials supply'
     ]
   },
   {
@@ -372,9 +289,15 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Truck',
     lexiconKey: 'transport',
     subIndustries: [
-      'Boda / ride services / taxi operations', 'Bus & coach services', 'Trucking / haulage',
-      'Courier / last-mile delivery', 'Warehousing & fulfillment', 'Freight forwarding / clearing & customs',
-      'Fleet leasing & management', 'Shipping/logistics coordination', 'Automotive towing & recovery',
+      'Boda / ride services / taxi operations',
+      'Bus & coach services',
+      'Trucking / haulage',
+      'Courier / last-mile delivery',
+      'Warehousing & fulfillment',
+      'Freight forwarding / clearing & customs',
+      'Fleet leasing & management',
+      'Shipping / logistics coordination',
+      'Automotive towing & recovery',
       'Fuel station / energy retail'
     ]
   },
@@ -384,9 +307,15 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Utensils',
     lexiconKey: 'hospitality',
     subIndustries: [
-      'Restaurant / café / fast food', 'Hotel / lodge / Airbnb host', 'Catering services',
-      'Bar / nightlife venue', 'Bakery / confectionery', 'Butchery / meat supply',
-      'Travel agency / tour operator', 'Events & conference services', 'Recreation / leisure business'
+      'Restaurant / café / fast food',
+      'Hotel / lodge / Airbnb host',
+      'Catering services',
+      'Bar / nightlife venue',
+      'Bakery / confectionery',
+      'Butchery / meat supply',
+      'Travel agency / tour operator',
+      'Events & conference services',
+      'Recreation / leisure business'
     ]
   },
   {
@@ -395,10 +324,16 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'HeartPulse',
     lexiconKey: 'services',
     subIndustries: [
-      'Clinic / hospital', 'Dental clinic', 'Laboratory & diagnostics',
-      'Medical outreach / community health', 'Nursing / home care services',
-      'Mental health / counseling', 'Gym / fitness center', 'Salon / spa',
-      'Wellness products/services'
+      'Clinic / hospital',
+      'Dental clinic',
+      'Laboratory & diagnostics',
+      'Pharmacy / drug shop (if not under retail)',
+      'Medical outreach / community health',
+      'Nursing / home care services',
+      'Mental health / counseling (regulated where required)',
+      'Gym / fitness center',
+      'Salon / spa',
+      'Wellness products / services'
     ]
   },
   {
@@ -407,9 +342,13 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'BookOpen',
     lexiconKey: 'services',
     subIndustries: [
-      'Nursery / primary / secondary school', 'Tertiary college / institute', 'Vocational training (TVET)',
-      'Tutoring / coaching / exam prep', 'Corporate training provider', 'EdTech / e-learning platform',
-      'School support services'
+      'Nursery / primary / secondary school',
+      'Tertiary college / institute',
+      'Vocational training (TVET)',
+      'Tutoring / coaching / exam prep',
+      'Corporate training provider',
+      'EdTech / e-learning platform',
+      'School support services (books, uniforms, transport)'
     ]
   },
   {
@@ -418,31 +357,67 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Monitor',
     lexiconKey: 'tech',
     subIndustries: [
-      'Software company / SaaS product', 'IT support & maintenance', 'Device repair',
-      'Web design & development', 'Mobile app development', 'Digital marketing agency',
-      'Cybersecurity services', 'Data analytics / BI / AI services', 'Network installation & ISP/telecom reseller',
-      'Cloud services / managed services', 'POS/ERP implementation'
+      'Software company / SaaS product',
+      'IT support & maintenance',
+      'Device repair (phones/computers)',
+      'Web design & development',
+      'Mobile app development',
+      'Digital marketing agency',
+      'Cybersecurity services',
+      'Data analytics / BI / AI services',
+      'Network installation & ISP/telecom reseller',
+      'Cloud services / managed services',
+      'POS / ERP implementation'
     ]
   },
   {
     id: 'finance',
-    label: 'Financial Services & Business Support',
+    label: 'Finance & Financial Services',
     iconName: 'Wallet',
     lexiconKey: 'services',
     subIndustries: [
-      'SACCO / cooperative finance', 'Microfinance / lending', 'Insurance agent/broker',
-      'Accounting & bookkeeping', 'Audit & tax advisory', 'Payroll services',
-      'Investment advisory', 'Payments/fintech services', 'Business registration & compliance services'
+      'SACCO / cooperative finance',
+      'Microfinance / lending (regulated)',
+      'Banking / agent banking / banking services',
+      'Mobile money / payments / fintech services',
+      'Insurance agent / broker',
+      'Investment advisory / wealth management (regulated)',
+      'Forex bureau / remittances / money transfer',
+      'Leasing / asset finance',
+      'Payroll services',
+      'Accounting & bookkeeping',
+      'Audit & tax advisory'
+    ]
+  },
+  {
+    id: 'consulting',
+    label: 'Consulting & Advisory Services',
+    iconName: 'Briefcase',
+    lexiconKey: 'services',
+    subIndustries: [
+      'Strategy & management consulting',
+      'HR & talent consulting',
+      'Operations / process improvement consulting',
+      'Finance / turnaround / pricing consulting',
+      'IT / digital transformation consulting',
+      'Data / BI / AI consulting',
+      'Cybersecurity consulting',
+      'Risk management & compliance consulting',
+      'Engineering consulting',
+      'Architecture / built-environment consultancy',
+      'Research, monitoring & evaluation (M&E)',
+      'Environmental / ESG consultancy'
     ]
   },
   {
     id: 'professional',
-    label: 'Professional Services',
+    label: 'Professional Services (non-consulting)',
     iconName: 'Briefcase',
     lexiconKey: 'services',
     subIndustries: [
-      'Legal services / law firm', 'Consulting', 'Recruitment / staffing agency',
-      'Engineering consulting', 'Research & evaluation (M&E)', 'Translation & interpretation'
+      'Legal services / law firm',
+      'Recruitment / staffing agency',
+      'Translation & interpretation'
     ]
   },
   {
@@ -451,9 +426,13 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Video',
     lexiconKey: 'services',
     subIndustries: [
-      'Photography / videography', 'Graphic design & branding', 'Printing & publishing',
-      'Advertising/PR agency', 'Content creation / influencer', 'Radio/TV/media production',
-      'Music/events entertainment services'
+      'Photography / videography',
+      'Graphic design & branding',
+      'Printing & publishing',
+      'Advertising / PR agency',
+      'Content creation / influencer',
+      'Radio / TV / media production',
+      'Music / events entertainment services'
     ]
   },
   {
@@ -462,7 +441,9 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Building2',
     lexiconKey: 'services',
     subIndustries: [
-      'Government services provider', 'Government contractors', 'Public-private partnership operators'
+      'Government services provider',
+      'Government contractors (supplies, construction, IT)',
+      'Public-private partnership operators'
     ]
   },
   {
@@ -471,8 +452,11 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Globe',
     lexiconKey: 'services',
     subIndustries: [
-      'NGO / foundation / charity', 'CBO (community-based org)', 'Faith-based organization programs',
-      'Social enterprise', 'Donor-funded project implementer'
+      'NGO / foundation / charity',
+      'CBO (community-based org)',
+      'Faith-based organization programs',
+      'Social enterprise (profit + impact)',
+      'Donor-funded project implementer'
     ]
   },
   {
@@ -481,19 +465,28 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Zap',
     lexiconKey: 'other',
     subIndustries: [
-      'Solar/renewable installation', 'Electrical services', 'Water supply services',
-      'Waste management & sanitation', 'Recycling / circular economy', 'Environmental services / consultancy',
+      'Solar / renewable installation',
+      'Electrical services (commercial)',
+      'Water supply services',
+      'Waste management & sanitation',
+      'Recycling / circular economy',
+      'Environmental services',
       'Security services (guards, CCTV, alarms)'
     ]
   },
   {
-    id: 'automotive',
+    id: 'automotive_services',
     label: 'Automotive, Machinery & Engineering Services',
     iconName: 'Wrench',
     lexiconKey: 'services',
     subIndustries: [
-      'Garage / mechanic', 'Car wash', 'Tyres & battery shop', 'Spare parts dealer',
-      'Motorcycle repair', 'Heavy machinery repair & hire', 'Welding/fabrication services'
+      'Garage / mechanic',
+      'Car wash',
+      'Tyres & battery shop',
+      'Spare parts dealer',
+      'Motorcycle repair',
+      'Heavy machinery repair & hire',
+      'Welding / fabrication services (if not manufacturing)'
     ]
   },
   {
@@ -502,9 +495,13 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Home',
     lexiconKey: 'services',
     subIndustries: [
-      'Laundry services', 'Cleaning services', 'Tailoring & fashion services',
-      'Event decoration & planning', 'Domestic staffing services', 'Hairdressing/barbering',
-      'Childcare/daycare services'
+      'Laundry services',
+      'Cleaning services',
+      'Tailoring & fashion services',
+      'Event decoration & planning',
+      'Domestic staffing services',
+      'Hairdressing / barbering',
+      'Childcare / daycare services'
     ]
   },
   {
@@ -513,17 +510,22 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Wifi',
     lexiconKey: 'tech',
     subIndustries: [
-      'Mobile money agency network', 'Airtime/data distribution',
-      'ISP services (local)', 'Tower/field service contractors'
+      'Mobile money agency network',
+      'Airtime / data distribution',
+      'ISP services (local)',
+      'Tower / field service contractors'
     ]
   },
   {
-    id: 'security',
-    label: 'Security, Defense & Risk Services',
+    id: 'security_defense',
+    label: 'Security, Defense & Risk Services (civilian)',
     iconName: 'Shield',
     lexiconKey: 'services',
     subIndustries: [
-      'Private security company', 'Risk management consultancy', 'Investigations'
+      'Private security company',
+      'Cybersecurity (if not under IT)',
+      'Risk management consultancy',
+      'Investigations (licensed)'
     ]
   },
   {
@@ -532,7 +534,9 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'Users',
     lexiconKey: 'other',
     subIndustries: [
-      'Church/ministry operations', 'Religious education programs', 'Community development programs'
+      'Church / ministry operations',
+      'Religious education programs',
+      'Community development programs'
     ]
   },
   {
@@ -541,7 +545,7 @@ export const INDUSTRY_TAXONOMY: IndustryCategory[] = [
     iconName: 'LayoutGrid',
     lexiconKey: 'other',
     subIndustries: [
-      'Holding company / multi-business operator', 'Marketplace / platform business', '“Not sure yet”'
+      'Multi-industry / general trading / holding company / conglomerate'
     ]
   }
 ];
@@ -589,6 +593,26 @@ export const AGRO_PROCESSING_QUIZ_COPY = {
   Innovation: { detection: "stagnant SKU list + slow innovation", cost: "market share loss to faster competitors", cliffhanger: "Deep Scan will identify Tail SKUs to cut and new winners to launch." },
   Risk: { detection: "food safety via 'carefulness' instead of systems", cost: "recall risk that could bankrupt the brand", cliffhanger: "Deep Scan will install the Compliance Lock." },
   People: { detection: "hero dependence + undefined roles", cost: "factory stops/slows when you aren't there", cliffhanger: "Deep Scan will build Role Cards to decentralize execution." }
+};
+
+export const CROP_FARMING_HOOKS = {
+  Money: "Input Cost Trap",
+  Operations: "Yield Gap",
+  Risk: "Silent Loss",
+  Market: "Price Taking",
+  Innovation: "Quality Discount",
+  Leadership: "Firefighting Mode",
+  People: "Productivity Leak"
+};
+
+export const CROP_FARMING_QUIZ_COPY = {
+  Leadership: { detection: "reactive decisions + no schedule", cost: "missed windows and constant firefighting", cliffhanger: "Deep Scan will build a Season Task Calendar." },
+  Market: { detection: "blind selling + panic pricing", cost: "leaving 20-30% margin on the table every season", cliffhanger: "Deep Scan will build a Price Intelligence Loop." },
+  Operations: { detection: "guesswork agronomy + late execution", cost: "yield potential cut in half by simple timing errors", cliffhanger: "Deep Scan will install Field Quality Checks." },
+  Money: { detection: "untracked inputs + emergency buying", cost: "buying high, selling low, and feeding fake inputs", cliffhanger: "Deep Scan will build a Crop Profit Calculator." },
+  Innovation: { detection: "bulk selling + post-harvest waste", cost: "losing value after the hard work is done", cliffhanger: "Deep Scan will install the Post-Harvest Loss Kill Switch." },
+  Risk: { detection: "praying for rain + reactive pest control", cost: "one shock wipes out the whole season profit", cliffhanger: "Deep Scan will build a Risk Playbook." },
+  People: { detection: "idle labor + weak supervision", cost: "paying for time but not getting the output", cliffhanger: "Deep Scan will set Labor Productivity Targets." }
 };
 
 export const MINING_HOOKS = {
@@ -1679,4 +1703,51 @@ export const INDUSTRY_DATA: Record<string, IndustryData> = {
     weights: { engine: 20, fuel: 18, shield: 16, tribe: 12, voice: 12, brain: 12, pulse: 10 },
     kpis: []
   }
+};
+
+export const GOAT_HOOKS = [
+  "Your profit is leaking through kids — not adults.",
+  "A goat business dies slowly through parasites and 'normal sickness'.",
+  "You're feeding goats, but not feeding profit.",
+  "You think you have a herd, but you have a collection of animals.",
+  "Selling goats when you need cash is the fastest way to stay small.",
+  "If you can't measure weight, you're donating money to the buyer.",
+  "A high mortality rate isn't 'bad luck' — it's a management choice.",
+  "Your biggest cost isn't feed — it's the goats that die or don't grow.",
+  "You're working for your goats, instead of them working for you.",
+  "The market pays for meat, not for 'time spent grazing'."
+];
+
+export const GOAT_QUIZ_COPY = {
+  Market: { detection: "selling blind + reactive deals", cost: "selling mixed goats and losing premiums", cliffhanger: "Deep Scan will build a Market Grade Ladder." },
+  Leadership: { detection: "random herd growth + overstocking", cost: "unproductive does eating your margin", cliffhanger: "Deep Scan will build a Herd Structure Plan." },
+  Operations: { detection: "dry season panic + feed waste", cost: "weight loss resets your herd backward", cliffhanger: "Deep Scan will build a Feed Gap Shield." },
+  Money: { detection: "blind spending + cash mixing", cost: "personal withdrawals bleeding the farm", cliffhanger: "Deep Scan will build a Profit Control System." },
+  Risk: { detection: "parasite burden + theft", cost: "silent losses from worms and pilferage", cliffhanger: "Deep Scan will build a Loss Shield." },
+  Innovation: { detection: "uncontrolled breeding + kid mortality", cost: "future profit dying before weaning", cliffhanger: "Deep Scan will build a Kid Survival Lock." },
+  People: { detection: "routine drift + damp housing", cost: "pneumonia and footrot from poor hygiene", cliffhanger: "Deep Scan will build a Routine Uptime System." }
+};
+
+export const SHEEP_HOOKS = [
+  "Your profit is leaking through lamb survival — not adult animals.",
+  "Worms don't just reduce growth… they steal months of weight.",
+  "Your pasture isn't grass — it's your bank account.",
+  "You're feeding sheep, but not feeding performance.",
+  "Footrot is a 'slow disaster' that eats your margin daily.",
+  "Flystrike turns one small hygiene issue into a cash emergency.",
+  "You don't have a flock plan — you have a flock situation.",
+  "You're selling sheep by need… buyers are buying by weight.",
+  "Dry season doesn't 'hurt profit' — it resets your flock backward.",
+  "If you can't measure lamb growth, you're guessing your future cash.",
+  "The farm looks busy, but the cash is quiet."
+];
+
+export const SHEEP_QUIZ_COPY = {
+  Market: { detection: "selling blind + reactive deals", cost: "selling mixed categories and losing premiums", cliffhanger: "Deep Scan will build a Market Grade Ladder." },
+  Leadership: { detection: "random flock growth + lack of structure", cost: "unproductive ewes eating your margin", cliffhanger: "Deep Scan will build a Flock Structure Optimizer." },
+  Operations: { detection: "dry season panic + feed waste", cost: "weight loss resets your flock backward", cliffhanger: "Deep Scan will build a Feed Gap Shield." },
+  Money: { detection: "blind spending + cash mixing", cost: "personal withdrawals bleeding the farm", cliffhanger: "Deep Scan will build a Profit Control System." },
+  Risk: { detection: "parasite burden + theft", cost: "silent losses from worms and pilferage", cliffhanger: "Deep Scan will build a Loss Shield." },
+  Innovation: { detection: "uncontrolled breeding + lamb mortality", cost: "future profit dying before weaning", cliffhanger: "Deep Scan will build a Lamb Survival Lock." },
+  People: { detection: "routine drift + damp housing", cost: "pneumonia and footrot from poor hygiene", cliffhanger: "Deep Scan will build a Routine Uptime System." }
 };

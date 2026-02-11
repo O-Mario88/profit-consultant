@@ -49,7 +49,6 @@ const PILLAR_ALIASES: Record<string, string> = {
 };
 
 const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapters, deepScanExecSummary, isUnlocked, onUnlock, onBack }) => {
-    const [expandedPillar, setExpandedPillar] = useState<string | null>(null);
 
     const sortedPillars = [...report.pillars].sort((a, b) => a.score - b.score);
 
@@ -76,91 +75,113 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
         const Icon = getPillarIcon(mappedName);
         const colors = PILLAR_COLORS[mappedName] || 'from-slate-500 to-slate-400';
         const pillarData = report.pillars.find(p => p.name === pillarName);
-        const isExpanded = expandedPillar === pillarName;
+
+        // Define color styles based on score for badges
+        const scoreColor = (pillarData?.score || 0) < 50 ? 'bg-red-500 text-red-100'
+            : (pillarData?.score || 0) < 70 ? 'bg-amber-500 text-amber-100'
+                : 'bg-green-500 text-green-100';
 
         return (
-            <div key={pillarName} className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/20">
-                {/* Chapter Header */}
-                <button
-                    onClick={() => setExpandedPillar(isExpanded ? null : pillarName)}
-                    className="w-full flex items-center justify-between p-6 text-left group"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 bg-gradient-to-br ${colors} rounded-xl flex items-center justify-center shadow-lg`}>
-                            <Icon className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-3">
-                                <h3 className="text-lg font-bold text-white">{pillarName}</h3>
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${(pillarData?.score || 0) < 50 ? 'bg-red-500/20 text-red-300'
-                                    : (pillarData?.score || 0) < 70 ? 'bg-amber-500/20 text-amber-300'
-                                        : 'bg-green-500/20 text-green-300'
-                                    }`}>
-                                    {pillarData?.score}/100
-                                </span>
-                            </div>
-                            <p className="text-xs text-slate-400 mt-0.5">{pillarData?.band || 'Analysis'}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {index === 0 && (
-                            <span className="text-[9px] font-bold bg-brand-500/20 text-brand-300 px-2 py-1 rounded-full">FREE PREVIEW</span>
-                        )}
-                        {isExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
-                    </div>
-                </button>
+            <div key={pillarName} className="bg-white/5 backdrop-blur border border-white/10 rounded-3xl overflow-hidden transition-all duration-300 hover:border-white/20 mb-8 shadow-2xl shadow-black/20">
+                {/* Chapter Header - Always Visible */}
+                <div className="relative p-8 overflow-hidden">
+                    {/* Background Splash */}
+                    <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${colors} opacity-10 blur-3xl rounded-full -mr-20 -mt-20 pointer-events-none`}></div>
 
-                {/* Chapter Content */}
-                {isExpanded && (
-                    <div className="px-6 pb-6 space-y-6 border-t border-white/5 pt-6">
-                        {/* Theory */}
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Eye className="w-4 h-4 text-blue-400" />
-                                <h4 className="text-sm font-bold text-blue-400 uppercase tracking-wider">Consultant Lens</h4>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                        <div className="flex items-center gap-6">
+                            <div className={`w-16 h-16 bg-gradient-to-br ${colors} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 transform rotate-3`}>
+                                <Icon className="w-8 h-8 text-white" />
                             </div>
-                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{chapter.theory}</p>
+                            <div>
+                                {index === 0 && (
+                                    <span className="text-[10px] font-bold bg-white/10 text-white/80 px-3 py-1 rounded-full border border-white/5 mb-2 inline-block">
+                                        FREE PREVIEW
+                                    </span>
+                                )}
+                                <h3 className="text-3xl font-black text-white tracking-tight">{pillarName}</h3>
+                                <p className="text-sm text-slate-400 font-medium tracking-wide uppercase mt-1 opacity-80">{pillarData?.band || 'Analysis'}</p>
+                            </div>
                         </div>
 
+                        {/* Score Display */}
+                        <div className="flex items-center gap-4 bg-black/20 rounded-2xl p-4 border border-white/5 backdrop-blur-md">
+                            <div className="text-right">
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pillar Score</div>
+                                <div className="text-3xl font-black text-white leading-none">{pillarData?.score}<span className="text-lg text-slate-500">/100</span></div>
+                            </div>
+                            <div className={`w-2 h-12 rounded-full ${scoreColor.split(' ')[0]}`}></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Chapter Content - Always Visible */}
+                <div className="px-8 pb-8 space-y-8">
+
+                    {/* Executive Theory */}
+                    <div className="prose prose-invert max-w-none">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-blue-500/10 rounded-lg">
+                                <Eye className="w-5 h-5 text-blue-400" />
+                            </div>
+                            <h4 className="text-lg font-bold text-blue-100">Consultant Lens</h4>
+                        </div>
+                        <p className="text-lg text-slate-300 leading-relaxed font-light">{chapter.theory}</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Diagnosis */}
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Activity className="w-4 h-4 text-amber-400" />
-                                <h4 className="text-sm font-bold text-amber-400 uppercase tracking-wider">Diagnosis</h4>
+                        <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:bg-white/10 transition-colors">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-amber-500/10 rounded-lg">
+                                    <Activity className="w-5 h-5 text-amber-400" />
+                                </div>
+                                <h4 className="text-base font-bold text-amber-100">Diagnosis</h4>
                             </div>
-                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{chapter.diagnosis}</p>
+                            <p className="text-slate-400 leading-relaxed text-sm">{chapter.diagnosis}</p>
                         </div>
 
                         {/* Psychology */}
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Brain className="w-4 h-4 text-purple-400" />
-                                <h4 className="text-sm font-bold text-purple-400 uppercase tracking-wider">Leadership Pattern</h4>
-                            </div>
-                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{chapter.psychology}</p>
-                        </div>
-
-                        {/* Financials */}
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-emerald-400" />
-                                <h4 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">Financial Impact</h4>
-                            </div>
-                            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{chapter.financials}</p>
-                        </div>
-
-                        {/* Prescription */}
-                        {chapter.prescription && (
-                            <div className="space-y-2 bg-brand-500/5 border border-brand-500/20 rounded-xl p-5">
-                                <div className="flex items-center gap-2">
-                                    <Crosshair className="w-4 h-4 text-brand-400" />
-                                    <h4 className="text-sm font-bold text-brand-400 uppercase tracking-wider">30-Day Remediation Prescription</h4>
+                        <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:bg-white/10 transition-colors">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-purple-500/10 rounded-lg">
+                                    <Brain className="w-5 h-5 text-purple-400" />
                                 </div>
-                                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{chapter.prescription}</p>
+                                <h4 className="text-base font-bold text-purple-100">Leadership Pattern</h4>
                             </div>
-                        )}
+                            <p className="text-slate-400 leading-relaxed text-sm">{chapter.psychology}</p>
+                        </div>
                     </div>
-                )}
+
+                    {/* Financials */}
+                    <div className="bg-emerald-500/5 rounded-2xl p-6 border border-emerald-500/10">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-emerald-500/10 rounded-lg">
+                                <Zap className="w-5 h-5 text-emerald-400" />
+                            </div>
+                            <h4 className="text-base font-bold text-emerald-100">Financial Impact</h4>
+                        </div>
+                        <p className="text-emerald-100/80 leading-relaxed font-medium">{chapter.financials}</p>
+                    </div>
+
+                    {/* Prescription */}
+                    {chapter.prescription && (
+                        <div className="relative group">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-brand-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                            <div className="relative bg-slate-900 border border-brand-500/30 rounded-2xl p-8">
+                                <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
+                                    <div className="p-2 bg-brand-500/20 rounded-lg">
+                                        <Crosshair className="w-6 h-6 text-brand-400" />
+                                    </div>
+                                    <h4 className="text-xl font-bold text-brand-100">30-Day Remediation Plan</h4>
+                                </div>
+                                <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4 font-mono text-sm">
+                                    {chapter.prescription}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         );
     };

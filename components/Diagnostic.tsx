@@ -12,7 +12,7 @@ import {
 import { Archetype, GeneratedReport, LeakIndices, BusinessProfile } from '../types';
 import { useLocalization } from '../contexts/LocalizationContext';
 import { generateStrategicReport, calculateLeakIndices, generateSignalBasedReport } from '../services/reportEngine';
-import { AGRO_PACK } from '../data/agro';
+import { AGRO_PACK } from '../data/agro/index';
 import { AGRI_PACK } from '../data/agri';
 import { MINING_PACK } from '../data/mining';
 import { OIL_GAS_PACK } from '../data/oilGas';
@@ -32,8 +32,14 @@ import { STATIONERY_PACK } from '../data/stationery';
 import { SPARE_PARTS_PACK } from '../data/spareParts';
 import { ASSEMBLY_PACK } from '../data/assembly';
 import { PRODUCE_PACK } from '../data/produce';
+
+import { CROP_FARMING_PACK } from '../data/cropFarming';
+import { CATTLE_PACK } from '../data/cattle';
+
+import { GOAT_PACK } from '../data/goat';
+import { SHEEP_PACK } from '../data/sheep';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
-import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY } from '../data/industryContext';
+import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY, GOAT_QUIZ_COPY, SHEEP_QUIZ_COPY } from '../data/industryContext';
 
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
 
@@ -146,63 +152,57 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    // -- Initialization --
    useEffect(() => {
       if (!businessProfile.industry) return;
-      const isFnbManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isTextileManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isFurnitureManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isMetalManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isPlasticsManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isSoapManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isBricksManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isWaterManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isFashionRetail =
-         businessProfile.industry === 'retail' &&
-         FASHION_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isHardwareRetail =
-         businessProfile.industry === 'retail' &&
-         HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isElectronicsRetail =
-         businessProfile.industry === 'retail' &&
-         ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isFmcgRetail =
-         businessProfile.industry === 'retail' &&
-         FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isStationeryRetail =
-         businessProfile.industry === 'retail' &&
-         STATIONERY_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isSparePartsRetail =
-         businessProfile.industry === 'retail' &&
-         SPARE_PARTS_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
-      const isAssemblyManufacturing =
-         businessProfile.industry === 'manufacturing' &&
-         ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry);
 
-      const pillars = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'];
+      // 1. Build Quick Scan Questions
+      let quickScanQs: ActiveQuestion[] = [];
+      const industryId = businessProfile.industry;
+      const sub = businessProfile.subIndustry;
+
+      // --- Helper Logic for Pack Detection ---
+      const isAgroProcessing = industryId === 'agriculture' && sub.startsWith('Agro-processing');
+
+      const isAgriInput = industryId === 'agriculture' && sub.startsWith('Input supplier');
+      const isProduceAggregation = industryId === 'agriculture' && (sub.startsWith('Produce aggregation') || sub.startsWith('Export / cross-border'));
+      const isCropFarming = industryId === 'agriculture' && sub.startsWith('Crop farming');
+
+      const isCattle = industryId === 'agriculture' && sub.startsWith('Cattle');
+      const isGoat = industryId === 'agriculture' && sub.startsWith('Goat');
+      const isSheep = industryId === 'agriculture' && sub.startsWith('Sheep');
+      // Note: Aquaculture currently has no specific Pack loaded in original code, it just has specific specific "Archetype" logic later.
+      // But if there IS a pack, we'd add it here. For now, we assume no generic pack unless defined.
+      // Wait, there IS an archetype logic for aquaculture. I will leave it as standard unless I see an AQ pack import.
+      // I see logic below for determining archetype for aquaculture.
+
+      const isMining = industryId === 'mining' && !sub.toLowerCase().includes('oil');
+      const isOilGas = industryId === 'mining' && sub.toLowerCase().includes('oil'); // Oil & Gas is inside Mining category now
+
+      const isFnbManufacturing = industryId === 'manufacturing' && sub.startsWith('Food & beverage');
+      const isTextileManufacturing = industryId === 'manufacturing' && sub.startsWith('Textile');
+      const isFurnitureManufacturing = industryId === 'manufacturing' && sub.startsWith('Furniture');
+      const isMetalManufacturing = industryId === 'manufacturing' && sub.startsWith('Metal works');
+      const isPlasticsManufacturing = industryId === 'manufacturing' && sub.startsWith('Plastics');
+      const isSoapManufacturing = industryId === 'manufacturing' && sub.startsWith('Soap');
+      const isBricksManufacturing = industryId === 'manufacturing' && sub.startsWith('Bricks');
+      const isWaterManufacturing = industryId === 'manufacturing' && sub.startsWith('Bottled water');
+      const isAssemblyManufacturing = industryId === 'manufacturing' && sub.startsWith('Assembly');
+
+      const isFashionRetail = industryId === 'retail' && sub.startsWith('Fashion');
+      const isHardwareRetail = industryId === 'retail' && sub.startsWith('Hardware');
+      const isElectronicsRetail = industryId === 'retail' && sub.startsWith('Electronics');
+      const isFmcgRetail = industryId === 'retail' && (sub.startsWith('Supermarket') || sub.startsWith('FMCG'));
+      const isStationeryRetail = industryId === 'retail' && sub.startsWith('Stationery');
+      const isSparePartsRetail = industryId === 'retail' && sub.startsWith('Spare parts');
+
+
+
+      // Helper to filter QS only
       const toQuickScanSet = <T extends { qid: string }>(questions: T[]): T[] => {
          const quickScan = questions.filter(q => q.qid.startsWith('QS_'));
          if (quickScan.length > 0) return quickScan;
          return questions.filter(q => !q.qid.startsWith('DS_'));
       };
 
-      // 1. Build Quick Scan Questions
-      let quickScanQs: ActiveQuestion[] = [];
-
-      if (businessProfile.industry === 'agro_processing') {
+      if (isAgroProcessing) {
          quickScanQs = toQuickScanSet(AGRO_PACK.questions).map((q, idx) => ({
             id: q.qid,
             pillar: q.pillar,
@@ -211,7 +211,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             isSwapped: false, // A is Leak, B is Control
             isGoalRelevant: true
          }));
-      } else if (businessProfile.industry === 'agri_input') {
+      } else if (isAgriInput) {
          quickScanQs = toQuickScanSet(AGRI_PACK.questions).map((q, idx) => ({
             id: q.qid,
             pillar: q.pillar,
@@ -220,7 +220,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             isSwapped: false,
             isGoalRelevant: true
          }));
-      } else if (businessProfile.industry === 'produce_aggregation') {
+      } else if (isProduceAggregation) {
          // Filter questions based on line_type (sub-industry)
          // Default to 'all' + matched sub-industry
          quickScanQs = toQuickScanSet(PRODUCE_PACK.questions)
@@ -233,7 +233,75 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                isSwapped: false,
                isGoalRelevant: true
             }));
-      } else if (businessProfile.industry === 'mining') {
+
+      } else if (isCropFarming) {
+         quickScanQs = toQuickScanSet(CROP_FARMING_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isCattle) {
+         quickScanQs = toQuickScanSet(CATTLE_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isSheep) {
+         quickScanQs = toQuickScanSet(SHEEP_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isGoat) {
+         quickScanQs = toQuickScanSet(GOAT_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+
+      } else if (isGoat) {
+         quickScanQs = toQuickScanSet(GOAT_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isSheep) {
+         quickScanQs = toQuickScanSet(SHEEP_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isMining) {
          quickScanQs = toQuickScanSet(MINING_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q) => ({
@@ -244,7 +312,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                isSwapped: false,
                isGoalRelevant: true
             }));
-      } else if (businessProfile.industry === 'oil_gas_services') {
+      } else if (isOilGas) {
          quickScanQs = toQuickScanSet(OIL_GAS_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q) => ({
@@ -255,7 +323,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                isSwapped: false,
                isGoalRelevant: true
             }));
-      } else if (isFnbManufacturing) {
+      }
+      else if (isFnbManufacturing) {
          quickScanQs = toQuickScanSet(FNB_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q) => ({
@@ -536,114 +605,182 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
       // Use AI Generator
       let report: GeneratedReport | null = null;
-      if (businessProfile.industry === 'agro_processing') {
+
+      const sub = businessProfile.subIndustry;
+      const ind = businessProfile.industry;
+
+      const isAgroProcessing = ind === 'agriculture' && sub.startsWith('Agro-processing');
+      const isAgriInput = ind === 'agriculture' && sub.startsWith('Input supplier');
+      const isProduceAggregation = businessProfile.industry === 'agriculture' && (businessProfile.subIndustry.startsWith('Produce aggregation') || businessProfile.subIndustry.startsWith('Export / cross-border'));
+      const isCropFarming = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Crop farming');
+      const isCattle = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Cattle');
+      const isGoat = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Goat');
+      const isSheep = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Sheep');
+
+      const isMining = businessProfile.industry === 'mining' && !businessProfile.subIndustry.toLowerCase().includes('oil');
+      const isOilGas = ind === 'mining' && sub.toLowerCase().includes('oil');
+
+      const isFnbManufacturing = ind === 'manufacturing' && sub.startsWith('Food & beverage');
+      const isTextileManufacturing = ind === 'manufacturing' && sub.startsWith('Textile');
+      const isFurnitureManufacturing = ind === 'manufacturing' && sub.startsWith('Furniture');
+      const isMetalManufacturing = ind === 'manufacturing' && sub.startsWith('Metal works');
+      const isPlasticsManufacturing = ind === 'manufacturing' && sub.startsWith('Plastics');
+      const isSoapManufacturing = ind === 'manufacturing' && sub.startsWith('Soap');
+      const isBricksManufacturing = ind === 'manufacturing' && sub.startsWith('Bricks');
+      const isWaterManufacturing = ind === 'manufacturing' && sub.startsWith('Bottled water');
+      const isAssemblyManufacturing = ind === 'manufacturing' && sub.startsWith('Assembly');
+
+      const isFashionRetail = ind === 'retail' && sub.startsWith('Fashion');
+      const isHardwareRetail = ind === 'retail' && sub.startsWith('Hardware');
+      const isElectronicsRetail = ind === 'retail' && sub.startsWith('Electronics');
+      const isFmcgRetail = ind === 'retail' && (sub.startsWith('Supermarket') || sub.startsWith('FMCG'));
+
+      if (isAgroProcessing) {
          const agroAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             agroAnswers[q.id] = finalAnswers[idx] - 1; // Convert 1-5 to 0-4
          });
          report = await generateSignalBasedReport(agroAnswers, businessProfile);
-      } else if (businessProfile.industry === 'agri_input') {
+      } else if (isAgriInput) {
          const agriAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
-            // Agri questions are A/B pairs where A=Leak (0) and B=Control (4 in 0-4 scale)
-            // But UI returns 1-5. 
-            // If User picked 1 (Strongly A), they are Leaking -> Score 0
-            // If User picked 5 (Strongly B), they are Strong -> Score 4
             agriAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(agriAnswers, businessProfile);
-      } else if (businessProfile.industry === 'mining') {
+      } else if (isProduceAggregation) {
+         const produceAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            produceAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(produceAnswers, businessProfile);
+      } else if (isCropFarming) {
+         const cropAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            cropAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(cropAnswers, businessProfile);
+      } else if (isCattle) {
+         const cattleAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            cattleAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(cattleAnswers, businessProfile);
+      } else if (isGoat) {
+         const goatAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            goatAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(goatAnswers, businessProfile);
+      } else if (isSheep) {
+         const sheepAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            sheepAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(sheepAnswers, businessProfile);
+      } else if (isMining) {
          const miningAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             miningAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(miningAnswers, businessProfile);
-      } else if (businessProfile.industry === 'oil_gas_services') {
+      } else if (isOilGas) {
          const oilGasAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             oilGasAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(oilGasAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && FNB_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isFnbManufacturing) {
          const fnbAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             fnbAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(fnbAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && TEXTILE_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isTextileManufacturing) {
          const textileAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             textileAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(textileAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && FURNITURE_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isFurnitureManufacturing) {
          const furnitureAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             furnitureAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(furnitureAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && METAL_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isMetalManufacturing) {
          const metalAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             metalAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(metalAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && PLASTICS_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isPlasticsManufacturing) {
          const plasticsAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             plasticsAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(plasticsAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isSoapManufacturing) {
          const soapAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             soapAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(soapAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isBricksManufacturing) {
          const bricksAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             bricksAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(bricksAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isWaterManufacturing) {
          const waterAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             waterAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(waterAnswers, businessProfile);
-      } else if (businessProfile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isAssemblyManufacturing) {
          const assemblyAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             assemblyAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(assemblyAnswers, businessProfile);
-      } else if (businessProfile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isFashionRetail) {
          const fashionAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             fashionAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(fashionAnswers, businessProfile);
-      } else if (businessProfile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isHardwareRetail) {
          const hardwareAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             hardwareAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(hardwareAnswers, businessProfile);
-      } else if (businessProfile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isElectronicsRetail) {
          const electronicsAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             electronicsAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(electronicsAnswers, businessProfile);
-      } else if (businessProfile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(businessProfile.subIndustry)) {
+      } else if (isFmcgRetail) {
          const fmcgAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             fmcgAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(fmcgAnswers, businessProfile);
       } else {
-         report = await generateStrategicReport(finalScores, archetype, businessProfile);
+         // Create a readable map of Question -> Answer
+         const answerMap: Record<string, string> = {};
+         finalAnswers.forEach((ans, idx) => {
+            const q = sessionQuestions[idx];
+            const answerText = ans === 1 ? `Strongly A: ${q.a}`
+               : ans === 2 ? `Leaning A: ${q.a}`
+                  : ans === 3 ? `Neutral`
+                     : ans === 4 ? `Leaning B: ${q.b}`
+                        : `Strongly B: ${q.b}`;
+            answerMap[q.pillar + " Question " + (idx + 1)] = answerText;
+         });
+
+         report = await generateStrategicReport(finalScores, archetype, businessProfile, answerMap);
       }
       if (report) {
          report.profileContext = businessProfile;

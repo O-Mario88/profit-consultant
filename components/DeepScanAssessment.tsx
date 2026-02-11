@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { GeneratedReport, DeepScanChapter } from '../types';
 import { generateDeepScanReport, DeepScanAssessmentAnswer } from '../services/gemini';
+import { DEEP_SCAN_DATA, DeepScanItem } from '../data/deepScanData';
 import {
     Brain, Shield, Activity, Zap, Megaphone, HeartPulse, Users,
     ArrowRight, ArrowLeft, Loader2, CheckCircle2, AlertTriangle
@@ -84,24 +85,34 @@ const PILLAR_ALIASES: Record<string, string> = {
 
 const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onComplete, onBack }) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const [answers, setAnswers] = useState<Record<string, string>>({});
+    const [answers, setAnswers] = useState<Record<string, number>>({});
     const [isGenerating, setIsGenerating] = useState(false);
     const [generationProgress, setGenerationProgress] = useState('');
 
     // Generate targeted questions based on weak pillars
     const questions = useMemo(() => {
         const sortedPillars = [...report.pillars].sort((a, b) => a.score - b.score);
-        const allQuestions: DeepQuestion[] = [];
+        const allQuestions: DeepScanItem[] = [];
 
-        for (const pillar of sortedPillars) {
-            const mappedName = PILLAR_ALIASES[pillar.name] || pillar.name;
-            const bank = DEEP_QUESTIONS_BANK[mappedName];
-            if (bank) {
-                // For weak pillars (< 60), include all 3 questions. For stronger, include 1-2.
-                const count = pillar.score < 50 ? 3 : pillar.score < 70 ? 2 : 1;
-                allQuestions.push(...bank.slice(0, count));
-            }
-        }
+        // 1. Get bottom 3 pillars (or all if fewer than 3)
+        const targetPillars = sortedPillars.slice(0, 3).map(p => p.name);
+
+        // 2. Filter questions for these pillars
+        const relevantQuestions = DEEP_SCAN_DATA.filter(q =>
+            targetPillars.includes(q.pillar) ||
+            targetPillars.includes(PILLAR_ALIASES[q.pillar] || '')
+        );
+
+        // 3. Take up to 2 per pillar to keep it short (max 6 questions)
+        const grouped: Record<string, DeepScanItem[]> = {};
+        relevantQuestions.forEach(q => {
+            if (!grouped[q.pillar]) grouped[q.pillar] = [];
+            grouped[q.pillar].push(q);
+        });
+
+        Object.values(grouped).forEach(qs => {
+            allQuestions.push(...qs.slice(0, 2)); // Limit to 2 per pillar
+        });
 
         return allQuestions;
     }, [report.pillars]);
@@ -117,11 +128,22 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
             setGenerationProgress('Analyzing your responses...');
 
             try {
-                const deepAnswers: DeepScanAssessmentAnswer[] = questions.map(q => ({
-                    pillar: q.pillar,
-                    question: q.question,
-                    answer: answers[q.id] || 'No answer provided'
-                }));
+                // Format answers for Gemini
+                const deepAnswers: DeepScanAssessmentAnswer[] = questions.map(q => {
+                    const val = answers[q.id] || 3;
+                    let alignment = "Neutral";
+                    if (val === 1) alignment = "Strongly aligns with Option A";
+                    if (val === 2) alignment = "Leans towards Option A";
+                    if (val === 3) alignment = "Neutral / Mixed";
+                    if (val === 4) alignment = "Leans towards Option B";
+                    if (val === 5) alignment = "Strongly aligns with Option B";
+
+                    return {
+                        pillar: q.pillar,
+                        question: `Compare: [A] "${q.a}" vs [B] "${q.b}"`,
+                        answer: `${alignment} (Score: ${val}/5).`
+                    };
+                });
 
                 setGenerationProgress('Consulting Gemini 1.5 Pro for personalized analysis...');
                 const result = await generateDeepScanReport(report, deepAnswers);
@@ -237,31 +259,73 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                             </div>
                         </div>
 
-                        {/* Question */}
-                        <h2 className="text-2xl md:text-3xl font-black text-white leading-snug">
-                            {currentQuestion.question}
-                        </h2>
+                        {/* Question Type: Forced Pair Slider */}
+                        <div className="space-y-8">
+                            <h2 className="text-xl md:text-2xl font-bold text-white leading-snug text-center">
+                                Which statement best describes your current situation?
+                            </h2>
 
-                        {/* Answer Textarea */}
-                        <textarea
-                            value={answers[currentQuestion.id] || ''}
-                            onChange={e => setAnswers(prev => ({ ...prev, [currentQuestion.id]: e.target.value }))}
-                            placeholder={currentQuestion.placeholder}
-                            rows={5}
-                            className="w-full bg-white/5 border border-white/20 rounded-2xl p-5 text-white placeholder-slate-500 focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none text-base leading-relaxed outline-none transition-all"
-                        />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                {/* Option A */}
+                                <div
+                                    className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${(answers[currentQuestion.id] || 3) < 3
+                                        ? 'bg-indigo-500/20 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]'
+                                        : 'bg-white/5 border-white/10 hover:border-white/20'
+                                        }`}
+                                    onClick={() => setAnswers(prev => ({ ...prev, [currentQuestion.id]: 1 }))}
+                                >
+                                    <div className="font-bold text-lg mb-2 text-indigo-300">Option A</div>
+                                    <p className="text-white text-lg leading-relaxed">{currentQuestion.a}</p>
+                                </div>
 
-                        {/* Context Hint */}
-                        <div className="flex items-start gap-3 bg-brand-500/10 border border-brand-500/20 rounded-xl p-4">
-                            <AlertTriangle className="w-4 h-4 text-brand-400 flex-shrink-0 mt-0.5" />
-                            <p className="text-xs text-slate-400 leading-relaxed">
-                                The more detail you provide, the more personalized your Deep Scan report will be.
-                                Gemini 1.5 Pro uses your answers to generate chapter-by-chapter analysis specific to your business.
-                            </p>
+                                {/* Option B */}
+                                <div
+                                    className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${(answers[currentQuestion.id] || 3) > 3
+                                        ? 'bg-teal-500/20 border-teal-500 shadow-[0_0_20px_rgba(20,184,166,0.3)]'
+                                        : 'bg-white/5 border-white/10 hover:border-white/20'
+                                        }`}
+                                    onClick={() => setAnswers(prev => ({ ...prev, [currentQuestion.id]: 5 }))}
+                                >
+                                    <div className="font-bold text-lg mb-2 text-teal-300">Option B</div>
+                                    <p className="text-white text-lg leading-relaxed">{currentQuestion.b}</p>
+                                </div>
+                            </div>
+
+                            {/* Slider Control */}
+                            <div className="max-w-xl mx-auto w-full pt-8 pb-4">
+                                <div className="flex justify-between text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">
+                                    <span>Strongly A</span>
+                                    <span>Neutral</span>
+                                    <span>Strongly B</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="1"
+                                    max="5"
+                                    step="1"
+                                    value={answers[currentQuestion.id] || 3}
+                                    onChange={(e) => setAnswers(prev => ({ ...prev, [currentQuestion.id]: parseInt(e.target.value) }))}
+                                    className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500"
+                                />
+                                <div className="flex justify-between mt-2">
+                                    {[1, 2, 3, 4, 5].map(val => (
+                                        <div
+                                            key={val}
+                                            onClick={() => setAnswers(prev => ({ ...prev, [currentQuestion.id]: val }))}
+                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-all ${(answers[currentQuestion.id] || 3) === val
+                                                ? 'bg-brand-500 text-white scale-110 shadow-lg'
+                                                : 'bg-slate-800 text-slate-500 hover:bg-slate-700'
+                                                }`}
+                                        >
+                                            {val}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
 
                         {/* Navigation */}
-                        <div className="flex justify-between items-center pt-4">
+                        <div className="flex justify-between items-center pt-8 border-t border-white/10">
                             <button
                                 onClick={handleBack}
                                 disabled={currentStep === 0}
@@ -271,11 +335,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                             </button>
                             <button
                                 onClick={handleNext}
-                                disabled={!answers[currentQuestion.id]?.trim()}
-                                className={`flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all group ${answers[currentQuestion.id]?.trim()
-                                    ? 'bg-gradient-to-r from-brand-500 to-purple-500 text-white hover:from-brand-400 hover:to-purple-400 shadow-lg shadow-brand-500/20'
-                                    : 'bg-white/10 text-slate-500 cursor-not-allowed'
-                                    }`}
+                                className={`flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all group bg-gradient-to-r from-brand-500 to-purple-500 text-white hover:from-brand-400 hover:to-purple-400 shadow-lg shadow-brand-500/20`}
                             >
                                 {isLastQuestion ? (
                                     <>
@@ -298,12 +358,12 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                                 onClick={() => setCurrentStep(i)}
                                 className={`w-8 h-8 rounded-full text-xs font-bold flex items-center justify-center transition-all ${i === currentStep
                                     ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30'
-                                    : answers[q.id]?.trim()
+                                    : (answers[q.id]) !== undefined
                                         ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                                         : 'bg-white/5 text-slate-500 border border-white/10'
                                     }`}
                             >
-                                {answers[q.id]?.trim() ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
+                                {(answers[q.id]) !== undefined ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
                             </button>
                         ))}
                     </div>

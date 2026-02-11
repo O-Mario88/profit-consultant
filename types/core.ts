@@ -98,6 +98,11 @@ export type SignalTag =
     | 'margin_mirage' | 'credit_chokehold' | 'dead_stock_cemetery' | 'silent_shrink' | 'discount_addiction'
     | 'trust_leak' | 'one_channel_fragility' | 'advice_to_sale_gap' | 'repeat_order_drift' | 'reputation_risk_loop'
     | 'management_by_guessing' | 'priority_whiplash' | 'no_owner_syndrome' | 'procurement_panic_buying'
+    // CROP FARMING SPECIFIC
+    | 'blind_pricing' | 'reactive_selling' | 'mixed_quality_loss' | 'reactive_planting' | 'late_response_risk'
+    | 'panic_buying' | 'cheap_input_trap' | 'labor_idle_waste' | 'schedule_drift' | 'bulk_loss'
+    | 'moisture_rot_risk' | 'transport_panic' | 'trust_gap' | 'blind_spend' | 'universal_cuts'
+    | 'weather_blindness' | 'memory_management'
     | 'assortment_confusion' | 'bundle_blindspot' | 'seasonal_offer_stagnation'
     | 'counterfeit_exposure' | 'compliance_shock' | 'liability_landmine'
     | 'sales_without_standards' | 'ethics_drift' | 'hero_staff_dependence'
@@ -148,4 +153,22 @@ export type SignalTag =
     | 'bargain_drift' | 'credit_sink' | 'cash_drawer_drift' | 'hidden_service_leak'
     | 'one_time_buyer_curse' | 'school_contract_miss' | 'whatsapp_blackhole' | 'bundle_blindness'
     | 'kpi_darkness' | 'stale_shelf_syndrome' | 'theft_tax' | 'counterfeit_piracy_landmine'
-    | 'dispute_tax' | 'supplier_short_delivery' | 'scriptless_selling' | 'careless_handling';
+    | 'dispute_tax' | 'supplier_short_delivery' | 'scriptless_selling' | 'careless_handling'
+    // CATTLE FARMING SPECIFIC
+    | 'distress_sale_pct' | 'weak_goal_alignment' | 'culling_drift' | 'feed_waste' | 'drought_panic'
+    | 'blind_feeding' | 'disease_blindspot' | 'quarantine_gap' | 'mortality_blindness' | 'fertility_gap'
+    | 'calf_mortality_risk' | 'future_profit_leak' | 'routine_drift' | 'stress_handling_loss' | 'injury_risk'
+    | 'roi_blindspot' | 'cashflow_crunch' | 'panic_selling' | 'data_blindspot' | 'loss_incidents'
+
+    // SHEEP FARMING SPECIFIC
+    | 'mineral_gap' | 'lamb_stunting' | 'condition_loss_risk' | 'storage_loss' | 'reactive_health' | 'drug_resistance_risk'
+    | 'footrot_risk' | 'parasite_load' | 'lamb_mortality_risk' | 'flystrike_risk' | 'lamb_survival_gap' | 'weaning_drift'
+    | 'quality_drift' | 'no_growth_targets' | 'mixed_flock_inefficiency' | 'hygiene_gap' | 'lamb_safety_gap' | 'stress_loss'
+    | 'operational_drag' | 'management_by_memory' | 'role_confusion' | 'cost_blindness' | 'vanity_metrics' | 'commingled_cash'
+    | 'loss_acceptance' | 'bad_debt' | 'identification_gap' | 'tracking_gap' | 'security_gap' | 'predator_risk'
+    | 'selling_blind' | 'single_buyer_risk' | 'weak_negotiation' | 'grade_blindness' | 'seasonality_miss'
+    | 'no_flock_plan' | 'uncontrolled_mating' | 'replacement_drift' | 'biosecurity_gap' | 'premature_scale'
+    | 'inbreeding_risk' | 'output_blindness' | 'herd_structure_gap' | 'pasture_mismanagement' | 'water_gap'
+    | 'no_records' | 'disease_spread_risk' | 'loss_denial' | 'uncontrolled_breeding' | 'late_reaction'
+    | 'unproductive_stock' | 'pneumonia_risk' | 'theft_risk' | 'review_gap' | 'record_completeness'
+    | 'climate_risk' | 'complacency_risk' | 'financial_blindness';
