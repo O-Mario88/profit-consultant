@@ -183,7 +183,7 @@ export interface LibraryItem {
     pillar: PillarId;
     signal_tags: SignalTag[];
     severity_fit: Array<'Watch' | 'Critical' | 'Stable' | 'Strong' | 'Emergency'>;
-    business_size_fit: Array<'solo' | 'small_team' | 'sme' | 'enterprise'>;
+    business_size_fit: Array<'solo' | 'small_team' | 'sme' | 'enterprise' | 'micro' | 'small' | 'medium' | 'large'>;
     text: string;
     type: 'strength' | 'leak' | 'kpi' | 'hook' | 'mission_brief';
     kpi_links?: string[];
@@ -226,6 +226,10 @@ export interface ActionDefinition {
     kpi_links?: string[];
     proof_required?: string[];
     impact_score?: number;
+    description?: string;
+    steps?: string[];
+    objective?: string;
+    outcome?: string;
 }
 
 export interface FixPlanAction {
@@ -252,4 +256,13 @@ export interface FixPlanTemplate {
     institutionalize90: string[];
     kpi: { name: string; def: string };
     traps: string[];
+}
+
+export interface IndustryPack {
+    id: string;
+    name: string;
+    description?: string;
+    library: LibraryItem[];
+    questions: QuestionDefinition[];
+    actions: any; // { snippets: ActionDefinition[], fixPlans7Day: any[], fixPlans30Day: any[] }
 }

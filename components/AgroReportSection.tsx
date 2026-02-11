@@ -93,9 +93,9 @@ export const AgroReportSection: React.FC<AgroReportSectionProps> = ({ report }) 
                                             <p className="text-slate-600 mt-2 text-lg">{idx.meaning}</p>
                                         </div>
                                         <div className="text-right">
-                                            {idx.detectedCost && (
+                                            {idx.silentCost && (
                                                 <div className="inline-block bg-red-50 text-red-700 font-bold px-4 py-3 rounded-xl border border-red-100 animate-pulse-slow">
-                                                    {idx.detectedCost}
+                                                    {idx.silentCost}
                                                     <div className="text-[10px] text-red-400 uppercase tracking-widest mt-1">Est. Loss</div>
                                                 </div>
                                             )}

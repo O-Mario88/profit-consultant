@@ -671,7 +671,7 @@ export const library: LibraryItem[] = [
     line_type: ['all'],
     pillar: pillar as any,
     signal_tags: [],
-    severity_fit: ['Critical', 'Watch', 'Stable'],
+    severity_fit: ['Critical', 'Watch', 'Stable'] as any,
     business_size_fit: ['all' as any],
     text: `${pillar} - {STATUS}: We detected {LEAK_1} and {LEAK_2}. Cost: {COST_IMPACT}. Cliffhanger: {NEXT_STEP}`,
     type: 'mission_brief' as const

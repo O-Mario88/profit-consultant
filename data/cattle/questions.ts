@@ -1,276 +1,339 @@
-
 import { QuestionDefinition } from '../../types';
 
-export const questions: QuestionDefinition[] = [
-    // --- PILLAR 1: Market & Pricing Power (Market) ---
+export const CATTLE_QUESTIONS: QuestionDefinition[] = [
+    // 1. Market & Pricing Power -> Market
     {
-        qid: 'QS_CATTLE_MARKET_01',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_market_qs_alert',
         pillar: 'Market',
-        signal_tags: ['blind_pricing', 'reactive_selling'],
-        weight: 1.5,
-        textA: "When a buyer calls for animals, you usually ask for time to check weights/condition and compare prices.",
-        textB: "You negotiate quickly based on 'how the animal looks today'.",
-        kpi_links: ['avg_selling_price', 'price_variance'],
-        actions_7d: ['WEIGHT_GRADE_7D'],
-        actions_30d: ['WEIGHT_GRADE_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We alert buyers when animals are 'nearly ready'.",
+        textB: "We alert buyers when animals hit a defined spec.",
+        line_type: ['Farming'],
+        signal_tags: ['market_pricing_power']
     },
     {
-        qid: 'QS_CATTLE_MARKET_02',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_market_qs_channels',
         pillar: 'Market',
-        signal_tags: ['distress_sale_pct', 'cashflow_visibility_gap'],
-        weight: 1.5,
-        textA: "When cash is tight, you sell specific animals that meet targets or are strategic to exit.",
-        textB: "You sell whichever animals are easiest to catch and move.",
-        kpi_links: ['distress_sale_pct', 'gross_margin_crop'],
-        actions_7d: ['WEIGHT_GRADE_7D'],
-        actions_30d: ['WEIGHT_GRADE_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We sell mostly to familiar buyers.",
+        textB: "We sell to familiar buyers plus 1–2 backups when pricing shifts.",
+        line_type: ['Farming'],
+        signal_tags: ['market_pricing_power']
+    },
+    {
+        qid: 'cattle_market_ds_buyer',
+        pillar: 'Market',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Our best buyer is the one who calls often.",
+        textB: "Our best buyer is the one who pays fastest and disputes least.",
+        line_type: ['Farming'],
+        signal_tags: ['market_pricing_power']
+    },
+    {
+        qid: 'cattle_market_ds_readiness',
+        pillar: 'Market',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We judge readiness by look.",
+        textB: "We judge readiness by look plus a consistent weight estimate method.",
+        line_type: ['Farming'],
+        signal_tags: ['market_pricing_power']
     },
 
-    // --- PILLAR 2: Herd Strategy & Production Plan (Leadership) ---
+    // 2. Herd Strategy & Genetics -> Operations (Production)
     {
-        qid: 'QS_CATTLE_STRATEGY_01',
-        industry: 'livestock',
-        line_type: ['all'],
-        pillar: 'Leadership',
-        signal_tags: ['weak_goal_alignment', 'priority_whiplash'],
-        weight: 1.5,
-        textA: "When you add animals, you mainly decide based on feed capacity + herd structure needs.",
-        textB: "You decide based on good price/opportunity when animals appear.",
-        kpi_links: ['stocking_rate', 'herd_composition'],
-        actions_7d: ['STABILIZE_PROFIT_7D'],
-        actions_30d: ['BUILD_CONTROL_30D']
-    },
-    {
-        qid: 'QS_CATTLE_STRATEGY_02',
-        industry: 'livestock',
-        line_type: ['all'],
-        pillar: 'Leadership',
-        signal_tags: ['memory_management', 'culling_drift'],
-        weight: 1.2,
-        textA: "When an animal underperforms, you assess cause and set a time-bound fix or cull rule.",
-        textB: "You keep it and hope it improves over time.",
-        kpi_links: ['culling_rate', 'avg_daily_gain'],
-        actions_7d: ['STABILIZE_PROFIT_7D'],
-        actions_30d: ['BUILD_CONTROL_30D']
-    },
-
-    // --- PILLAR 3: Feeding & Grazing Economics (Operations/Money) ---
-    {
-        qid: 'QS_CATTLE_FEED_01',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_herd_qs_culling',
         pillar: 'Operations',
-        signal_tags: ['feed_waste', 'drought_panic'],
-        weight: 1.5,
-        textA: "In dry season, you usually have planned hay/silage/forage reserves.",
-        textB: "You rely on buying feed when conditions get tough.",
-        kpi_links: ['dry_season_loss_pct', 'feed_cost_head'],
-        actions_7d: ['FEED_GAP_PLAN_7D'],
-        actions_30d: ['FEED_GAP_PLAN_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We keep females that 'usually calve'.",
+        textB: "We keep females based on a simple calving performance note.",
+        line_type: ['Farming'],
+        signal_tags: ['herd_strategy_genetics']
     },
     {
-        qid: 'QS_CATTLE_FEED_02',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_herd_qs_buying',
         pillar: 'Operations',
-        signal_tags: ['blind_feeding', 'yield_bleed'],
-        weight: 1.5,
-        textA: "When animals lose condition, you adjust feed by category/stage and monitor BCS.",
-        textB: "You increase general feeding for the whole herd.",
-        kpi_links: ['body_condition_score', 'feed_conversion'],
-        actions_7d: ['FEED_GAP_PLAN_7D'],
-        actions_30d: ['FEED_GAP_PLAN_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We buy breeding stock when a deal appears.",
+        textB: "We buy breeding stock when it fits our planned herd target.",
+        line_type: ['Farming'],
+        signal_tags: ['herd_strategy_genetics']
+    },
+    {
+        qid: 'cattle_herd_ds_bulls',
+        pillar: 'Operations',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Bulls are chosen for appearance.",
+        textB: "Bulls are chosen for appearance plus practical performance notes.",
+        line_type: ['Farming'],
+        signal_tags: ['herd_strategy_genetics']
+    },
+    {
+        qid: 'cattle_herd_ds_growth',
+        pillar: 'Operations',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We grow herd size when cash allows.",
+        textB: "We grow herd size when feed capacity allows.",
+        line_type: ['Farming'],
+        signal_tags: ['herd_strategy_genetics']
     },
 
-    // --- PILLAR 4: Animal Health & Biosecurity (Risk) ---
+    // 3. Nutrition & Feed System -> Operations (Inputs)
     {
-        qid: 'QS_CATTLE_HEALTH_01',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_feed_qs_adjust',
+        pillar: 'Operations',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We adjust feed when animals look thin.",
+        textB: "We adjust feed when a weekly check shows trend changes.",
+        line_type: ['Farming'],
+        signal_tags: ['nutrition_feed_system']
+    },
+    {
+        qid: 'cattle_feed_qs_storage',
+        pillar: 'Operations',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We store feed where space is available.",
+        textB: "We store feed where it stays dry and losses are easiest to spot.",
+        line_type: ['Farming'],
+        signal_tags: ['nutrition_feed_system']
+    },
+    {
+        qid: 'cattle_feed_ds_buying',
+        pillar: 'Operations',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We buy feed when it finishes.",
+        textB: "We buy feed before it finishes with a buffer.",
+        line_type: ['Farming'],
+        signal_tags: ['nutrition_feed_system']
+    },
+    {
+        qid: 'cattle_feed_ds_water',
+        pillar: 'Operations',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Water is assumed.",
+        textB: "Water is checked daily.",
+        line_type: ['Farming'],
+        signal_tags: ['nutrition_feed_system']
+    },
+
+    // 4. Health, Welfare & Biosecurity -> Risk
+    {
+        qid: 'cattle_risk_qs_new_animals',
         pillar: 'Risk',
-        signal_tags: ['disease_blindspot', 'quarantine_gap'],
-        weight: 1.5,
-        textA: "When a new animal arrives, you usually isolate and observe before mixing.",
-        textB: "You mix quickly so it 'settles with others'.",
-        kpi_links: ['morbidity_rate', 'outbreak_response_time'],
-        actions_7d: ['HEALTH_CALENDAR_7D'],
-        actions_30d: ['HEALTH_CALENDAR_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "New animals join after observation.",
+        textB: "New animals join after a short separation routine.",
+        line_type: ['Farming'],
+        signal_tags: ['health_welfare_biosecurity']
     },
     {
-        qid: 'QS_CATTLE_HEALTH_02',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_risk_qs_treatment',
         pillar: 'Risk',
-        signal_tags: ['late_response_risk', 'mortality_blindness'],
-        weight: 1.2,
-        textA: "When an animal looks slightly sick, you monitor temp/appetite and act early.",
-        textB: "You wait a day or two to see if it improves.",
-        kpi_links: ['mortality_rate', 'treatment_success_rate'],
-        actions_7d: ['HEALTH_CALENDAR_7D'],
-        actions_30d: ['HEALTH_CALENDAR_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We treat when symptoms become obvious.",
+        textB: "We treat when daily checks show early warning.",
+        line_type: ['Farming'],
+        signal_tags: ['health_welfare_biosecurity']
+    },
+    {
+        qid: 'cattle_risk_ds_visitors',
+        pillar: 'Risk',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Visitors can enter freely.",
+        textB: "Visitors follow simple entry rules.",
+        line_type: ['Farming'],
+        signal_tags: ['health_welfare_biosecurity']
+    },
+    {
+        qid: 'cattle_risk_ds_mortality',
+        pillar: 'Risk',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We don’t log deaths.",
+        textB: "We log deaths and likely cause to prevent repeats.",
+        line_type: ['Farming'],
+        signal_tags: ['health_welfare_biosecurity']
     },
 
-    // --- PILLAR 5: Breeding, Calving & Youngstock (Innovation/Growth) ---
+    // 5. Operations & Infrastructure -> Leadership (Backbone)
     {
-        qid: 'QS_CATTLE_BREED_01',
-        industry: 'livestock',
-        line_type: ['all'],
-        pillar: 'Innovation',
-        signal_tags: ['fertility_gap', 'decision_bottleneck'],
-        weight: 1.5,
-        textA: "When a cow doesn't conceive, you investigate and set a decision timeline (treat/rebreed/cull).",
-        textB: "You keep trying again next cycle without a deadline.",
-        kpi_links: ['calving_interval', 'conception_rate'],
-        actions_7d: ['CALVING_SURVIVAL_7D'],
-        actions_30d: ['CALVING_SURVIVAL_30D']
+        qid: 'cattle_infra_qs_repairs',
+        pillar: 'Leadership',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Repairs happen when something breaks.",
+        textB: "Repairs happen on a simple weekly checklist.",
+        line_type: ['Farming'],
+        signal_tags: ['operations_infrastructure']
     },
     {
-        qid: 'QS_CATTLE_BREED_02',
-        industry: 'livestock',
-        line_type: ['all'],
-        pillar: 'Innovation',
-        signal_tags: ['calf_mortality_risk', 'future_profit_leak'],
-        weight: 1.5,
-        textA: "For newborn calves, you mostly focus first on colostrum + hygiene + warmth.",
-        textB: "Letting it stay with the cow and 'nature does the rest'.",
-        kpi_links: ['calf_mortality_pct', 'weaning_weight'],
-        actions_7d: ['CALVING_SURVIVAL_7D'],
-        actions_30d: ['CALVING_SURVIVAL_30D']
+        qid: 'cattle_infra_qs_loading',
+        pillar: 'Leadership',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Loading is handled by whoever is around.",
+        textB: "Loading follows a consistent routine to reduce stress losses.",
+        line_type: ['Farming'],
+        signal_tags: ['operations_infrastructure']
+    },
+    {
+        qid: 'cattle_infra_ds_security',
+        pillar: 'Leadership',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Security is trust-based.",
+        textB: "Security includes routine controls (access + counting + logs).",
+        line_type: ['Farming'],
+        signal_tags: ['operations_infrastructure']
+    },
+    {
+        qid: 'cattle_infra_ds_water_fail',
+        pillar: 'Leadership',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Water system failures happen sometimes.",
+        textB: "Water system failures trigger a same-day response.",
+        line_type: ['Farming'],
+        signal_tags: ['operations_infrastructure']
     },
 
-    // --- PILLAR 6: Operations, Labor & Asset Uptime (People) ---
+    // 6. People & Daily Execution -> People
     {
-        qid: 'QS_CATTLE_OPS_01',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_people_qs_roles',
         pillar: 'People',
-        signal_tags: ['routine_drift', 'reactive_maintenance'],
-        weight: 1.5,
-        textA: "When routines are disrupted, you adjust schedule and protect critical tasks first.",
-        textB: "You do tasks when time allows and catch up later.",
-        kpi_links: ['routine_compliance', 'labor_cost_head'],
-        actions_7d: ['ROUTINE_DISCIPLINE_7D'],
-        actions_30d: ['ROUTINE_DISCIPLINE_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "Everyone helps with everything.",
+        textB: "Everyone has a main responsibility plus backup coverage.",
+        line_type: ['Farming'],
+        signal_tags: ['people_daily_execution']
     },
     {
-        qid: 'QS_CATTLE_OPS_02',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_people_qs_mistakes',
         pillar: 'People',
-        signal_tags: ['stress_handling_loss', 'injury_risk'],
-        weight: 1.2,
-        textA: "When animals are hard to handle, you improve facilities/techniques to reduce stress.",
-        textB: "You use more force/manpower to get it done quickly.",
-        kpi_links: ['injury_rate', 'asset_uptime'],
-        actions_7d: ['ROUTINE_DISCIPLINE_7D'],
-        actions_30d: ['ROUTINE_DISCIPLINE_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We correct mistakes as they happen.",
+        textB: "We correct mistakes and update the routine so it won’t repeat.",
+        line_type: ['Farming'],
+        signal_tags: ['people_daily_execution']
+    },
+    {
+        qid: 'cattle_people_ds_training',
+        pillar: 'People',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Training is verbal.",
+        textB: "Training is demonstrated and checked.",
+        line_type: ['Farming'],
+        signal_tags: ['people_daily_execution']
+    },
+    {
+        qid: 'cattle_people_ds_incentives',
+        pillar: 'People',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Incentives reward attendance.",
+        textB: "Incentives reward survival + output + low waste.",
+        line_type: ['Farming'],
+        signal_tags: ['people_daily_execution']
     },
 
-    // --- PILLAR 7: Finance, Cashflow & Unit Economics (Money) ---
+    // 7. Finance & Cash Control -> Money
     {
-        qid: 'QS_CATTLE_FINANCE_01',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_money_qs_feed_spend',
         pillar: 'Money',
-        signal_tags: ['blind_spend', 'roi_blindspot'],
-        weight: 1.5,
-        textA: "When you plan spending, you prioritize what improves fertility/growth/milk efficiently.",
-        textB: "You spread money across many needs so everything gets something.",
-        kpi_links: ['cost_per_head', 'gross_margin_animal'],
-        actions_7d: ['STABILIZE_PROFIT_7D'],
-        actions_30d: ['BUILD_CONTROL_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We know roughly what we spend on feed.",
+        textB: "We track feed spend by group/batch.",
+        line_type: ['Farming'],
+        signal_tags: ['finance_cash_control']
     },
     {
-        qid: 'QS_CATTLE_FINANCE_02',
-        industry: 'livestock',
-        line_type: ['all'],
+        qid: 'cattle_money_qs_selling',
         pillar: 'Money',
-        signal_tags: ['universal_cuts', 'cashflow_crunch'],
-        weight: 1.5,
-        textA: "When cash is short, you delay non-critical costs and protect production drivers.",
-        textB: "You cut costs evenly (including feed/health).",
-        kpi_links: ['budget_variance', 'debt_service_ratio'],
-        actions_7d: ['STABILIZE_PROFIT_7D'],
-        actions_30d: ['BUILD_CONTROL_30D']
-    },
-
-    // --- PILLAR 8: Risk, Resilience & Management Systems (Risk) ---
-    {
-        qid: 'QS_CATTLE_RISK_01',
-        industry: 'livestock',
-        line_type: ['all'],
-        pillar: 'Risk',
-        signal_tags: ['drought_panic', 'panic_selling'],
-        weight: 1.5,
-        textA: "During drought signals, you usually reduce pressure early (destock, reserve feed, plan water).",
-        textB: "You wait and react when pasture is finished.",
-        kpi_links: ['drought_feed_days', 'distress_sale_pct'],
-        actions_7d: ['THEFT_MOVEMENT_7D'],
-        actions_30d: ['THEFT_MOVEMENT_30D']
+        industry: 'cattle',
+        weight: 1,
+        textA: "We sell when cash is tight.",
+        textB: "We sell when cash is tight and the batch is within a planned window.",
+        line_type: ['Farming'],
+        signal_tags: ['finance_cash_control']
     },
     {
-        qid: 'QS_CATTLE_RISK_02',
-        industry: 'livestock',
-        line_type: ['all'],
-        pillar: 'Risk',
-        signal_tags: ['memory_management', 'data_blindspot'],
-        weight: 1.2,
-        textA: "For records, you update weekly/monthly at minimum.",
-        textB: "You update only when selling or vaccinating.",
-        kpi_links: ['record_completeness', 'loss_incidents'],
-        actions_7d: ['THEFT_MOVEMENT_7D'],
-        actions_30d: ['THEFT_MOVEMENT_30D']
+        qid: 'cattle_money_ds_profit',
+        pillar: 'Money',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We know revenue.",
+        textB: "We know revenue and loss leaks.",
+        line_type: ['Farming'],
+        signal_tags: ['finance_cash_control']
+    },
+    {
+        qid: 'cattle_money_ds_reserves',
+        pillar: 'Money',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We don’t plan reserves.",
+        textB: "We keep a small reserve for predictable shocks.",
+        line_type: ['Farming'],
+        signal_tags: ['finance_cash_control']
     },
 
-
-    // --- DEEP SCAN QUESTIONS ---
-    // P1: Market
-    { qid: 'DS_CATTLE_P1_01', industry: 'livestock', line_type: ['all'], pillar: 'Market', weight: 1, signal_tags: [], textA: "I price using weight/grade bands", textB: "I price using 'market rumors'", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P1_02', industry: 'livestock', line_type: ['all'], pillar: 'Market', weight: 1, signal_tags: [], textA: "I plan sales around target finish dates", textB: "I sell when pressure comes", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P1_03', industry: 'livestock', line_type: ['all'], pillar: 'Market', weight: 1, signal_tags: [], textA: "I maintain multiple buyers", textB: "I stick to one trusted buyer", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P1_04', industry: 'livestock', line_type: ['all'], pillar: 'Market', weight: 1, signal_tags: [], textA: "I separate by category/condition", textB: "I sell mixed lots", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P1_05', industry: 'livestock', line_type: ['all'], pillar: 'Market', weight: 1, signal_tags: [], textA: "anchored on metrics (kg/BCS)", textB: "anchored on relationship", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P2: Herd Strategy (Leadership)
-    { qid: 'DS_CATTLE_P2_01', industry: 'livestock', line_type: ['all'], pillar: 'Leadership', weight: 1, signal_tags: [], textA: "clear production plan", textB: "mixed goals depending on season", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P2_02', industry: 'livestock', line_type: ['all'], pillar: 'Leadership', weight: 1, signal_tags: [], textA: "planned heifer pipeline", textB: "replace when a cow dies/sold", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P2_03', industry: 'livestock', line_type: ['all'], pillar: 'Leadership', weight: 1, signal_tags: [], textA: "screened + quarantined", textB: "bought on trust/appearance", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P2_04', industry: 'livestock', line_type: ['all'], pillar: 'Leadership', weight: 1, signal_tags: [], textA: "selected for traits (fertility, growth)", textB: "selected for size/looks", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P3: Feeding (Operations)
-    { qid: 'DS_CATTLE_P3_01', industry: 'livestock', line_type: ['all'], pillar: 'Operations', weight: 1, signal_tags: [], textA: "rotational plan", textB: "open grazing", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P3_02', industry: 'livestock', line_type: ['all'], pillar: 'Operations', weight: 1, signal_tags: [], textA: "feed reserve strategy", textB: "emergency buying", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P3_03', industry: 'livestock', line_type: ['all'], pillar: 'Operations', weight: 1, signal_tags: [], textA: "consistent mineral program", textB: "occasional salts", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P3_04', industry: 'livestock', line_type: ['all'], pillar: 'Operations', weight: 1, signal_tags: [], textA: "guaranteed access", textB: "access depends on weather", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P4: Health (Risk)
-    { qid: 'DS_CATTLE_P4_01', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "prevention schedule", textB: "treat when needed", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P4_02', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "mandatory quarantine", textB: "optional quarantine", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P4_03', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "correct dose + full course", textB: "adjust dose to save money", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P4_04', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "treatment log", textB: "memory-based", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P5: Breeding (Innovation)
-    { qid: 'DS_CATTLE_P5_01', industry: 'livestock', line_type: ['all'], pillar: 'Innovation', weight: 1, signal_tags: [], textA: "routine observation schedule", textB: "notice when it happens", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P5_02', industry: 'livestock', line_type: ['all'], pillar: 'Innovation', weight: 1, signal_tags: [], textA: "breeding log", textB: "memory", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P5_03', industry: 'livestock', line_type: ['all'], pillar: 'Innovation', weight: 1, signal_tags: [], textA: "controlled breeding", textB: "bulls run freely", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P5_04', industry: 'livestock', line_type: ['all'], pillar: 'Innovation', weight: 1, signal_tags: [], textA: "BCS targets", textB: "general feeding", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P6: Operations/People
-    { qid: 'DS_CATTLE_P6_01', industry: 'livestock', line_type: ['all'], pillar: 'People', weight: 1, signal_tags: [], textA: "stage-based groups", textB: "mixed herd mostly", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P6_02', industry: 'livestock', line_type: ['all'], pillar: 'People', weight: 1, signal_tags: [], textA: "low-stress handling", textB: "fast handling", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P6_03', industry: 'livestock', line_type: ['all'], pillar: 'People', weight: 1, signal_tags: [], textA: "preventive maintenance", textB: "repair after breakdown", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P7: Finance (Money)
-    { qid: 'DS_CATTLE_P7_01', industry: 'livestock', line_type: ['all'], pillar: 'Money', weight: 1, signal_tags: [], textA: "costs tracked by category", textB: "totals only", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P7_02', industry: 'livestock', line_type: ['all'], pillar: 'Money', weight: 1, signal_tags: [], textA: "profit per head", textB: "herd size", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P7_03', industry: 'livestock', line_type: ['all'], pillar: 'Money', weight: 1, signal_tags: [], textA: "borrow with repayment plan", textB: "borrow to survive", kpi_links: [], actions_7d: [], actions_30d: [] },
-
-    // P8: Risk
-    { qid: 'DS_CATTLE_P8_01', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "tagged and tracked", textB: "known by appearance", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P8_02', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "movement logged", textB: "informal", kpi_links: [], actions_7d: [], actions_30d: [] },
-    { qid: 'DS_CATTLE_P8_03', industry: 'livestock', line_type: ['all'], pillar: 'Risk', weight: 1, signal_tags: [], textA: "forage reserves", textB: "buying feed later", kpi_links: [], actions_7d: [], actions_30d: [] }
+    // 8. Records, Data & Compliance -> Innovation
+    {
+        qid: 'cattle_innov_qs_routine',
+        pillar: 'Innovation',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We keep records when we remember.",
+        textB: "We keep records as part of a daily routine.",
+        line_type: ['Farming'],
+        signal_tags: ['records_data_compliance']
+    },
+    {
+        qid: 'cattle_innov_qs_review',
+        pillar: 'Innovation',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We review performance when there’s a problem.",
+        textB: "We review performance at month-end even when fine.",
+        line_type: ['Farming'],
+        signal_tags: ['records_data_compliance']
+    },
+    {
+        qid: 'cattle_innov_ds_health_log',
+        pillar: 'Innovation',
+        industry: 'cattle',
+        weight: 1,
+        textA: "We remember health events.",
+        textB: "We log health events briefly.",
+        line_type: ['Farming'],
+        signal_tags: ['records_data_compliance']
+    },
+    {
+        qid: 'cattle_innov_ds_action',
+        pillar: 'Innovation',
+        industry: 'cattle',
+        weight: 1,
+        textA: "Data is collected but unused.",
+        textB: "Data triggers 1–2 action decisions monthly.",
+        line_type: ['Farming'],
+        signal_tags: ['records_data_compliance']
+    }
 ];

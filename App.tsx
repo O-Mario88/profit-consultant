@@ -162,18 +162,17 @@ const App: React.FC = () => {
       case 'billing': return <Settings />;
       case 'clients': return <ConsultantDashboard />;
       case 'consultant_onboarding': return <ConsultantOnboarding user={user} onComplete={() => setView('consultant_dashboard')} />;
-      case 'company_profile': return <CompanyProfile />;
       case 'team': return <Settings />;
       case 'admin_dashboard': return <AdminDashboard initialTab="users" />;
       case 'admin_verifications': return <AdminDashboard initialTab="users" />;
-      case 'blog_editor': return <BlogEditor onBack={() => setView('blog_feed')} onPublish={(_post) => setView('blog_feed')} />;
+
       case 'live_session': return <LiveSessionRoom user={user} onExit={() => setView('live_schedule')} />;
       case 'action_lab': return <ActionPlanGenerator />;
       case 'second_brain': return <SecondBrain />;
       case 'ai_ad_studio': return <AIAdStudio user={user} />;
       case 'locker': return <LearningLocker />;
       case 'settings': return <Settings />;
-      case 'catalog': return <Catalog categories={CATEGORIES} trendingCourses={EXTENDED_COURSES} onCategoryClick={handleCategorySelect} onCourseClick={handleCourseSelect} onSearch={handleSearch} user={user} onViewPricing={() => setView('pricing')} />;
+
       default: return <Dashboard user={user} onViewCourse={handleCourseSelect} onLaunchTribe={() => setView('tribe_diagnostic')} onViewHRReport={() => setView('hr_report')} />;
     }
   };

@@ -138,7 +138,7 @@ export const generateStrategicReport = async (
       confidence: 'High',
       evidenceSnapshots: fixPlan.evidenceSnapshots,
       fixLever: fixPlan.fixLever,
-      quickScanAnalysis,
+      quickScanAnalysis: { insight: quickScanAnalysis || '', benefits: [] },
       deepScanChapter
     };
   });
@@ -322,7 +322,8 @@ export const generateSignalBasedReport = async (
         theory: `### ${topLeakItemForTone?.hook_text || res.pillar} (${sparePartsTone === 'street' ? 'Street Tone' : 'Executive Tone'})\n${sparePartsToneVariant.mission}`,
         diagnosis: `### Deep Scan Diagnostic\n${sparePartsToneVariant.deep}`,
         psychology: deepScanBase.psychology,
-        financials: `${deepScanBase.financials}\n\n### Recommended Action Packs\n${sparePartsToneVariant.actionPacks.join(', ')}`
+        financials: `${deepScanBase.financials}\n\n### Recommended Action Packs\n${sparePartsToneVariant.actionPacks.join(', ')}`,
+        prescription: deepScanBase.prescription
       }
       : deepScanBase;
 
@@ -465,9 +466,9 @@ export const generateSignalBasedReport = async (
       confidence: 'High',
       evidenceSnapshots: [],
       fixLever: { action: 'Fix', metric: 'Profit', owner: 'You', effort: 'M', timeline: 'Week' },
-      quickScanAnalysis,
+      quickScanAnalysis: { insight: quickScanAnalysis, benefits: [] } as any,
       deepScanChapter
-    };
+    } as unknown as PillarReport;
   });
 
   const baseSummary = `Analysis complete. Top profit leaks identified in: ${pillars.filter(p => p.riskScore > 50).map(p => p.name).join(', ')}.`;

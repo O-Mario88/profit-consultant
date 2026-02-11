@@ -1,110 +1,459 @@
+import { LibraryItem } from '../../types';
 
-export const STRENGTH_COPY = {
-    // Pillar 1: Market
-    'market_pricing_power': "You check weights/condition before pricing and sell strategically.",
-    'market_buyer_mix': "You have repeat buyers (traders, abattoirs) and don't rely on just one channel.",
+export const CATTLE_LIBRARY: LibraryItem[] = [
+    // 1. Market & Pricing Power -> Market
+    {
+        id: 'strength_defined_buyer',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium', 'large'],
+        pillar: 'Market',
+        type: 'strength',
+        text: "We sell to a defined buyer type (butchers/feedlots/exporters) with clear specs.",
+        signal_tags: ['market_pricing_power'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_price_by_weight',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium', 'large'],
+        pillar: 'Market',
+        type: 'strength',
+        text: "We price by weight/grade/condition, not 'per head guessing'.",
+        signal_tags: ['market_pricing_power'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_distress_selling',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Market',
+        type: 'leak',
+        text: "We sell when cash pressure hits, not when the market is best (distress selling).",
+        signal_tags: ['market_pricing_power'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_buyer_price_setting',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Market',
+        type: 'leak',
+        text: "Prices are set by buyers; we accept because we lack options.",
+        signal_tags: ['market_pricing_power'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_avg_price_kg',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Market',
+        type: 'kpi',
+        text: "Average selling price per kg liveweight (or carcass kg) by channel.",
+        signal_tags: ['market_pricing_power'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 2: Herd Strategy (Leadership)
-    'leadership_goals': "You have a clear purpose (beef, dairy, breeding) and plan herd structure.",
-    'leadership_culling': "You cull unproductive animals based on rules, not emotion.",
-    'leadership_planning': "You prevent overstocking and plan for carrying capacity.",
+    // 2. Herd Strategy & Genetics -> Operations (Production)
+    {
+        id: 'strength_clear_system',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Operations',
+        type: 'strength',
+        text: "We run a clear system (cow-calf, backgrounding, fattening) with targets.",
+        signal_tags: ['herd_strategy_genetics'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_planned_culling',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Operations',
+        type: 'strength',
+        text: "We cull consistently (poor fertility, chronic sickness, bad temperament).",
+        signal_tags: ['herd_strategy_genetics'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_unplanned_breeding',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Operations',
+        type: 'leak',
+        text: "Breeding is unplanned; calving is scattered and chaotic.",
+        signal_tags: ['herd_strategy_genetics'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_random_growth',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Operations',
+        type: 'leak',
+        text: "We expand herd size before stabilizing survival/feed.",
+        signal_tags: ['herd_strategy_genetics'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_calving_rate',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Operations',
+        type: 'kpi',
+        text: "Calving rate = calves born / cows exposed.",
+        signal_tags: ['herd_strategy_genetics'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 3: Feeding (Operations)
-    'operations_feeding': "You budget feed by season and have a dry-season plan (hay/silage).",
-    'operations_grazing': "You rotate pastures to prevent overgrazing and protect soil.",
-    'operations_water': "Clean water is constant; intake drives weight gain.",
+    // 3. Nutrition & Feed System -> Operations (Inputs)
+    {
+        id: 'strength_seasonal_feed_plan',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Operations',
+        type: 'strength',
+        text: "We run a seasonal feed plan (pasture + conserved feed + supplements).",
+        signal_tags: ['nutrition_feed_system'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_water_quality',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium', 'large'],
+        pillar: 'Operations',
+        type: 'strength',
+        text: "We protect water access and quality daily (water is non-negotiable).",
+        signal_tags: ['nutrition_feed_system'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_reactive_feeding',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Operations',
+        type: 'leak',
+        text: "Feed decisions are reactive ('when pasture finishes, we panic').",
+        signal_tags: ['nutrition_feed_system'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_overgrazing',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Operations',
+        type: 'leak',
+        text: "Pasture is overgrazed; recovery is slow; costs rise.",
+        signal_tags: ['nutrition_feed_system'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_adg',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Operations',
+        type: 'kpi',
+        text: "Average Daily Gain (ADG) by batch.",
+        signal_tags: ['nutrition_feed_system'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 4: Health (Risk)
-    'risk_health': "You vaccinate on schedule and quarantine all new arrivals.",
-    'risk_biosecurity': "Illness is caught early; you don't wait for 'downers' to act.",
+    // 4. Health, Welfare & Biosecurity -> Risk
+    {
+        id: 'strength_biosecurity_plan',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Risk',
+        type: 'strength',
+        text: "We operate a practical farm biosecurity plan (visitor control, quarantine).",
+        signal_tags: ['health_welfare_biosecurity'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_early_detection',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Risk',
+        type: 'strength',
+        text: "We detect illness early using daily checks and record symptoms.",
+        signal_tags: ['health_welfare_biosecurity'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_uncontrolled_mixing',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Risk',
+        type: 'leak',
+        text: "Animals mix freely (new, sick, old) and disease spreads fast.",
+        signal_tags: ['health_welfare_biosecurity'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_late_treatment',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Risk',
+        type: 'leak',
+        text: "Treatments are late; we only act when animals collapse.",
+        signal_tags: ['health_welfare_biosecurity'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_mortality_rate',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Risk',
+        type: 'kpi',
+        text: "Mortality rate and 'cause known %'.",
+        signal_tags: ['health_welfare_biosecurity'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 5: Breeding (Innovation)
-    'innovation_breeding': "You track heat/service dates and target a consistent calving interval.",
-    'innovation_youngstock': "Calf mortality is low because colostrum and hygiene are priority.",
+    // 5. Operations & Infrastructure -> Leadership (Backbone)
+    {
+        id: 'strength_functional_infra',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Leadership',
+        type: 'strength',
+        text: "We have functional fencing, gates, handling crush, and safe loading routine.",
+        signal_tags: ['operations_infrastructure'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_maintenance_routine',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Leadership',
+        type: 'strength',
+        text: "We schedule maintenance (troughs, pumps, pasture, housing).",
+        signal_tags: ['operations_infrastructure'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_weak_fencing',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Leadership',
+        type: 'leak',
+        text: "Weak fencing causes losses, disputes, and theft risk.",
+        signal_tags: ['operations_infrastructure'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_no_handling_system',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Leadership',
+        type: 'leak',
+        text: "No crush/handling system → vet work becomes dangerous and delayed.",
+        signal_tags: ['operations_infrastructure'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_infra_downtime',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Leadership',
+        type: 'kpi',
+        text: "Equipment downtime hours/month (water pumps, crush).",
+        signal_tags: ['operations_infrastructure'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 6: Operations (People)
-    'people_routines': "Daily tasks (feeding, checking) happen on time, every time.",
-    'people_handling': "Handling facilities are safe; animals aren't stressed or injured.",
-    'people_theft': "Theft is controlled with tags, counts, and movement logs.",
+    // 6. People & Daily Execution -> People
+    {
+        id: 'strength_clear_roles',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'People',
+        type: 'strength',
+        text: "Everyone has clear roles (feeding, health checks, records).",
+        signal_tags: ['people_daily_execution'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_sops',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'People',
+        type: 'strength',
+        text: "We use simple SOPs (feeding, calving assistance, quarantine).",
+        signal_tags: ['people_daily_execution'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_no_accountability',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'People',
+        type: 'leak',
+        text: "No clear accountability; problems bounce between people.",
+        signal_tags: ['people_daily_execution'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_untrained_staff',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'People',
+        type: 'leak',
+        text: "Staff are untrained in early illness signs; detection is late.",
+        signal_tags: ['people_daily_execution'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_checklist_completion',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'People',
+        type: 'kpi',
+        text: "Routine completion score (% daily checklist done).",
+        signal_tags: ['people_daily_execution'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 7: Finance (Money)
-    'money_unit_economics': "You know the cost per head per month and track margin.",
-    'money_cashflow': "Farm cash is separate from personal cash; you don't raid the business.",
+    // 7. Finance & Cash Control -> Money
+    {
+        id: 'strength_cost_per_kg',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Money',
+        type: 'strength',
+        text: "We know cost per kg gain and use it to decide.",
+        signal_tags: ['finance_cash_control'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_separate_finances',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Money',
+        type: 'strength',
+        text: "We separate farm money from personal money.",
+        signal_tags: ['finance_cash_control'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_unknown_profitability',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Money',
+        type: 'leak',
+        text: "We don’t know cost per animal/day; profitability is unknown.",
+        signal_tags: ['finance_cash_control'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_personal_drain',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Money',
+        type: 'leak',
+        text: "Personal spending drains business cash weekly.",
+        signal_tags: ['finance_cash_control'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_gross_margin_animal',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Money',
+        type: 'kpi',
+        text: "Gross margin per animal (or per batch).",
+        signal_tags: ['finance_cash_control'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
 
-    // Pillar 8: Risk
-    'risk_resilience': "You have buffers for drought and don't panic-sell good stock.",
-    'risk_records': "Records are complete; you learn from performance trends."
-};
-
-export const WEAKNESS_COPY = {
-    // Pillar 1: Market
-    'market_reactive': "You sell when you need cash, often taking low prices for good animals.",
-    'market_blind': "You don't weigh or grade; buyers dictate the value.",
-
-    // Pillar 2: Herd Strategy (Leadership)
-    'leadership_drift': "The herd grows randomly; you keep unproductive animals too long.",
-    'leadership_overstock': "You have too many mouths for your land, stunting growth for everyone.",
-
-    // Pillar 3: Feeding (Operations)
-    'operations_starvation': "Dry season surprises you; animals lose weight and value.",
-    'operations_waste': "Feed is wasted or low quality; water access is inconsistent.",
-
-    // Pillar 4: Health (Risk)
-    'risk_outbreak': "No quarantine means disease walks right in; you treat too late.",
-    'risk_mortality': "Deaths are accepted as 'normal' instead of investigated.",
-
-    // Pillar 5: Breeding (Innovation)
-    'innovation_infertility': "Long calving intervals mean you feed cows for no output.",
-    'innovation_calf_loss': "Calves die early from poor colostrum or hygiene.",
-
-    // Pillar 6: Operations (People)
-    'people_chaos': "Routines drift; work is done when convenient, not when needed.",
-    'people_stress': "Rough handling causes injury and weight loss.",
-
-    // Pillar 7: Finance (Money)
-    'money_blind_spot': "You don't track costs; 'profit' is just a guess.",
-    'money_bleed': "Personal withdrawals bleed the farm dry; cash isn't reinvested.",
-
-    // Pillar 8: Risk
-    'risk_exposure': "Drought leads to panic selling; theft is 'part of the business'.",
-    'risk_no_data': "No records mean you repeat the same mistakes every year."
-};
-
-export const KPI_COPY = {
-    'avg_selling_price': { label: "Avg Selling Price", unit: "UGX/kg" },
-    'price_variance': { label: "Price Variance vs Market", unit: "%" },
-    'distress_sale_pct': { label: "Distress Sales", unit: "%" },
-    'stocking_rate': { label: "Stocking Rate", unit: "An/Acre" },
-    'herd_composition': { label: "Productive Herd %", unit: "%" },
-    'culling_rate': { label: "Culling Rate", unit: "%" },
-    'avg_daily_gain': { label: "Avg Daily Gain", unit: "kg/day" },
-    'dry_season_loss_pct': { label: "Dry Season Weight Loss", unit: "%" },
-    'feed_cost_head': { label: "Feed Cost per Head", unit: "UGX" },
-    'body_condition_score': { label: "Avg Body Condition", unit: "1-5" },
-    'feed_conversion': { label: "Feed Efficiency", unit: "Ratio" },
-    'morbidity_rate': { label: "Sickness Rate", unit: "%/mth" },
-    'outbreak_response_time': { label: "Outbreak Response", unit: "Hours" },
-    'mortality_rate': { label: "Mortality Rate", unit: "%/yr" },
-    'treatment_success_rate': { label: "Treatment Success", unit: "%" },
-    'calving_interval': { label: "Calving Interval", unit: "Days" },
-    'conception_rate': { label: "Conception Rate", unit: "%" },
-    'calf_mortality_pct': { label: "Calf Mortality", unit: "%" },
-    'weaning_weight': { label: "Weaning Weight", unit: "kg" },
-    'routine_compliance': { label: "Routine Compliance", unit: "%" },
-    'labor_cost_head': { label: "Labor Cost per Head", unit: "UGX" },
-    'injury_rate': { label: "Injury Rate", unit: "%" },
-    'asset_uptime': { label: "Water/Fence Uptime", unit: "%" },
-    'cost_per_head': { label: "Total Cost per Head", unit: "UGX" },
-    'gross_margin_animal': { label: "Gross Margin", unit: "%" },
-    'budget_variance': { label: "Budget Variance", unit: "%" },
-    'debt_service_ratio': { label: "Debt Service Ratio", unit: "%" },
-    'drought_feed_days': { label: "Feed Reserves", unit: "Days" },
-    'record_completeness': { label: "Record Completeness", unit: "%" },
-    'loss_incidents': { label: "Theft/Loss Count", unit: "#" }
-};
-
-export const library = {
-    STRENGTH_COPY,
-    WEAKNESS_COPY,
-    KPI_COPY
-};
+    // 8. Records, Data & Compliance -> Innovation
+    {
+        id: 'strength_data_linking',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Innovation',
+        type: 'strength',
+        text: "We link performance (growth, fertility) to feed inputs where possible.",
+        signal_tags: ['records_data_compliance'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'strength_monthly_review',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Innovation',
+        type: 'strength',
+        text: "We use a monthly review to choose 1–2 improvements.",
+        signal_tags: ['records_data_compliance'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    },
+    {
+        id: 'leak_incomplete_records',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Innovation',
+        type: 'leak',
+        text: "Records are incomplete; decisions are guesswork.",
+        signal_tags: ['records_data_compliance'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'leak_no_traceability',
+        industry: 'cattle',
+        business_size_fit: ['medium', 'large'],
+        pillar: 'Innovation',
+        type: 'leak',
+        text: "No traceability → buyer trust is low; disputes rise.",
+        signal_tags: ['records_data_compliance'],
+        line_type: ['Farming'],
+        severity_fit: ['Critical']
+    },
+    {
+        id: 'kpi_record_score',
+        industry: 'cattle',
+        business_size_fit: ['small', 'medium'],
+        pillar: 'Innovation',
+        type: 'kpi',
+        text: "Record completeness score (births, deaths, sales logged).",
+        signal_tags: ['records_data_compliance'],
+        line_type: ['Farming'],
+        severity_fit: ['Strong']
+    }
+];

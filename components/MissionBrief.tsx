@@ -148,7 +148,7 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
                                  </div>
                               </div>
                               <p className="text-sm text-slate-300 leading-relaxed line-clamp-3">
-                                 {pillar.quickScanAnalysis || pillar.hiddenCost}
+                                 {pillar.quickScanAnalysis?.insight || pillar.hiddenCost}
                               </p>
                               <div className="mt-4 flex items-center gap-2 text-xs text-red-400 font-medium">
                                  <TrendingUp className="w-3.5 h-3.5" />
@@ -272,7 +272,7 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
                                  </div>
 
                                  <p className="text-sm text-slate-300 leading-relaxed mb-3">
-                                    {pillar.quickScanAnalysis || pillar.hiddenCost}
+                                    {pillar.quickScanAnalysis?.insight || pillar.hiddenCost}
                                  </p>
 
                                  <div className="flex items-center gap-2 text-xs font-bold">

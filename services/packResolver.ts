@@ -18,6 +18,10 @@ import { FMCG_PACK } from "../data/fmcg";
 import { STATIONERY_PACK } from "../data/stationery";
 import { SPARE_PARTS_PACK } from "../data/spareParts";
 import { ASSEMBLY_PACK } from "../data/assembly";
+import { PIGGERY_PACK } from "../data/piggery";
+import { POULTRY_PACK } from "../data/poultry";
+import { DAIRY_PACK } from "../data/dairy";
+import { FARM_MACHINERY_PACK } from '../data/farm_machinery';
 import {
     FNB_SUB_INDUSTRIES,
     TEXTILE_SUB_INDUSTRIES,
@@ -54,6 +58,13 @@ export interface IndustryFlags {
     isStationeryRetail: boolean;
     isSparePartsRetail: boolean;
     isAssemblyManufacturing: boolean;
+    isPiggery: boolean;
+    isPoultry: boolean;
+    isDairy: boolean;
+    isAgriInput: boolean;
+    isFarmMachinery: boolean;
+    isCropFarming: boolean;
+    isCattle: boolean;
 }
 
 export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags => ({
@@ -72,16 +83,39 @@ export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags =>
     isStationeryRetail: profile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(profile.subIndustry),
     isSparePartsRetail: profile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(profile.subIndustry),
     isAssemblyManufacturing: profile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(profile.subIndustry),
+    isAgriInput: profile.industry === 'agriculture' && profile.subIndustry.startsWith('Input supplier'),
+    isFarmMachinery: profile.industry === 'agriculture' && (
+        profile.subIndustry.toLowerCase().includes('machinery') ||
+        profile.subIndustry.toLowerCase().includes('mechanization') ||
+        profile.subIndustry.toLowerCase().includes('irrigation')
+    ),
+    isCropFarming: profile.industry === 'agriculture' && (
+        profile.subIndustry.startsWith('Crop farming') ||
+        profile.subIndustry.includes('Horticulture')
+    ),
+    isCattle: profile.industry === 'agriculture' && (
+        profile.subIndustry.startsWith('Cattle') ||
+        profile.subIndustry.startsWith('Beef') ||
+        profile.subIndustry.startsWith('Livestock')
+    ),
+    isPiggery: profile.industry === 'agriculture' && profile.subIndustry.toLowerCase().includes('pig'),
+    isPoultry: profile.industry === 'agriculture' && profile.subIndustry.toLowerCase().includes('poultry'),
+    isDairy: profile.industry === 'agriculture' && (profile.subIndustry.toLowerCase().includes('dairy') || profile.subIndustry.toLowerCase().includes('milk')),
 });
 
-const PACK_BY_BASE_INDUSTRY: Record<string, { questions: QuestionDefinition[]; library: any[]; actions: any[] }> = {
+const PACK_BY_BASE_INDUSTRY: Record<string, { questions: QuestionDefinition[]; library: any[]; actions: any }> = {
     agri_input: AGRI_PACK,
     agro_processing: AGRO_PACK,
     mining: MINING_PACK,
     oil_gas_services: OIL_GAS_PACK
 };
 
-export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFlags): { questions: QuestionDefinition[]; library: any[]; actions: any[] } => {
+export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFlags): { questions: QuestionDefinition[]; library: any[]; actions: any } => {
+    if (flags.isAgriInput) return AGRI_PACK; // Assuming AGRI_PACK is the INPUT_SUPPLY_PACK
+    if (flags.isFarmMachinery) return FARM_MACHINERY_PACK;
+    if (flags.isPiggery) return PIGGERY_PACK;
+    if (flags.isPoultry) return POULTRY_PACK;
+    if (flags.isDairy) return DAIRY_PACK;
     if (flags.isFnbManufacturing) return FNB_PACK;
     if (flags.isTextileManufacturing) return TEXTILE_PACK;
     if (flags.isFurnitureManufacturing) return FURNITURE_PACK;
@@ -97,6 +131,9 @@ export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFla
     if (flags.isStationeryRetail) return STATIONERY_PACK;
     if (flags.isSparePartsRetail) return SPARE_PARTS_PACK;
     if (flags.isAssemblyManufacturing) return ASSEMBLY_PACK;
+    if (flags.isPiggery) return PIGGERY_PACK;
+    if (flags.isPoultry) return POULTRY_PACK;
+    if (flags.isDairy) return DAIRY_PACK;
     return PACK_BY_BASE_INDUSTRY[profile.industry] || AGRO_PACK;
 };
 
@@ -137,5 +174,11 @@ export const getWhyItMatters = (profile: BusinessProfile, flags: IndustryFlags):
         return 'Assembly and OEM margin depends on first-pass yield discipline, traceability control, and stable cross-functional execution.';
     if (profile.industry === 'agri_input')
         return 'Agri-input businesses win when stock, advisory quality, and cash discipline are systemized.';
+    if (flags.isPiggery)
+        return 'Pig farming profitability relies on strict biosecurity, feed cost control, and consistent market grading.';
+    if (flags.isPoultry)
+        return 'Poultry profitability depends on low mortality, feed conversion efficiency, and biosecurity discipline.';
+    if (flags.isDairy)
+        return 'Dairy profitability is built on cold chain discipline, route efficiency, and strict quality control.';
     return 'Agro-processing requires tight control of yield and flow.';
 };

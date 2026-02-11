@@ -1,4 +1,3 @@
-
 import { KPI } from "../types";
 import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES, SPARE_PARTS_SUB_INDUSTRIES, STATIONERY_SUB_INDUSTRIES } from "./retailSubIndustries";
 
@@ -14,6 +13,84 @@ export interface Lexicon {
   cash_risk: string;
   staff: string;
 }
+
+export const FARM_MACHINERY_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Territory creep is eating your margin.",
+    "You don’t have customers. You have random jobs.",
+    "Your brand is ‘emergency-only’—that’s the most expensive way to operate."
+  ],
+  'Money': [
+    "Your quote is a promise you didn’t calculate.",
+    "Discounting is your silent payroll.",
+    "You’re running a charity called ‘free mobilization’.",
+    "Warranty turned into a free-labor subscription."
+  ],
+  'Operations': [
+    "Your dispatch is a leak map.",
+    "You’re paying fuel to deliver lateness.",
+    "Repeat visits are profit refunds.",
+    "Breakdowns are interest on neglected maintenance.",
+    "Parts in pockets = silent theft."
+  ],
+  'People': [
+    "One hero technician is a single point of failure.",
+    "Shortcuts today are callbacks tomorrow.",
+    "Untrained labor creates expensive learning on customer machines."
+  ]
+};
+
+export const CROP_FARMING_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Silent yield killers are eating your volume.",
+    "Panic-selling is a penalty you pay every season.",
+    "Grade dilution is a tax on your quality."
+  ],
+  'Money': [
+    "Emergency input buying kills your margin.",
+    "You’re farming by guesswork, not profit per acre.",
+    "Cash shortages force bad selling decisions."
+  ],
+  'Operations': [
+    "Timing debt compounds: late planting = lost yield.",
+    "Spray-and-pray costs more than scouting.",
+    "Post-harvest loss is money you already earned but lost."
+  ],
+  'People': [
+    "Labor chaos is a premium you pay for poor planning.",
+    "Unsupervised weeding misses the critical window."
+  ],
+  'Innovation': [
+    "No records = no learning = same mistakes next year.",
+    "Decisions based on feelings lose to decisions based on data."
+  ]
+};
+
+export const CATTLE_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Distress selling is killing your margin.",
+    "Buyer monopoly tax: one customer quietly owns your profit.",
+    "Grade discount ambush: quality unknown until the buyer decides."
+  ],
+  'Money': [
+    "Feed drift: small daily waste becomes a monthly salary.",
+    "Medicine roulette: treat late, pay double.",
+    "Hidden loss ledger: theft/mortality/discounts not counted = not controlled."
+  ],
+  'Operations': [
+    "Maintenance punishment: ignoring small issues buys big breakdowns.",
+    "Late detection debt: the longer you wait, the more you pay.",
+    "Stress losses: rough handling converts weight into injuries."
+  ],
+  'People': [
+    "Owner bottleneck: your farm is profitable only when you’re present.",
+    "Routine collapse: small skipped tasks create big losses."
+  ],
+  'Innovation': [
+    "No records = no control.",
+    "Inventory is cash wearing grass (or feed)."
+  ]
+};
 
 // Map industry ID to specific leak symptoms for Mission Brief
 export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
@@ -33,7 +110,173 @@ export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   transport: ['breakdowns', 'fuel theft', 'idle fleet', 'delivery delays'],
   manufacturing: ['scrap rate', 'downtime', 'batch defects', 'supply delays'],
   services: ['unbilled hours', 'scope creep', 'client churn', 'proposal delays'],
-  other: ['waste', 'delays', 'inconsistency', 'rework']
+  other: ['waste', 'delays', 'inconsistency', 'rework'],
+  piggery: ['mortality', 'bad FCR', 'feed waste', 'market discounts'],
+  poultry: ['mortality', 'bad FCR', 'feed waste', 'heat stress', 'wet litter'],
+  dairy: ["Mastitis", "Somatic Cell Count", "Cold Chain", "Feed Conversion"],
+  beekeeping: ["Varroa", "Swarm Control", "Extraction Yield", "Queen Quality"],
+  input_supply: ["Expired Stock", "Counterfeit", "Regulatory Fine", "Batch Traceability", "Credit Drift"]
+};
+
+export const INPUT_SUPPLY_HOOKS = {
+  market_offer_strategy: {
+    question: "Do you plan your assortment based on supplier deals or customer demand?",
+    why_ask: "Buying what suppliers push instead of what customers need leads to dead stock and lost sales.",
+    risk_if_ignored: "You tie up cash in slow-moving items and miss the peak season demand."
+  },
+  product_integrity_compliance: {
+    question: "Can you trace every batch of product to the specific customer who bought it?",
+    why_ask: "Without batch traceability, a single quality complaint or recall can destroy your reputation and create liability.",
+    risk_if_ignored: "You cannot defend against false claims or execute a recall, leading to fines and brand damage."
+  },
+  sourcing_supplier_control: {
+    question: "Do you vet suppliers and negotiate clear terms, or just buy from whoever has stock?",
+    why_ask: "Reliance on unvetted suppliers increases the risk of poor quality, late delivery, and price shocks.",
+    risk_if_ignored: "You face stockouts or quality issues during critical seasons, losing customer trust."
+  },
+  inventory_storage_fulfillment: {
+    question: "Do you strictly enforce First-Expire-First-Out (FEFO) to manage shelf life?",
+    why_ask: "Chemicals and seeds have limited shelf life; poor rotation guarantees write-offs.",
+    risk_if_ignored: "You lose margin to expired stock and disposal costs."
+  },
+  sales_channels_partner_network: {
+    question: "Do you control dealer pricing and training, or just sell to any reseller?",
+    why_ask: "Uncontrolled dealers undercut your price and fail to support the product, damaging your brand.",
+    risk_if_ignored: "You lose market value and end users get poor results, blaming your product."
+  },
+  customer_success_stewardship: {
+    question: "Do you provide safe-use training and advisory, or just hand over the product?",
+    why_ask: "Farmers often misuse inputs; without guidance, they blame the product for poor results.",
+    risk_if_ignored: "You face high complaint rates and lose repeat customers to competitors who offer advice."
+  },
+  pricing_finance_credit: {
+    question: "Is your pricing based on true landed cost, or just following competitors?",
+    why_ask: "Ignoring freight, shrink, and finance costs in pricing means you might be selling at a loss.",
+    risk_if_ignored: "You bleed profit on every sale while thinking you are competitive."
+  },
+  data_traceability_ci: {
+    question: "Do you use data to forecast demand, or rely on gut feel?",
+    why_ask: "Guessing demand leads to stockouts of winners and overstock of losers.",
+    risk_if_ignored: "You miss the season's revenue peak because you ran out of the right product."
+  }
+};
+
+export const FARM_MACHINERY_QUIZ_COPY = {
+  welcomeTitle: "Farm Machinery & Services Audit",
+  welcomeSubtitle: "Identify profit leaks in your contracting, dealership, or fleet operations.",
+  surveyTitle: "Machinery & Services Diagnostic",
+  surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes."
+};
+
+export const CROP_FARMING_QUIZ_COPY = {
+  welcomeTitle: "Crop Profit & Yield Audit",
+  welcomeSubtitle: "Identify hidden leaks in agronomy, post-harvest, and marketing.",
+  surveyTitle: "Crop Farming Diagnostic",
+  surveySubtitle: "Assess your 8 Pillars of Profitability in 5-7 minutes."
+};
+
+export const CATTLE_QUIZ_COPY = {
+  welcomeTitle: "Beef Profit & Herd Audit",
+  welcomeSubtitle: "Identify hidden leaks in genetics, feed, and market power.",
+  surveyTitle: "Cattle Diagnostic",
+  surveySubtitle: "Assess your 8 Pillars of Profitability in 5-7 minutes."
+};
+
+export const INPUT_SUPPLY_QUIZ_COPY = {
+  intro: {
+    title: "Input Supplier Profit Scan",
+    description: "For suppliers of seeds, fertilizers, chemicals, & vet supplies. Pinpoint profit leaks in your inventory, compliance, and sales channels.",
+    image_url: "/images/input_supply_intro.jpg" // Placeholder
+  },
+  pillars: {
+    market_offer_strategy: {
+      title: "Market & Offer Strategy",
+      description: "Assortment planning and customer segmentation."
+    },
+    product_integrity_compliance: {
+      title: "Product Integrity & Compliance",
+      description: "Traceability, quality, and anti-counterfeit controls."
+    },
+    sourcing_supplier_control: {
+      title: "Sourcing & Supplier Control",
+      description: "Vendor management and procurement discipline."
+    },
+    inventory_storage_fulfillment: {
+      title: "Inventory & Fulfillment",
+      description: "Storage conditions, FEFO, and stock accuracy."
+    },
+    sales_channels_partner_network: {
+      title: "Sales Channels & Network",
+      description: "Dealer management and channel strategy."
+    },
+    customer_success_stewardship: {
+      title: "Customer Success & Stewardship",
+      description: "Advisory services and safe-use training."
+    },
+    pricing_finance_credit: {
+      title: "Pricing, Finance & Credit",
+      description: "Margin management, credit control, and cashflow."
+    },
+    data_traceability_ci: {
+      title: "Data & Traceability",
+      description: "Forecasting, batch tracking, and continuous improvement."
+    }
+  }
+};
+
+export const INDUSTRY_LEXICON_TOKENS: Record<string, Record<string, string>> = {
+  'input_supply': {
+    'customer': 'Farmer',
+    'product': 'Input / Product',
+    'service': 'Advisory',
+    'competitor': 'Competitor'
+  },
+  'farm_machinery': {
+    'customer': 'Client / Farmer',
+    'product': 'Machine / Part',
+    'service': 'Job / Service',
+    'competitor': 'Other Shop'
+  },
+  'crop_farming': {
+    'customer': 'Buyer / Market',
+    'product': 'Crop / Produce',
+    'service': 'Delivery',
+    'competitor': 'Other Farm'
+  },
+  'cattle': {
+    'customer': 'Buyer / Abattoir',
+    'product': 'Animal / Batch',
+    'service': 'Transport',
+    'competitor': 'Other Producer'
+  }
+};
+
+export const INDUSTRY_QUIZ_TOKENS: Record<string, Record<string, string>> = {
+  'default': {
+    'leak': 'Profit Leak',
+    'margin': 'Margin',
+    'waste': 'Waste'
+  },
+  'cattle': {
+    'leak': 'Weight Loss / Leak',
+    'margin': 'Margin per Kg',
+    'waste': 'Mortality / Shrink'
+  },
+  'crop_farming': {
+    'leak': 'Yield Loss / Leak',
+    'margin': 'Crop Margin',
+    'waste': 'Post-Harvest Loss'
+  },
+  'farm_machinery': {
+    'leak': 'Downtime / Leak',
+    'margin': 'Job Margin',
+    'waste': 'Idle Time'
+  },
+  'input_supply': {
+    'leak': 'Stock Loss / Leak',
+    'margin': 'Product Margin',
+    'waste': 'Expired Stock'
+  }
 };
 
 export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
@@ -47,6 +290,17 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     cash_risk: 'dead stock',
     staff: 'staff'
   },
+  beekeeping: {
+    customer: 'buyer/packer',
+    order: 'batch/drum',
+    delivery: 'delivery',
+    stock: 'colonies/supers',
+    lead: 'market inquiry',
+    quality: 'moisture/purity',
+    cash_risk: 'collapse/theft',
+    staff: 'apiary team'
+  },
+
   tech: {
     customer: 'client',
     order: 'project/sprint',
@@ -96,6 +350,16 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     quality: 'spec compliance',
     cash_risk: 'spoilage/rejects',
     staff: 'operators'
+  },
+  poultry: {
+    customer: 'buyer/trader',
+    order: 'batch/flock',
+    delivery: 'transport',
+    stock: 'birds',
+    lead: 'buyer inquiry',
+    quality: 'weight/health',
+    cash_risk: 'mortality/disease',
+    staff: 'caretakers'
   },
   mining: {
     customer: 'buyer/offtaker',
@@ -176,6 +440,16 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     quality: 'quality',
     cash_risk: 'waste',
     staff: 'team'
+  },
+  piggery: {
+    customer: 'buyer/trader',
+    order: 'sale/batch',
+    delivery: 'transport',
+    stock: 'herd',
+    lead: 'buyer inquiry',
+    quality: 'weight/health',
+    cash_risk: 'disease/mortality',
+    staff: 'workers'
   }
 };
 
@@ -575,6 +849,26 @@ export const AQUACULTURE_QUIZ_COPY = {
   People: { detection: "approval-first culture + inconsistent routines", cost: "slow response to water/health issues, quality drift across shifts", cliffhanger: "Deep Scan defines decision boundaries + SOP ownership so your farm runs without bottlenecks." }
 };
 
+export const BEEKEEPING_HOOKS = {
+  Money: "Varroa Interest Rate",
+  Operations: "Inspection Theater",
+  Risk: "Silent Colony Collapse",
+  Market: "Price-by-Rumor",
+  Innovation: "Queen Failure Tax",
+  Leadership: "Calendar vs Weather",
+  People: "Labor Drift"
+};
+
+export const BEEKEEPING_QUIZ_COPY = {
+  Leadership: { detection: "inspection theater + no records", cost: "making decisions on 'vibes' while colonies collapse", cliffhanger: "Deep Scan will install a Decision-Led Inspection protocol." },
+  Market: { detection: "wholesale thinking + price-by-rumor", cost: "selling premium effort at bulk commodity prices", cliffhanger: "Deep Scan will build your Brand Value Ladder." },
+  Operations: { detection: "calendar management + equipment bottlenecks", cost: "missing the honey flow because boxes weren't ready", cliffhanger: "Deep Scan will build a Flow-Ready countback calendar." },
+  Money: { detection: "unknown profit per hive + feed burn", cost: "subsidizing dead-loss hives with your winners", cliffhanger: "Deep Scan will calculate your true Break-Even Hive Count." },
+  Innovation: { detection: "old comb + genetic stagnation", cost: "fighting disease and low vigor uphill", cliffhanger: "Deep Scan will build a Queen & Comb Renewal schedule." },
+  Risk: { detection: "varroa blindness + theft risk", cost: "paying the 'silent bill' of colony collapse next season", cliffhanger: "Deep Scan will install the Biosecurity Shield." },
+  People: { detection: "labor drift + chaotic harvest", cost: "hours spent driving/working without honey in the drum", cliffhanger: "Deep Scan will set Labor Efficiency targets." }
+};
+
 export const AGRO_PROCESSING_HOOKS = {
   Money: "Yield Bleed",
   Operations: "Downtime Drain",
@@ -595,25 +889,7 @@ export const AGRO_PROCESSING_QUIZ_COPY = {
   People: { detection: "hero dependence + undefined roles", cost: "factory stops/slows when you aren't there", cliffhanger: "Deep Scan will build Role Cards to decentralize execution." }
 };
 
-export const CROP_FARMING_HOOKS = {
-  Money: "Input Cost Trap",
-  Operations: "Yield Gap",
-  Risk: "Silent Loss",
-  Market: "Price Taking",
-  Innovation: "Quality Discount",
-  Leadership: "Firefighting Mode",
-  People: "Productivity Leak"
-};
 
-export const CROP_FARMING_QUIZ_COPY = {
-  Leadership: { detection: "reactive decisions + no schedule", cost: "missed windows and constant firefighting", cliffhanger: "Deep Scan will build a Season Task Calendar." },
-  Market: { detection: "blind selling + panic pricing", cost: "leaving 20-30% margin on the table every season", cliffhanger: "Deep Scan will build a Price Intelligence Loop." },
-  Operations: { detection: "guesswork agronomy + late execution", cost: "yield potential cut in half by simple timing errors", cliffhanger: "Deep Scan will install Field Quality Checks." },
-  Money: { detection: "untracked inputs + emergency buying", cost: "buying high, selling low, and feeding fake inputs", cliffhanger: "Deep Scan will build a Crop Profit Calculator." },
-  Innovation: { detection: "bulk selling + post-harvest waste", cost: "losing value after the hard work is done", cliffhanger: "Deep Scan will install the Post-Harvest Loss Kill Switch." },
-  Risk: { detection: "praying for rain + reactive pest control", cost: "one shock wipes out the whole season profit", cliffhanger: "Deep Scan will build a Risk Playbook." },
-  People: { detection: "idle labor + weak supervision", cost: "paying for time but not getting the output", cliffhanger: "Deep Scan will set Labor Productivity Targets." }
-};
 
 export const MINING_HOOKS = {
   Operations: 'Recovery Leak',
@@ -1750,4 +2026,68 @@ export const SHEEP_QUIZ_COPY = {
   Risk: { detection: "parasite burden + theft", cost: "silent losses from worms and pilferage", cliffhanger: "Deep Scan will build a Loss Shield." },
   Innovation: { detection: "uncontrolled breeding + lamb mortality", cost: "future profit dying before weaning", cliffhanger: "Deep Scan will build a Lamb Survival Lock." },
   People: { detection: "routine drift + damp housing", cost: "pneumonia and footrot from poor hygiene", cliffhanger: "Deep Scan will build a Routine Uptime System." }
+};
+
+export const PIGGERY_QUIZ_COPY = {
+  Market: { detection: "selling by need + mixed sizes", cost: "forced discounts and loss of bargaining power", cliffhanger: "Deep Scan will map your buyer strategy + grade ladder." },
+  Operations: { detection: "reactive breeding + overcrowding", cost: "stress, disease, and uneven growth cycles", cliffhanger: "Deep Scan will build a Pig Flow & Capacity Plan." },
+  Money: { detection: "bad FCR + feed leakage", cost: "feeding profits to the floor or the rats", cliffhanger: "Deep Scan will install Feed Tracking and Waste Controls." },
+  Risk: { detection: "biosecurity gaps + easy entry", cost: "one outbreak erases the entire year's profit", cliffhanger: "Deep Scan will build your Biosecurity Wall." },
+  People: { detection: "high piglet mortality + missed heats", cost: "silent bankruptcy through lost production potential", cliffhanger: "Deep Scan will lock in Farrowing & Weaning routines." },
+  Leadership: { detection: "wet pens + broken equipment", cost: "environmental stress slowing growth and increasing vet bills", cliffhanger: "Deep Scan will set Housing & Maintenance Standards." },
+  Innovation: { detection: "unknown cost per kg + manure waste", cost: "selling below true cost and missing waste-to-value revenue", cliffhanger: "Deep Scan will build your Unit Cost + Manure Value model." }
+};
+
+export const POULTRY_HOOKS = [
+  "Your profit is bleeding through feed spillage and feeder height.",
+  "Ammonia isn’t just smell — it’s invisible weight loss.",
+  "Bad brooding is a 14-day mistake you pay for 42 days.",
+  "If water pressure fails, your birds stop converting — silently.",
+  "You’re not losing eggs — you’re losing cash in trays.",
+  "Mortality is not ‘normal’ — it’s unaccounted cost of production.",
+  "Heat stress steals growth like a thief — no alarms, no receipts.",
+  "Biosecurity is not cleanliness — it’s discipline when people are tired.",
+  "Mixed sizes create bullying, uneven weights, and hidden discounts.",
+  "Your farm is busy… but the numbers are missing."
+];
+
+export const POULTRY_QUIZ_COPY = {
+  // ... (keep usage of copy)
+  Market: { detection: "selling blind + reactive deals", cost: "selling mixed birds/eggs and losing premiums", cliffhanger: "Deep Scan will build a Market Grade Ladder." },
+  Operations: { detection: "wet litter + heat stress", cost: "silent growth loss and high feed conversion", cliffhanger: "Deep Scan will build a Feed & Climate Shield." },
+  Money: { detection: "bad FCR + feed waste", cost: "feeding profits to the floor or rodents", cliffhanger: "Deep Scan will install Feed Tracking and Unit Cost Control." },
+  Risk: { detection: "biosecurity gaps + easy entry", cost: "one outbreak erases the entire year's profit", cliffhanger: "Deep Scan will build your Biosecurity Wall." },
+  People: { detection: "routine drift + skipped checks", cost: "small errors compounding into large losses", cliffhanger: "Deep Scan will lock in Daily Checklists." },
+  Leadership: { detection: "reactive placement + overstocking", cost: "stressing birds and limiting potential from day 1", cliffhanger: "Deep Scan will build a Flock Cycle Plan." },
+  Innovation: { detection: "brooding errors + uneven start", cost: "poor uniformity and high early mortality", cliffhanger: "Deep Scan will build a Brooding Excellence System." }
+};
+
+export const DAIRY_HOOKS = [
+  "Milk doesn't 'spoil'... it gets abandoned by your system.",
+  "If temperature isn't logged, your profit is uninsured.",
+  "Adulteration isn't a quality issue — it's a silent investor stealing your margins.",
+  "A weak testing routine creates a bad milk subscription.",
+  "Route inefficiency is fuel burning inside your cashflow.",
+  "A collection center without SOPs is a leak factory with a logo.",
+  "When you pay late, farmers don't complain — they disappear.",
+  "If your buyer sets your price, you're not selling milk — you're selling power.",
+  "Spillage, shrink, and 'small losses' are profit evaporation.",
+  "Maintenance delays turn into cold chain emergencies that you pay for twice.",
+  "If you don't separate roles, you're funding friendly fraud.",
+  "No batch traceability = one mistake can bankrupt your reputation."
+];
+
+export const DAIRY_QUIZ_COPY = {
+  hook: "Milk Collection isn't just about volume. It's about Cold Chain Discipline, Route Efficiency, and Trust.",
+  kpi_intro: "Top aggregators track net margin per liter and temperature compliance daily. Most others just track total volume.",
+  leak_intro: "In milk collection, profit leaks happen in the gap between the cow and the chiller. Spoilage, adulteration, and route waste are the silent killers.",
+  result_intro: "We've analyzed your collection center across 7 pillars of profitability. Here is where you are leaking value.",
+  action_intro: "Stop spoilage. Lock in quality premiums. Optimize routes. Here is your 30-day plan.",
+  Leadership: { detection: "random supply + farmer churn", cost: "losing volume predictability and paying for idle capacity", cliffhanger: "Deep Scan will build a Farmer Loyalty Engine." },
+  Risk: { detection: "weak testing + adulteration", cost: "paying for water and losing buyer trust", cliffhanger: "Deep Scan will build an Adulteration Shield." },
+  Innovation: { detection: "temperature breaks + spoilage", cost: "direct profit evaporation and rejected loads", cliffhanger: "Deep Scan will build a Cold Chain Lock." },
+  Operations: { detection: "route inefficiency + downtime", cost: "burning fuel and losing quality before arrival", cliffhanger: "Deep Scan will build a Route Profit Engine." },
+  People: { detection: "SOP gaps + role conflict", cost: "consistency failures and friendly fraud", cliffhanger: "Deep Scan will build a Standard Work System." },
+  Market: { detection: "buyer dependence + price taking", cost: "margin squeeze and risk of total volume loss", cliffhanger: "Deep Scan will build a Buyer Power Upgrade." },
+  Money: { detection: "cash leakage + weak controls", cost: "funding losses you can't see until month-end", cliffhanger: "Deep Scan will build a Cash Discipline Wall." }
 };

@@ -135,7 +135,8 @@ export const normalizeDeepScanTone = (
         theory: normalizeDeepScanSection('theory', rawTheory, pillar, score),
         diagnosis: normalizeDeepScanSection('diagnosis', rawDiagnosis, pillar, score),
         psychology: normalizeDeepScanSection('psychology', rawPsychology, pillar, score),
-        financials: normalizeDeepScanSection('financials', mergedFinancials || fallback.financials, pillar, score)
+        financials: normalizeDeepScanSection('financials', mergedFinancials || fallback.financials, pillar, score),
+        prescription: rawPrescription
     };
 };
 

@@ -3,7 +3,7 @@ import { ActionDefinition } from '../../types';
 export const ACTIONS: ActionDefinition[] = [
     // --- PACK A: Lamb Survival Lock ---
     {
-        id: 'sheep_pack_a',
+        action_id: 'sheep_pack_a',
         title: 'Pack A: Lamb Survival Lock',
         pillar: 'Innovation',
         description: 'Stop the #1 profit leak: lambs dying before wean.',
@@ -15,12 +15,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Ensure "naval dip" (iodine) for every newborn to prevent infection.'
         ],
         outcome: 'Lambing register + higher survival rate.',
-        signal_tags: ['lamb_mortality_risk', 'lamb_survival_gap', 'lamb_safety_gap']
+        signal_tags: ['lamb_mortality_risk', 'lamb_survival_gap', 'lamb_safety_gap'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK B: Worm Pressure Breaker ---
     {
-        id: 'sheep_pack_b',
+        action_id: 'sheep_pack_b',
         title: 'Pack B: Worm Pressure Breaker',
         pillar: 'Risk',
         description: 'Worms steal months of growth. Break the cycle now.',
@@ -32,12 +36,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Improve hygiene in night housing (clean bedding breaks the cycle).'
         ],
         outcome: 'Parasite log + lower drug costs + faster growth.',
-        signal_tags: ['parasite_load', 'reactive_health', 'drug_resistance_risk']
+        signal_tags: ['parasite_load', 'reactive_health', 'drug_resistance_risk'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK C: Footrot & Mobility Recovery ---
     {
-        id: 'sheep_pack_c',
+        action_id: 'sheep_pack_c',
         title: 'Pack C: Footrot & Mobility Recovery',
         pillar: 'Risk',
         description: 'Limping sheep don’t eat, don’t breed, and don’t grow.',
@@ -49,12 +57,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Run the "clean" flock through a preventive footbath.'
         ],
         outcome: 'Mobility restored + higher feed intake.',
-        signal_tags: ['footrot_risk', 'biosecurity_gap', 'hygiene_gap']
+        signal_tags: ['footrot_risk', 'biosecurity_gap', 'hygiene_gap'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK D: Dry Season Feed Gap Shield ---
     {
-        id: 'sheep_pack_d',
+        action_id: 'sheep_pack_d',
         title: 'Pack D: Dry Season Feed Gap Shield',
         pillar: 'Operations',
         description: 'Prevent the "reset" where flock loses all its gained weight.',
@@ -66,12 +78,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Implement strict rationing (don’t waste feed on the ground).'
         ],
         outcome: 'Dry-season feed calendar + minimized weight loss.',
-        signal_tags: ['drought_panic', 'condition_loss_risk', 'climate_risk', 'feed_waste']
+        signal_tags: ['drought_panic', 'condition_loss_risk', 'climate_risk', 'feed_waste'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK E: Flock Structure + Culling Rules ---
     {
-        id: 'sheep_pack_e',
+        action_id: 'sheep_pack_e',
         title: 'Pack E: Flock Structure Optimizer',
         pillar: 'Leadership',
         description: 'Stop feeding unproductive animals. Keep only earners.',
@@ -83,12 +99,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Select replacements only from the best-performing mothers.'
         ],
         outcome: 'Flock map + cull list + higher margin per head.',
-        signal_tags: ['no_flock_plan', 'unproductive_stock', 'culling_drift', 'herd_structure_gap']
+        signal_tags: ['no_flock_plan', 'unproductive_stock', 'culling_drift', 'herd_structure_gap'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK F: Market Grade Ladder + Sell Queue ---
     {
-        id: 'sheep_pack_f',
+        action_id: 'sheep_pack_f',
         title: 'Pack F: Market Grade Ladder',
         pillar: 'Market',
         description: 'Stop selling "sheep". Start selling "Grades".',
@@ -100,12 +120,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Time sales around demand peaks (festivals, school fees) if possible.'
         ],
         outcome: 'Price tracker + sell queue + better negotiation power.',
-        signal_tags: ['selling_blind', 'blind_pricing', 'grade_blindness', 'reactive_selling']
+        signal_tags: ['selling_blind', 'blind_pricing', 'grade_blindness', 'reactive_selling'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK G: Security + Predator Control ---
     {
-        id: 'sheep_pack_g',
+        action_id: 'sheep_pack_g',
         title: 'Pack G: Security & Loss Shield',
         pillar: 'Risk',
         description: 'Stop silent theft and predator losses.',
@@ -117,12 +141,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Reconcile movement log weekly (Deaths - Sales + Births = Count).',
         ],
         outcome: 'Reconciliation sheet + secure perimeter.',
-        signal_tags: ['theft_risk', 'predator_risk', 'security_gap', 'tracking_gap']
+        signal_tags: ['theft_risk', 'predator_risk', 'security_gap', 'tracking_gap'],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- PACK H: Wool Value Capture (Optional) ---
     {
-        id: 'sheep_pack_h',
+        action_id: 'sheep_pack_h',
         title: 'Pack H: Wool Value Capture',
         pillar: 'Operations',
         description: 'Turn wool from waste into a bonus income stream.',
@@ -134,12 +162,16 @@ export const ACTIONS: ActionDefinition[] = [
             'Store properly (dry, pest-free) until sale.'
         ],
         outcome: 'Wool quality checklist + sales record.',
-        signal_tags: ['quality_drift', 'storage_loss'] // General tags fitting wool issues
+        signal_tags: ['quality_drift', 'storage_loss'], // General tags fitting wool issues
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     },
 
     // --- GENERIC 7-DAY & 30-DAY PLANS ---
     {
-        id: 'sheep_7_day_stabilize',
+        action_id: 'sheep_7_day_stabilize',
         title: '7-Day Fast Wins: Stabilize Profit',
         pillar: 'Leadership',
         description: 'Stop the bleeding. Get control of the flock and cash.',
@@ -154,10 +186,14 @@ export const ACTIONS: ActionDefinition[] = [
             'Day 7: Cash & Reinvest. Separate farm cash. Buy one critical supply (dewormer/salt).'
         ],
         outcome: 'Flock counted, sick isolated, cash flow separated.',
-        signal_tags: []
+        signal_tags: [],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 7,
+        effort: 'M'
     },
     {
-        id: 'sheep_30_day_build',
+        action_id: 'sheep_30_day_build',
         title: '30-Day System: Build Control',
         pillar: 'Leadership',
         description: 'Install the habits that make profit inevitable.',
@@ -169,6 +205,10 @@ export const ACTIONS: ActionDefinition[] = [
             'Week 4: Breeding & Cycles. Ram control. Lamb growth targets. Monthly financial review.'
         ],
         outcome: 'Functioning management system with data visibility.',
-        signal_tags: []
+        signal_tags: [],
+        industry: 'agriculture',
+        line_type: ['sheep'],
+        days: 30,
+        effort: 'M'
     }
 ];

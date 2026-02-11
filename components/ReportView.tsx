@@ -181,7 +181,7 @@ const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix, isU
                         </div>
 
                         <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed font-medium">
-                           {pillar.quickScanAnalysis || pillar.hiddenCost}
+                           {pillar.quickScanAnalysis?.insight || pillar.hiddenCost}
                         </p>
 
                         <div className="mt-auto space-y-3 pt-4 border-t border-gray-100">
@@ -256,7 +256,9 @@ const ReportView: React.FC<ReportViewProps> = ({ report, onBack, onStartFix, isU
                                  </div>
 
                                  <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl">
-                                    <ReactMarkdown className="prose prose-sm max-w-none text-blue-900">{pillar.deepScanChapter.psychology}</ReactMarkdown>
+                                    <div className="prose prose-sm max-w-none text-blue-900">
+                                       <ReactMarkdown>{pillar.deepScanChapter.psychology}</ReactMarkdown>
+                                    </div>
                                  </div>
 
                                  <div className="prose prose-lg text-slate-700 max-w-none">

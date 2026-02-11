@@ -28,6 +28,7 @@ import { FASHION_PACK } from '../data/fashion';
 import { HARDWARE_PACK } from '../data/hardware';
 import { ELECTRONICS_PACK } from '../data/electronics';
 import { FMCG_PACK } from '../data/fmcg';
+import { resolveIndustryPack, resolveIndustryFlags } from '../services/packResolver';
 import { STATIONERY_PACK } from '../data/stationery';
 import { SPARE_PARTS_PACK } from '../data/spareParts';
 import { ASSEMBLY_PACK } from '../data/assembly';
@@ -38,8 +39,13 @@ import { CATTLE_PACK } from '../data/cattle';
 
 import { GOAT_PACK } from '../data/goat';
 import { SHEEP_PACK } from '../data/sheep';
+import { PIGGERY_PACK } from '../data/piggery';
+import { POULTRY_PACK } from '../data/poultry';
+import { DAIRY_PACK } from '../data/dairy';
+import { FARM_MACHINERY_PACK } from '../data/farm_machinery';
+import { INPUT_SUPPLY_PACK } from '../data/input_supply';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
-import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY, GOAT_QUIZ_COPY, SHEEP_QUIZ_COPY } from '../data/industryContext';
+import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY, GOAT_QUIZ_COPY, SHEEP_QUIZ_COPY, PIGGERY_QUIZ_COPY } from '../data/industryContext';
 
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
 
@@ -168,6 +174,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const isCattle = industryId === 'agriculture' && sub.startsWith('Cattle');
       const isGoat = industryId === 'agriculture' && sub.startsWith('Goat');
       const isSheep = industryId === 'agriculture' && sub.startsWith('Sheep');
+      const isPiggery = industryId === 'agriculture' && sub.toLowerCase().includes('pig');
+      const isPoultry = industryId === 'agriculture' && sub.toLowerCase().includes('poultry');
       // Note: Aquaculture currently has no specific Pack loaded in original code, it just has specific specific "Archetype" logic later.
       // But if there IS a pack, we'd add it here. For now, we assume no generic pack unless defined.
       // Wait, there IS an archetype logic for aquaculture. I will leave it as standard unless I see an AQ pack import.
@@ -212,7 +220,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             isGoalRelevant: true
          }));
       } else if (isAgriInput) {
-         quickScanQs = toQuickScanSet(AGRI_PACK.questions).map((q, idx) => ({
+         quickScanQs = toQuickScanSet(INPUT_SUPPLY_PACK.questions).map((q, idx) => ({
             id: q.qid,
             pillar: q.pillar,
             a: q.textA,
@@ -258,6 +266,28 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             }));
       } else if (isSheep) {
          quickScanQs = toQuickScanSet(SHEEP_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isPiggery) {
+         quickScanQs = toQuickScanSet(PIGGERY_PACK.questions)
+            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
+            .map((q) => ({
+               id: q.qid,
+               pillar: q.pillar,
+               a: q.textA,
+               b: q.textB,
+               isSwapped: false,
+               isGoalRelevant: true
+            }));
+      } else if (isPoultry) {
+         quickScanQs = toQuickScanSet(POULTRY_PACK.questions)
             .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
             .map((q) => ({
                id: q.qid,
@@ -610,12 +640,12 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const ind = businessProfile.industry;
 
       const isAgroProcessing = ind === 'agriculture' && sub.startsWith('Agro-processing');
-      const isAgriInput = ind === 'agriculture' && sub.startsWith('Input supplier');
       const isProduceAggregation = businessProfile.industry === 'agriculture' && (businessProfile.subIndustry.startsWith('Produce aggregation') || businessProfile.subIndustry.startsWith('Export / cross-border'));
-      const isCropFarming = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Crop farming');
-      const isCattle = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Cattle');
+
+
       const isGoat = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Goat');
       const isSheep = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Sheep');
+      const { isPiggery, isPoultry, isDairy, isAgriInput, isFarmMachinery, isCropFarming, isCattle } = resolveIndustryFlags(businessProfile);
 
       const isMining = businessProfile.industry === 'mining' && !businessProfile.subIndustry.toLowerCase().includes('oil');
       const isOilGas = ind === 'mining' && sub.toLowerCase().includes('oil');
@@ -677,6 +707,24 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             sheepAnswers[q.id] = finalAnswers[idx] - 1;
          });
          report = await generateSignalBasedReport(sheepAnswers, businessProfile);
+      } else if (isPiggery) {
+         const piggeryAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            piggeryAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(piggeryAnswers, businessProfile);
+      } else if (isPoultry) {
+         const poultryAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            poultryAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(poultryAnswers, businessProfile);
+      } else if (isDairy) {
+         const dairyAnswers: Record<string, number> = {};
+         sessionQuestions.forEach((q, idx) => {
+            dairyAnswers[q.id] = finalAnswers[idx] - 1;
+         });
+         report = await generateSignalBasedReport(dairyAnswers, businessProfile);
       } else if (isMining) {
          const miningAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {

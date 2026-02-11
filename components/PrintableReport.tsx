@@ -193,9 +193,9 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ report }) => {
                                     <h4 className="text-xl font-bold text-slate-900">{idx.title}</h4>
                                     <p className="text-slate-500 italic">"{idx.meaning}"</p>
                                  </div>
-                                 {idx.detectedCost && (
+                                 {idx.silentCost && (
                                     <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg border border-red-100 text-right">
-                                       <div className="font-bold text-lg">{idx.detectedCost}</div>
+                                       <div className="font-bold text-lg">{idx.silentCost}</div>
                                        <div className="text-[10px] uppercase font-bold text-red-400">Est. Loss</div>
                                     </div>
                                  )}
