@@ -6,7 +6,7 @@ import {
   searchKnowledgeBase
 } from './knowledge-base.js';
 
-const QUICK_REPORT_MODEL = process.env.OPENAI_REPORT_MODEL || process.env.OPENAI_FINE_TUNED_MODEL || 'gpt-5.2-mini';
+const QUICK_REPORT_MODEL = process.env.OPENAI_REPORT_MODEL || process.env.OPENAI_FINE_TUNED_MODEL || 'gpt-4o-mini';
 const DEEP_SCAN_MODEL = process.env.OPENAI_DEEP_SCAN_MODEL || QUICK_REPORT_MODEL;
 const VECTOR_STORE_ID = process.env.OPENAI_VECTOR_STORE_ID || '';
 
@@ -19,6 +19,7 @@ const EMPTY_KNOWLEDGE_BASE = {
 const PILLAR_ALIASES = {
   operations: 'Operations',
   engine: 'Operations',
+  ops: 'Operations',
   money: 'Money',
   fuel: 'Money',
   market: 'Market',
@@ -31,6 +32,16 @@ const PILLAR_ALIASES = {
   shield: 'Risk',
   people: 'People',
   tribe: 'People'
+};
+
+const PILLAR_KEYWORDS = {
+  Operations: ['operations', 'engine', 'ops'],
+  Money: ['money', 'fuel', 'finance'],
+  Market: ['market', 'voice', 'customer', 'sales'],
+  Leadership: ['leadership', 'brain', 'management'],
+  Innovation: ['innovation', 'pulse', 'improvement'],
+  Risk: ['risk', 'shield', 'compliance'],
+  People: ['people', 'tribe', 'team', 'hiring']
 };
 
 const toCanonicalPillar = (value) => {
@@ -139,44 +150,318 @@ const scoreKeysToPillars = (scores) => {
   return output.length > 0 ? output : [...CANONICAL_PILLARS];
 };
 
+const detectPillarFromText = (text = '') => {
+  const lower = String(text).toLowerCase();
+  for (const [pillar, words] of Object.entries(PILLAR_KEYWORDS)) {
+    if (words.some((word) => lower.includes(word))) return pillar;
+  }
+  return '';
+};
+
 const buildAnswerBuckets = (answers = {}) => {
   const buckets = {};
   for (const pillar of CANONICAL_PILLARS) buckets[pillar] = [];
 
-  for (const [question, answer] of Object.entries(answers)) {
-    const lower = question.toLowerCase();
-    let matched = '';
-    for (const pillar of CANONICAL_PILLARS) {
-      if (lower.includes(pillar.toLowerCase())) {
-        matched = pillar;
-        break;
-      }
-    }
+  for (const [question, answer] of Object.entries(answers || {})) {
+    const matched = detectPillarFromText(question) || detectPillarFromText(String(answer));
     const value = `${question}: ${String(answer)}`;
     if (matched) buckets[matched].push(value);
     else buckets.Operations.push(value);
   }
+
   return buckets;
 };
 
-const pickEvidence = (kb, { profile, pillar, score, snippets = [], limit = 6 }) => {
-  const query = [
-    profile?.industry || '',
-    profile?.subIndustry || '',
-    pillar,
-    `pillar_score_${score}`,
-    snippets.slice(0, 6).join(' ')
-  ]
-    .filter(Boolean)
-    .join(' ');
+const dedupeDocs = (docs = []) => {
+  const out = [];
+  const seen = new Set();
 
-  return searchKnowledgeBase(kb, {
+  for (const doc of docs) {
+    const sig = [
+      doc.meta?.type,
+      doc.meta?.libraryKind,
+      doc.meta?.actionKind,
+      doc.meta?.questionStage,
+      doc.meta?.vocabKind,
+      doc.meta?.pillar,
+      doc.meta?.sourcePack,
+      String(doc.text || '').slice(0, 120)
+    ].join('|');
+
+    if (seen.has(sig)) continue;
+    seen.add(sig);
+    out.push(doc);
+  }
+
+  return out;
+};
+
+const searchCategory = ({
+  kb,
+  profile,
+  pillar,
+  query,
+  limit,
+  primaryFilters,
+  fallbackFilters
+}) => {
+  const common = {
     query,
     industry: profile?.industry || '',
     subIndustry: profile?.subIndustry || '',
     pillar,
     limit
+  };
+
+  const primary = searchKnowledgeBase(kb, {
+    ...common,
+    ...primaryFilters
   });
+
+  if (!fallbackFilters || primary.length >= Math.min(2, limit)) {
+    return primary;
+  }
+
+  const fallback = searchKnowledgeBase(kb, {
+    ...common,
+    ...fallbackFilters
+  });
+
+  return dedupeDocs([...primary, ...fallback]).slice(0, limit);
+};
+
+const collectPillarEvidenceBundle = ({
+  kb,
+  profile,
+  pillar,
+  score,
+  snippets = [],
+  limitPerCategory = 3
+}) => {
+  const query = [
+    profile?.industry || '',
+    profile?.subIndustry || '',
+    profile?.userTitle || '',
+    profile?.country || '',
+    profile?.regionGroup || '',
+    pillar,
+    `score_${score}`,
+    snippets.slice(0, 10).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return {
+    strengths: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['strength'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['strength']
+      }
+    }),
+    shortcomings: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['leak'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['leak']
+      }
+    }),
+    kpiStatements: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['kpi'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['kpi']
+      }
+    }),
+    profitLeakVocabulary: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['vocabulary'],
+        vocabKinds: ['hooks', 'leak_tokens', 'lexicons', 'quiz_tokens'],
+        requirePillar: false
+      }
+    }),
+    hookStatements: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['hook', 'mission_brief'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['library'],
+        libraryKinds: ['hook', 'mission_brief']
+      }
+    }),
+    actionSnippets: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['action'],
+        actionKinds: ['snippet'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['action'],
+        actionKinds: ['snippet']
+      }
+    }),
+    stabilizeActions7Day: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['action'],
+        actionKinds: ['fix_7_day'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['action'],
+        actionKinds: ['fix_7_day']
+      }
+    }),
+    buildControlActions30Day: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['action'],
+        actionKinds: ['fix_30_day'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['action'],
+        actionKinds: ['fix_30_day']
+      }
+    }),
+    forcedPairsAB: searchCategory({
+      kb,
+      profile,
+      pillar,
+      query,
+      limit: limitPerCategory,
+      primaryFilters: {
+        documentTypes: ['question'],
+        questionStages: ['forced_pair'],
+        requirePillar: true
+      },
+      fallbackFilters: {
+        documentTypes: ['question'],
+        questionStages: ['forced_pair']
+      }
+    })
+  };
+};
+
+const formatEvidenceBlock = (title, matches, maxItems = 3) => {
+  if (!Array.isArray(matches) || matches.length === 0) return `${title}\n- No direct evidence retrieved.`;
+  const selected = dedupeDocs(matches).slice(0, maxItems);
+  return `${title}\n${formatKnowledgeContext(selected, 300)}`;
+};
+
+const formatPillarEvidenceBundle = (pillar, bundle) => {
+  const blocks = [
+    formatEvidenceBlock('Strength Statements', bundle.strengths),
+    formatEvidenceBlock('Shortcoming Statements', bundle.shortcomings),
+    formatEvidenceBlock('KPI Measurement Statements', bundle.kpiStatements),
+    formatEvidenceBlock('Profit Leak Vocabulary / Hook Phrases', [...bundle.profitLeakVocabulary, ...bundle.hookStatements]),
+    formatEvidenceBlock('Action Snippet Library', bundle.actionSnippets),
+    formatEvidenceBlock('7-Day Stabilize Profit Actions', bundle.stabilizeActions7Day),
+    formatEvidenceBlock('30-Day Build Control Actions', bundle.buildControlActions30Day),
+    formatEvidenceBlock('Industry/Species Forced Pairs (A/B)', bundle.forcedPairsAB)
+  ];
+
+  return `## ${pillar} Knowledge Bundle\n${blocks.join('\n\n')}`;
+};
+
+const clampText = (text, maxChars = 52000) => {
+  const safe = sanitize(text, '');
+  if (safe.length <= maxChars) return safe;
+  return `${safe.slice(0, maxChars)}\n[TRUNCATED_FOR_TOKEN_BUDGET]`;
+};
+
+const toKvpString = (record) =>
+  Object.entries(record || {})
+    .map(([key, value]) => `- ${key}: ${String(value)}`)
+    .join('\n');
+
+const formatDeepAnswers = (answers = []) =>
+  (answers || [])
+    .map((item, idx) => `${idx + 1}. ${sanitize(item?.pillar, 'General')} | Q: ${sanitize(item?.question)} | A: ${sanitize(item?.answer)}`)
+    .join('\n');
+
+const profileContextBlock = (profile, archetype) => {
+  const goals = Array.isArray(profile?.goals) && profile.goals.length > 0 ? profile.goals.join(', ') : 'None provided';
+  const channels = Array.isArray(profile?.salesChannels) && profile.salesChannels.length > 0
+    ? profile.salesChannels.join(', ')
+    : 'Not provided';
+  const products = Array.isArray(profile?.products) && profile.products.length > 0
+    ? profile.products.join(', ')
+    : 'Not provided';
+
+  return [
+    `- Business: ${sanitize(profile?.businessName, 'Unnamed Business')}`,
+    `- Owner/Lead: ${sanitize(profile?.userName, 'Not provided')}`,
+    `- Role/Title: ${sanitize(profile?.userTitle, 'Not provided')}`,
+    `- Industry: ${sanitize(profile?.industry, 'General')}`,
+    `- Sub-industry/Species: ${sanitize(profile?.subIndustry, 'General')}`,
+    `- Team size: ${sanitize(profile?.size, 'Unknown')}`,
+    `- Model: ${sanitize(profile?.model, 'Unknown')}`,
+    `- Stage: ${sanitize(profile?.stage, 'Unknown')}`,
+    `- Goals: ${goals}`,
+    `- Pain Point: ${sanitize(profile?.pain, 'Not provided')}`,
+    `- Operating model: ${sanitize(profile?.operatingModel, 'Not provided')}`,
+    `- Sales channels: ${channels}`,
+    `- Products: ${products}`,
+    `- Country: ${sanitize(profile?.country, 'Unknown')}`,
+    `- Region group: ${sanitize(profile?.regionGroup, 'Unknown')}`,
+    `- Content region: ${sanitize(profile?.contentRegion, 'Unknown')}`,
+    `- Locale language: ${sanitize(profile?.localeLanguage, 'Unknown')}`,
+    `- Locale currency: ${sanitize(profile?.localeCurrency, 'Unknown')}`,
+    `- Archetype: ${sanitize(archetype, 'Unknown')}`
+  ].join('\n');
 };
 
 const fallbackQuickPillar = (pillar, score, profile) => {
@@ -257,31 +542,6 @@ const summarySchema = {
   }
 };
 
-const toKvpString = (record, maxEntries = 16) =>
-  Object.entries(record || {})
-    .slice(0, maxEntries)
-    .map(([key, value]) => `- ${key}: ${String(value)}`)
-    .join('\n');
-
-const collectQuickKnowledgeContext = (kb, profile, pillars, scores, answerBuckets) => {
-  const lines = [];
-
-  for (const pillar of pillars) {
-    const pillarScore = Number(scores?.[pillar.toLowerCase()] ?? scores?.[pillar] ?? 0);
-    const evidence = pickEvidence(kb, {
-      profile,
-      pillar,
-      score: pillarScore,
-      snippets: answerBuckets[pillar] || [],
-      limit: 5
-    });
-    if (evidence.length === 0) continue;
-    lines.push(`## ${pillar} Evidence\n${formatKnowledgeContext(evidence)}`);
-  }
-
-  return lines.join('\n\n').slice(0, 12000);
-};
-
 const mapQuickResult = (modelOutput, profile, scores, pillars) => {
   const result = {};
 
@@ -320,8 +580,30 @@ export const generatePremiumQuickReport = async ({
 }) => {
   const kb = loadKnowledgeBase();
   const pillars = scoreKeysToPillars(scores);
-  const answerBuckets = buildAnswerBuckets(quickScanAnswers);
-  const knowledgeContext = collectQuickKnowledgeContext(kb, profile, pillars, scores, answerBuckets);
+  const answerBuckets = buildAnswerBuckets(quickScanAnswers || {});
+
+  const knowledgeByPillar = {};
+  for (const pillar of pillars) {
+    const pillarScore = Number(scores?.[pillar.toLowerCase()] ?? scores?.[pillar] ?? 0);
+    const snippets = answerBuckets[pillar] || [];
+    const bundle = collectPillarEvidenceBundle({
+      kb,
+      profile,
+      pillar,
+      score: pillarScore,
+      snippets,
+      limitPerCategory: 3
+    });
+    knowledgeByPillar[pillar] = bundle;
+  }
+
+  const knowledgeContext = clampText(
+    pillars
+      .map((pillar) => formatPillarEvidenceBundle(pillar, knowledgeByPillar[pillar]))
+      .join('\n\n'),
+    38000
+  );
+
   const sortedWeakest = [...pillars].sort((a, b) => {
     const scoreA = Number(scores?.[a.toLowerCase()] ?? scores?.[a] ?? 0);
     const scoreB = Number(scores?.[b.toLowerCase()] ?? scores?.[b] ?? 0);
@@ -333,18 +615,15 @@ You are a premium management consulting AI for Profit Driven Channel.
 Write with executive precision:
 - diagnosis first, then impact, then action.
 - no hype, no generic positivity, no filler.
-- use only evidence provided in assessment inputs and knowledge context.
-- when inference is necessary, keep it conservative and operationally explicit.
+- use only evidence provided in assessment inputs and knowledge bundles.
+- ground each pillar in: strengths, shortcomings, KPI statements, profit-leak vocabulary/hooks, action snippets, 7-day actions, 30-day actions, and forced-pair A/B evidence.
+- personalize directly to user role/title, location, industry/sub-industry, and explicit response patterns.
 Return strict JSON only.
   `.trim();
 
-  const input = `
+  const input = clampText(`
 CLIENT PROFILE
-- Business: ${sanitize(profile?.businessName, 'Unnamed Business')}
-- Industry: ${sanitize(profile?.industry, 'General')}
-- Sub-industry: ${sanitize(profile?.subIndustry, 'General')}
-- Team size: ${sanitize(profile?.size, 'Unknown')}
-- Archetype: ${sanitize(archetype, 'Unknown')}
+${profileContextBlock(profile, archetype)}
 
 PILLAR SCORES (0-100)
 ${JSON.stringify(scores || {}, null, 2)}
@@ -352,10 +631,10 @@ ${JSON.stringify(scores || {}, null, 2)}
 WEAKEST PILLARS
 ${sortedWeakest.slice(0, 3).join(', ')}
 
-QUICK SCAN ANSWERS
-${toKvpString(quickScanAnswers || {}, 24)}
+ALL QUICK SCAN RESPONSES
+${toKvpString(quickScanAnswers || {}) || '- No quick scan responses captured.'}
 
-KNOWLEDGE CONTEXT FROM DATASET
+PILLAR KNOWLEDGE BUNDLES
 ${knowledgeContext || 'No additional evidence available.'}
 
 OUTPUT REQUIREMENTS
@@ -364,8 +643,9 @@ OUTPUT REQUIREMENTS
   - name
   - quickScan (70-120 words)
   - deepDive.theory, diagnosis, psychology, financials, prescription.
-  Keep sections practical and investment-grade.
-  `.trim();
+- each prescription must include clear 7-day stabilization and 30-day control actions.
+- each diagnosis must reference KPI movement and likely profit leak mechanism.
+  `.trim(), 52000);
 
   let parsed = null;
   try {
@@ -374,7 +654,7 @@ OUTPUT REQUIREMENTS
       model: QUICK_REPORT_MODEL,
       instructions,
       input,
-      schemaName: 'premium_quick_scan_report',
+      schemaName: 'premium_quick_scan_report_v2',
       schema: quickSchema,
       maxOutputTokens: 4600,
       temperature: 0.15
@@ -401,23 +681,14 @@ const canonicalFromReportPillar = (name) => {
 const groupDeepAnswersByPillar = (deepScanAnswers) => {
   const buckets = {};
   for (const pillar of CANONICAL_PILLARS) buckets[pillar] = [];
+
   for (const item of deepScanAnswers || []) {
     const pillar = canonicalFromReportPillar(item?.pillar);
     if (!pillar) continue;
     buckets[pillar].push(`Q: ${sanitize(item.question)}\nA: ${sanitize(item.answer)}`);
   }
-  return buckets;
-};
 
-const buildDeepScanKnowledgeContext = (kb, profile, pillar, score, answerSnippets) => {
-  const evidence = pickEvidence(kb, {
-    profile,
-    pillar,
-    score,
-    snippets: answerSnippets,
-    limit: 7
-  });
-  return formatKnowledgeContext(evidence, 460);
+  return buckets;
 };
 
 const generateSinglePillarChapter = async ({
@@ -427,23 +698,23 @@ const generateSinglePillarChapter = async ({
   score,
   band,
   quickInsight,
-  answerSnippets,
+  quickAnswerSnippets,
+  deepAnswerSnippets,
   knowledgeContext
 }) => {
   const instructions = `
 You are a senior consulting partner writing one pillar chapter of a premium diagnostic report.
 Rules:
 - direct, evidence-led, commercially grounded.
-- reference answer patterns and dataset evidence; do not invent facts.
 - no motivational filler.
+- ground recommendations in: strengths, shortcomings, KPI statements, hooks/vocabulary, snippet library, 7-day actions, 30-day actions, and forced-pair A/B signals.
+- tie advice to the user profile (role/title/location/industry/sub-industry).
 Return valid JSON only.
   `.trim();
 
-  const input = `
+  const input = clampText(`
 CLIENT
-- Industry: ${sanitize(profile?.industry, 'General')}
-- Sub-industry: ${sanitize(profile?.subIndustry, 'General')}
-- Team size: ${sanitize(profile?.size, 'Unknown')}
+${profileContextBlock(profile, '')}
 
 PILLAR
 - Name: ${pillar}
@@ -453,8 +724,11 @@ PILLAR
 CURRENT QUICK SCAN INSIGHT
 ${sanitize(quickInsight, 'No quick insight provided.')}
 
-DEEP SCAN ANSWERS
-${answerSnippets.length > 0 ? answerSnippets.join('\n\n') : 'No pillar-specific deep scan answers provided.'}
+ALL QUICK SCAN RESPONSES FOR THIS PILLAR
+${quickAnswerSnippets.length > 0 ? quickAnswerSnippets.join('\n\n') : 'No quick scan responses captured for this pillar.'}
+
+ALL DEEP SCAN RESPONSES FOR THIS PILLAR
+${deepAnswerSnippets.length > 0 ? deepAnswerSnippets.join('\n\n') : 'No deep scan responses captured for this pillar.'}
 
 KNOWLEDGE CONTEXT
 ${knowledgeContext || 'No additional dataset evidence found.'}
@@ -465,16 +739,17 @@ OUTPUT REQUIREMENTS
 - psychology: 130-210 words.
 - financials: 140-220 words.
 - prescription: concrete plan split into Week 1, Days 8-30, Days 31-90.
-  `.trim();
+- include specific KPIs and expected movement.
+  `.trim(), 36000);
 
   const parsed = await runStructuredPrompt({
     openai,
     model: DEEP_SCAN_MODEL,
     instructions,
     input,
-    schemaName: 'premium_deep_scan_chapter',
+    schemaName: 'premium_deep_scan_chapter_v2',
     schema: chapterSchema,
-    maxOutputTokens: 2200,
+    maxOutputTokens: 2300,
     temperature: 0.2
   });
 
@@ -486,6 +761,7 @@ const generateExecutiveSummary = async ({
   profile,
   pillarScores,
   chapterDrafts,
+  quickScanResponses,
   deepAnswers
 }) => {
   const instructions = `
@@ -494,39 +770,41 @@ Use high-stakes consultant tone:
 - single most critical finding first
 - root causes and financial exposure next
 - 7-day priority decision
+- 30-day control build
 - 90-day outlook
 Return JSON only.
   `.trim();
 
-  const input = `
+  const input = clampText(`
 CLIENT PROFILE
-- Business: ${sanitize(profile?.businessName, 'Unnamed Business')}
-- Industry: ${sanitize(profile?.industry, 'General')}
-- Sub-industry: ${sanitize(profile?.subIndustry, 'General')}
+${profileContextBlock(profile, '')}
 
 PILLAR SCORES
 ${JSON.stringify(pillarScores, null, 2)}
 
-DEEP ANSWER SAMPLE
-${(deepAnswers || []).slice(0, 6).map((a) => `- ${a.pillar}: ${a.answer}`).join('\n')}
+ALL QUICK SCAN RESPONSES
+${toKvpString(quickScanResponses || {}) || '- No quick responses available.'}
+
+ALL DEEP SCAN RESPONSES
+${formatDeepAnswers(deepAnswers || []) || '- No deep responses available.'}
 
 CHAPTER HIGHLIGHTS
 ${Object.entries(chapterDrafts || {}).map(([pillar, chapter]) => {
-    const diagnosis = sanitize(chapter?.diagnosis, '').slice(0, 220);
-    const financials = sanitize(chapter?.financials, '').slice(0, 180);
+    const diagnosis = sanitize(chapter?.diagnosis, '').slice(0, 260);
+    const financials = sanitize(chapter?.financials, '').slice(0, 200);
     return `- ${pillar}: ${diagnosis}\n  Financial: ${financials}`;
   }).join('\n')}
 
 OUTPUT
 Return {"summary":"..."} in 260-420 words.
-  `.trim();
+  `.trim(), 52000);
 
   const parsed = await runStructuredPrompt({
     openai,
     model: DEEP_SCAN_MODEL,
     instructions,
     input,
-    schemaName: 'premium_deep_scan_summary',
+    schemaName: 'premium_deep_scan_summary_v2',
     schema: summarySchema,
     maxOutputTokens: 900,
     temperature: 0.15
@@ -544,7 +822,10 @@ export const generatePremiumDeepScanReport = async ({
 }) => {
   const kb = loadKnowledgeBase();
   const profile = quickScanReport?.profileContext || {};
-  const answerBuckets = groupDeepAnswersByPillar(deepScanAnswers || []);
+  const quickScanResponses = quickScanReport?.quickScanResponses || {};
+
+  const quickAnswerBuckets = buildAnswerBuckets(quickScanResponses);
+  const deepAnswerBuckets = groupDeepAnswersByPillar(deepScanAnswers || []);
   const sourcePillars = Array.isArray(quickScanReport?.pillars) ? quickScanReport.pillars : [];
 
   const requested = sourcePillars
@@ -559,17 +840,26 @@ export const generatePremiumDeepScanReport = async ({
 
   const chapters = {};
 
-  // Small batching keeps latency manageable while avoiding aggressive parallel bursts.
   for (let i = 0; i < requested.length; i += 3) {
     const batch = requested.slice(i, i + 3);
+
     const results = await Promise.all(batch.map(async (item) => {
-      const answerSnippets = answerBuckets[item.canonical] || [];
-      const knowledgeContext = buildDeepScanKnowledgeContext(
+      const quickSnippets = quickAnswerBuckets[item.canonical] || [];
+      const deepSnippets = deepAnswerBuckets[item.canonical] || [];
+      const combinedSnippets = [...quickSnippets, ...deepSnippets];
+
+      const evidenceBundle = collectPillarEvidenceBundle({
         kb,
         profile,
-        item.canonical,
-        item.score,
-        answerSnippets
+        pillar: item.canonical,
+        score: item.score,
+        snippets: combinedSnippets,
+        limitPerCategory: 4
+      });
+
+      const knowledgeContext = clampText(
+        formatPillarEvidenceBundle(item.canonical, evidenceBundle),
+        26000
       );
 
       try {
@@ -580,7 +870,8 @@ export const generatePremiumDeepScanReport = async ({
           score: item.score,
           band: item.band,
           quickInsight: item.quickInsight,
-          answerSnippets,
+          quickAnswerSnippets: quickSnippets,
+          deepAnswerSnippets: deepSnippets,
           knowledgeContext
         });
 
@@ -598,13 +889,15 @@ export const generatePremiumDeepScanReport = async ({
     }));
 
     for (const item of results) {
-      const chapter = item.chapter || fallbackDeepChapter(item.canonical, item.score, profile);
+      const fallback = fallbackDeepChapter(item.canonical, item.score, profile);
+      const chapter = item.chapter || fallback;
+
       chapters[item.originalName] = {
-        theory: sanitize(chapter.theory, fallbackDeepChapter(item.canonical, item.score, profile).theory),
-        diagnosis: sanitize(chapter.diagnosis, fallbackDeepChapter(item.canonical, item.score, profile).diagnosis),
-        psychology: sanitize(chapter.psychology, fallbackDeepChapter(item.canonical, item.score, profile).psychology),
-        financials: sanitize(chapter.financials, fallbackDeepChapter(item.canonical, item.score, profile).financials),
-        prescription: sanitize(chapter.prescription, fallbackDeepChapter(item.canonical, item.score, profile).prescription)
+        theory: sanitize(chapter.theory, fallback.theory),
+        diagnosis: sanitize(chapter.diagnosis, fallback.diagnosis),
+        psychology: sanitize(chapter.psychology, fallback.psychology),
+        financials: sanitize(chapter.financials, fallback.financials),
+        prescription: sanitize(chapter.prescription, fallback.prescription)
       };
     }
 
@@ -623,6 +916,7 @@ export const generatePremiumDeepScanReport = async ({
         return acc;
       }, {}),
       chapterDrafts: chapters,
+      quickScanResponses,
       deepAnswers: deepScanAnswers || []
     });
   } catch (error) {

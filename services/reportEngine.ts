@@ -36,6 +36,64 @@ import { ReportStrengthsData } from "../types/strengths";
 // Re-export for backward compat
 export { calculateLeakIndices } from "./scoring";
 
+const EMPTY_PILLAR_SCORES: PillarScores = {
+  operations: 50,
+  money: 50,
+  market: 50,
+  leadership: 50,
+  innovation: 50,
+  risk: 50,
+  people: 50
+};
+
+const toSignalAnswerLabel = (rawValue: number, question: QuestionDefinition): string => {
+  const clamped = Math.max(0, Math.min(4, Number.isFinite(rawValue) ? Math.round(rawValue) : 2));
+  if (clamped === 0) return `Strongly A: ${question.textA}`;
+  if (clamped === 1) return `Leaning A: ${question.textA}`;
+  if (clamped === 2) return `Neutral`;
+  if (clamped === 3) return `Leaning B: ${question.textB}`;
+  return `Strongly B: ${question.textB}`;
+};
+
+const buildQuickScanResponseMap = (
+  questions: QuestionDefinition[],
+  answers: Record<string, number>
+): Record<string, string> => {
+  const out: Record<string, string> = {};
+
+  for (const q of questions) {
+    if (!Object.prototype.hasOwnProperty.call(answers, q.qid)) continue;
+    const rawValue = Number(answers[q.qid]);
+    out[`${q.pillar} | ${q.qid}`] = toSignalAnswerLabel(rawValue, q);
+  }
+
+  return out;
+};
+
+const toCanonicalScoreKey = (pillarName: string): keyof PillarScores | null => {
+  const lower = pillarName.trim().toLowerCase();
+  if (lower === 'operations' || lower === 'engine') return 'operations';
+  if (lower === 'money' || lower === 'fuel') return 'money';
+  if (lower === 'market' || lower === 'voice') return 'market';
+  if (lower === 'leadership' || lower === 'brain') return 'leadership';
+  if (lower === 'innovation' || lower === 'pulse' || lower === 'innovation & creativity') return 'innovation';
+  if (lower === 'risk' || lower === 'shield') return 'risk';
+  if (lower === 'people' || lower === 'tribe') return 'people';
+  return null;
+};
+
+const buildCanonicalScoresFromPillars = (pillars: Array<{ pillar: string; score: number }>): PillarScores => {
+  const output: PillarScores = { ...EMPTY_PILLAR_SCORES };
+
+  for (const pillar of pillars) {
+    const key = toCanonicalScoreKey(pillar.pillar);
+    if (!key) continue;
+    output[key] = Number.isFinite(pillar.score) ? pillar.score : output[key];
+  }
+
+  return output;
+};
+
 export const generateStrategicReport = async (
   scores: PillarScores,
   archetype: Archetype,
@@ -65,36 +123,8 @@ export const generateStrategicReport = async (
     const whyItMatters = injectLexicon(briefTemplate.controls, industry);
     const hiddenCost = injectLexicon(briefTemplate.costing, industry);
     const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry)
-      .replace('{STATUS}', `**${pillarName}**`) // Bold the status
-      .replace('{COST}', `**${briefTemplate.costing}**`) // Bold the cost
-    // Note: LOST_REVENUE, TIME_WASTED, RISK_LEVEL might not be in the template string in this file, check logic.
-    // Ah, previously I saw `.replace('{LOST_REVENUE}', lostRevenue)` in my memory but looking at view_file lines 67-68,
-    // it seems `injectLexicon` returns the string and then it's assigned to `deepInsight`.
-    // Wait, line 67 in `view_file` is: `const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry);`
-    // It DOES NOT have the chain of replaces I thought it had in the previous failed attempt context.
-    // The previous failed attempt tried to replace lines 193+ which don't match.
-    // Lines 67 just calls injectLexicon.
-    // I need to see where `{STATUS}` etc are replaced.
-    // It seems they might NOT be replaced here in `generateStrategicReport`?
-    // Let me look at `data/missionBriefLibrary.ts`. It has placeholders like `{lead}`, `{order}` in controls.
-    // But `cliffhanger` text: "The Deep Scan will map your entire delivery workflow step-by-step to identify the exact 'Constraint Step'..."
-    // It doesn't seem to have `{STATUS}` placeholders in `cliffhanger` for `Engine`.
-    // However, `deepInsight` logic in `generateSignalBasedReport` (lines 372+) DOES have complex replacement logic.
-    // Lines 373: `let text = ...`
-    // Lines 382: `text = text.replace(/{STATUS}/g, statusLabel);`
-    // I should update THAT part in `generateSignalBasedReport`.
-
-    // BUT, what about `generateStrategicReport` (Deep Scan report)?
-    // Line 67: `const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry);`
-    // `injectLexicon` likely handles some replacements or just dictionary swap.
-    // If I want to bold things in Deep Scan report, I might need to update `injectLexicon` or modify `deepInsight` here if it had placeholders.
-    // The user wants bolding.
-    // In `missionBriefLibrary.ts`, I already added markdown to the text itself!
-    // So `briefTemplate.cliffhanger` ALREADY has `**'Constraint Step'**`.
-    // So checking `generateStrategicReport` might be unnecessary if I just want the static text to be bold.
-    // However, I should check if there are dynamic replacements I want to bold.
-    // `generateSignalBasedReport` definitely has dynamic replacements.
-    // Let's modify `generateSignalBasedReport` replacements.
+      .replace('{STATUS}', `**${pillarName}**`)
+      .replace('{COST}', `**${briefTemplate.costing}**`);
 
     // Use helper for industry-aware fix plan (passing subIndustry)
     const fixPlan = getFixPlan(industry, pillarName, profile?.subIndustry);
@@ -222,6 +252,7 @@ export const generateStrategicReport = async (
     agroIndices,
     deepScanScores,
     profileContext: profile,
+    quickScanResponses: quickScanAnswers || {},
     strengthsData
   };
 };
@@ -250,6 +281,17 @@ export const generateSignalBasedReport = async (
   const { pillarResults, signalScores } = calculateSignalScores(answers, scopedQuestions);
   const archetype = deriveSignalArchetype(pillarResults as Record<string, PillarResult>);
   const assemblyAutoTags = isAssemblyManufacturing ? deriveAssemblyAutoTags(signalScores) : [];
+  const quickScanResponses = buildQuickScanResponseMap(scopedQuestions as QuestionDefinition[], answers);
+
+  const aiScores = buildCanonicalScoresFromPillars(
+    Object.values(pillarResults as Record<string, PillarResult>).map((item) => ({
+      pillar: item.pillar,
+      score: item.score
+    }))
+  );
+
+  let aiData: any = null;
+  aiData = await generateReportAnalysis(profile, aiScores, archetype, quickScanResponses);
 
   // 2. Build Pillars
   const pillars: PillarReport[] = Object.values(pillarResults).map((res: any) => {
@@ -352,14 +394,19 @@ export const generateSignalBasedReport = async (
           ? 'Bottleneck Forming'
           : 'Controlled';
 
+    const aiPillarData =
+      aiData?.pillars?.[res.pillar] ||
+      aiData?.pillars?.[res.pillar?.toLowerCase?.()] ||
+      aiData?.pillars?.[(res.pillar || '').charAt(0).toUpperCase() + (res.pillar || '').slice(1)];
+
     const quickScanBase = normalizeQuickScanTone(
-      undefined,
+      aiPillarData?.quickScan,
       res.pillar,
       normalizedBand,
       profile.industry
     );
     const deepScanBase = normalizeDeepScanTone(
-      undefined,
+      aiPillarData?.deepDive,
       res.pillar,
       score,
       profile.industry
@@ -552,6 +599,10 @@ export const generateSignalBasedReport = async (
     })()
     : '';
 
+  const mergedSummary = aiData?.executiveSummary
+    ? `${aiData.executiveSummary}${assemblyTagSummary}`.trim()
+    : `${baseSummary}${assemblyTagSummary}`.trim();
+
   // Calculate real leak indices from pillar scores
   const pillarScores: Record<string, number> = {};
   pillars.forEach(p => { pillarScores[p.name.toLowerCase()] = p.score; });
@@ -593,7 +644,7 @@ export const generateSignalBasedReport = async (
     id: crypto.randomUUID(),
     date: new Date().toLocaleDateString(),
     archetype,
-    executiveSummary: `${baseSummary}${assemblyTagSummary}`.trim(),
+    executiveSummary: mergedSummary,
     pillars: pillars,
     unlocks: [],
     indices: realIndices,
@@ -601,6 +652,7 @@ export const generateSignalBasedReport = async (
     agroIndices: [],
     deepScanScores: undefined,
     profileContext: profile,
+    quickScanResponses,
     strengthsData
   };
 };

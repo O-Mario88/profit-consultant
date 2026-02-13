@@ -183,6 +183,7 @@ export interface GeneratedReport {
     deepScanScores?: DeepScanScores;
     // profileContext: BusinessProfile; // Referenced linearly, will import in types.ts barrel
     profileContext?: BusinessProfile;
+    quickScanResponses?: Record<string, string>;
     // CliftonStrengths data block
     strengthsData?: ReportStrengthsData;
 }

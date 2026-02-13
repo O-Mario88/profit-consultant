@@ -6,6 +6,11 @@ export interface BusinessProfile {
     userTitle: string;
     industry: string;
     subIndustry: string;
+    country?: string;
+    regionGroup?: string;
+    contentRegion?: string;
+    localeLanguage?: string;
+    localeCurrency?: string;
     reportTone?: 'consultant' | 'executive' | 'street';
     model: 'b2b' | 'b2c' | 'both';
     size: 'solo' | 'micro' | 'small' | 'small_med' | 'medium' | 'large' | 'enterprise';

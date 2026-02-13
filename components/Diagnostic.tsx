@@ -116,7 +116,7 @@ const getIcon = (name: string) => {
 };
 
 const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }) => {
-   const { t } = useLocalization();
+   const { t, locale } = useLocalization();
    const [step, setStep] = useState<Step>('setup');
 
    // Assessment State
@@ -133,6 +133,11 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       userTitle: '',
       industry: '',
       subIndustry: '',
+      country: locale.country,
+      regionGroup: locale.regionGroup,
+      contentRegion: locale.contentRegion,
+      localeLanguage: locale.language,
+      localeCurrency: locale.currency,
       model: 'both',
       size: 'solo',
       hasManagers: false,
@@ -161,6 +166,29 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    const [strengthsAnswers, setStrengthsAnswers] = useState<number[]>([]);
    const [strengthsIndex, setStrengthsIndex] = useState(0);
    const [strengthsSkipped, setStrengthsSkipped] = useState(false);
+
+   useEffect(() => {
+      setBusinessProfile(prev => {
+         if (
+            prev.country === locale.country &&
+            prev.regionGroup === locale.regionGroup &&
+            prev.contentRegion === locale.contentRegion &&
+            prev.localeLanguage === locale.language &&
+            prev.localeCurrency === locale.currency
+         ) {
+            return prev;
+         }
+
+         return {
+            ...prev,
+            country: locale.country,
+            regionGroup: locale.regionGroup,
+            contentRegion: locale.contentRegion,
+            localeLanguage: locale.language,
+            localeCurrency: locale.currency
+         };
+      });
+   }, [locale.country, locale.regionGroup, locale.contentRegion, locale.language, locale.currency]);
 
    // -- Initialization --
    useEffect(() => {
