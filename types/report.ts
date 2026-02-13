@@ -9,6 +9,7 @@ import {
     PillarScores
 } from './core';
 import { BusinessProfile } from './business';
+import { ReportStrengthsData } from './strengths';
 
 // Forward reference to BusinessProfile is tricky if we want Strict separation.
 // But core shouldn't depend on business. Report depends on BusinessProfile?
@@ -64,6 +65,9 @@ export interface ActionItem {
     verificationCriteria?: string;
     optionalEvidence?: string;
     autoTags?: string[];
+    // CliftonStrengths fields
+    strengthsLever?: string;    // e.g. "Analytical + Command"
+    talentAction?: string;      // e.g. "Hire externally" | "Redeploy internally" | "Develop managers"
 }
 
 export interface PillarDriver {
@@ -75,6 +79,8 @@ export interface PillarDriver {
 export interface QuickScanAnalysis {
     insight: string;
     benefits: string[];
+    costAnalysis?: string;
+    impact?: string;
 }
 
 export interface PillarReport {
@@ -99,6 +105,9 @@ export interface PillarReport {
     fixLever: { action: string; metric: string; owner: string; effort: string; timeline: string };
     quickScanAnalysis?: QuickScanAnalysis;
     deepScanChapter?: DeepScanChapter;
+    // CliftonStrengths fields
+    strengthsFactor?: string;   // Root-cause from strengths lens
+    strengthsFix?: string;      // Strengths-based remediation
 }
 
 export interface InspectionItem {
@@ -174,6 +183,8 @@ export interface GeneratedReport {
     deepScanScores?: DeepScanScores;
     // profileContext: BusinessProfile; // Referenced linearly, will import in types.ts barrel
     profileContext?: BusinessProfile;
+    // CliftonStrengths data block
+    strengthsData?: ReportStrengthsData;
 }
 
 export interface LibraryItem {

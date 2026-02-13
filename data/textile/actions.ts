@@ -1,297 +1,135 @@
-import { ActionDefinition } from '../../types';
-
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
-
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
-  {
-    action_id: 'ACT_TX_OPS_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Defect Heatmap (Top 5 defects by operation)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['defects_per_100_pcs', 'fpy_percent'],
-    proof_required: ['defect_heatmap_board'],
-    impact_score: 9
+export const actions = {
+  // P1: Risk
+  defect_dictionary: {
+    title: 'Defect Dictionary',
+    description: 'One defect dictionary + photo standards (train once, use everywhere).',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_OPS_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['waste_not_costed'],
-    title: 'Cutting Yield Baseline (Marker efficiency + fabric loss)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['cutting_yield_percent'],
-    proof_required: ['cutting_baseline_sheet'],
-    impact_score: 8
+  golden_sample_governance: {
+    title: 'Golden Sample Governance',
+    description: 'Rule for where samples are stored, how referenced, and who signs changes.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_OPS_7_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['wip_pileup'],
-    title: 'WIP Clamp (Set max WIP per line)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['wip_level', 'lead_time'],
-    proof_required: ['wip_limits_posted'],
-    impact_score: 8
+  calibration_schedule: {
+    title: 'Calibration & Gauge Control',
+    description: 'Weekly checks + monthly audit routine for tools.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_OPS_7_04',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['changeover_black_hole'],
-    title: 'Changeover Checklist (Style switch standard)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['changeover_minutes'],
-    proof_required: ['changeover_checklist_logs'],
-    impact_score: 8
+  traceability_map: {
+    title: 'Traceability Map',
+    description: 'Traceability map + 30-minute drill script to isolate lots fast.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_OPS_7_05',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Rework Kill List (Top 3 causes + fix)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rework_hours'],
-    proof_required: ['rework_tracker'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_TX_OPS_7_06',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['planning_gap'],
-    title: 'Material Readiness Routine (Trims + fabric staging)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['idle_time'],
-    proof_required: ['staging_checklist'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_TX_LEAD_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_meeting_to_action'],
-    title: 'Daily Line Huddle (15 min: plan vs actual)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['action_closure_rate'],
-    proof_required: ['huddle_notes'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_TX_MONEY_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['zombie_costs'],
-    title: 'Overtime Audit (Why did we do overtime?)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['overtime_cost_percent'],
-    proof_required: ['overtime_reason_log'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_TX_MARKET_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['order_fulfillment_instability'],
-    title: 'Packing & Dispatch Flow Check (bottlenecks)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['otd_percent'],
-    proof_required: ['dispatch_bottleneck_list'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_TX_PEOPLE_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'People',
-    signal_tags: ['cross_function_breakdown'],
-    title: 'Attendance Shock Plan (backup operators list)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['attendance_rate'],
-    proof_required: ['backup_operator_roster'],
-    impact_score: 7
+  compliance_pack_template: {
+    title: 'Compliance Pack Template',
+    description: 'One-click tests, declarations, and trace documents.',
+    link: '#'
   },
 
-  // 30-Day Build Control
-  {
-    action_id: 'ACT_TX_MONEY_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'Style-Level Costing Model (true cost per garment)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['margin_per_style'],
-    proof_required: ['style_costing_sheet'],
-    impact_score: 9
+  // P2: Innovation
+  start_to_sew_gate: {
+    title: 'Start-to-Sew Gate',
+    description: 'Checklist: no cut until fabric test + trims + tech pack are approved.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_OPS_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'In-Line Quality Gates (not end-only)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['fpy_percent', 'defects_per_100_pcs'],
-    proof_required: ['inline_quality_sops'],
-    impact_score: 9
+  bom_lock_rule: {
+    title: 'BOM Lock + Change Log',
+    description: 'Stop silent changes; require a logged request for BOM updates.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_OPS_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['bottleneck_bounce'],
-    title: 'Line Balancing Program',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['line_efficiency_percent'],
-    proof_required: ['line_balance_chart'],
-    impact_score: 9
+  shade_band_sop: {
+    title: 'Shade Band Mapping',
+    description: 'Map fabric rolls to bundles to prevent shade shading.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_INNOV_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['pack_size_profit_blindspot'],
-    title: 'Marker/Pattern Optimization Routine',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['marker_efficiency_percent'],
-    proof_required: ['marker_library'],
-    impact_score: 8
+
+  // P3: Market
+  wip_update_template: {
+    title: 'Weekly WIP Update',
+    description: 'Proactive status template with early risk flags for customers.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_LEAD_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['management_by_memory'],
-    title: 'Supervisor Coaching Playbook',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['supervisor_performance_score'],
-    proof_required: ['coaching_logs'],
-    impact_score: 8
+  capacity_commit_rule: {
+    title: 'Capacity-to-Commit Rule',
+    description: 'Accept/decline logic based on real line capacity.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_MARKET_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['weak_proof_pack'],
-    title: 'Sampling Discipline (conversion targets + cost cap)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['sample_to_order_percent'],
-    proof_required: ['sample_tracker'],
-    impact_score: 8
+  customer_scorecard: {
+    title: 'Customer Profitability Scorecard',
+    description: 'Rank buyers by margin and strategic fit, not just volume.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_RISK_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['supplier_variance_risk'],
-    title: 'Supplier Quality Scorecard (fabric/trims)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['supplier_defect_rate'],
-    proof_required: ['supplier_scorecard'],
-    impact_score: 8
+
+  // P4: Leadership
+  standard_costing_sheet: {
+    title: 'Standard Costing Sheet',
+    description: 'SMV + yield + efficiency assumptions baked into every quote.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_RISK_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['compliance_blocker_risk'],
-    title: 'Compliance Vault + Audit Readiness System',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['audit_nonconformities'],
-    proof_required: ['compliance_vault'],
-    impact_score: 9
+  change_fee_schedule: {
+    title: 'Change Request Fee Schedule',
+    description: 'Standard prices for late changes to stop free work.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_PEOPLE_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'People',
-    signal_tags: ['training_gap'],
-    title: 'Skill Certification + Training Ladder',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['skill_certification_coverage'],
-    proof_required: ['training_plan'],
-    impact_score: 8
+  credit_policy_tiers: {
+    title: 'Credit & Deposit Policy',
+    description: 'Customer tiers defining deposit rules and credit limits.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_TX_INNOV_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['no_market_feedback_loop'],
-    title: 'Production Tracking Digitization (basic scan/board)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['real_time_visibility_rate'],
-    proof_required: ['production_dashboard'],
-    impact_score: 8
+
+  // P5: Operations
+  production_board: {
+    title: 'Daily Production Board',
+    description: 'Plan vs actual + reason codes for every variance.',
+    link: '#'
+  },
+  wip_limit_rules: {
+    title: 'WIP Limit Rules',
+    description: 'Max bundles between ops to stop pileups and hide defects.',
+    link: '#'
+  },
+  downtime_log: {
+    title: 'Downtime Log',
+    description: 'Track minutes by reason to find the top capacity killer.',
+    link: '#'
+  },
+  otif_root_cause: {
+    title: 'OTIF Root Cause Tree',
+    description: 'Drill down into why shipments were late (materials, plan, quality).',
+    link: '#'
+  },
+
+  // P6: Money
+  loss_dashboard: {
+    title: 'Daily Loss Dashboard',
+    description: '$ Rework + $ Overtime + $ Scrap visible daily.',
+    link: '#'
+  },
+  wip_aging_report: {
+    title: 'WIP Valuation & Aging',
+    description: 'Identify slow-moving cash trapped on the floor.',
+    link: '#'
+  },
+  variance_review: {
+    title: 'Monthly Variance Agenda',
+    description: 'Review planned vs actual cost with named owners.',
+    link: '#'
+  },
+
+  // P7: People
+  skill_matrix: {
+    title: 'Skill Matrix',
+    description: 'Map operator skills to ops to find bottlenecks and gaps.',
+    link: '#'
+  },
+  daily_huddle_script: {
+    title: 'Daily Huddle Script',
+    description: 'Safety + Quality + Delivery + Blockers in 10 minutes.',
+    link: '#'
+  },
+  near_miss_workflow: {
+    title: 'Near Miss Reporting',
+    description: 'Simple flow to report and close safety risks in 48 hours.',
+    link: '#'
   }
-];
+};

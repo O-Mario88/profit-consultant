@@ -13,77 +13,77 @@ const baseRows: Array<{
   cost: string;
   cliffhanger: string;
 }> = [
-  {
-    pillar: 'Operations',
-    leak: 'Yield Leak, Rework Tax, Downtime Bleed, and Changeover Chaos are reducing sellable output and forcing expensive recovery work.',
-    strength: 'Operations run on measured control: OEE, yield, scrap, downtime, and changeover performance are visible and acted on daily.',
-    hook: 'Yield Leak',
-    kpi: 'OEE %, Yield %, Scrap %, Rework %, Downtime hours, Changeover minutes',
-    signal_tags: ['yield_bleed', 'downtime_drain', 'changeover_black_hole'],
-    cost: 'Raw materials are converted into waste, capacity is lost to stoppages, and quality failures trigger avoidable rework.',
-    cliffhanger: 'Fix Mode installs loss mapping, changeover standards, and first-pass quality controls so capacity rises without new equipment.'
-  },
-  {
-    pillar: 'Money',
-    leak: 'COGS Blindness, Shrinkage Tax, and Discount Addiction are creating Margin Mirage even when volume looks strong.',
-    strength: 'Money control is SKU-level: true COGS, margin, working capital, and cash conversion are managed intentionally.',
-    hook: 'COGS Blindness',
-    kpi: 'COGS per unit, Gross margin % by SKU, Inventory turns, DSO, Shrinkage cost, Overtime cost %',
-    signal_tags: ['costing_gap', 'shrinkage_leak', 'discounting_leak'],
-    cost: 'Volume moves but cash and margin are trapped in hidden unit costs, expiry loss, and weak pricing discipline.',
-    cliffhanger: 'Fix Mode builds a cost-per-unit engine linked to wastage and promo controls so growth stops eroding profit.'
-  },
-  {
-    pillar: 'Market',
-    leak: 'Shelf-Trust Risk and Out-of-Stock Penalty are weakening repeat orders while distribution dependence increases pricing pressure.',
-    strength: 'Market performance is predictable: service levels are stable, complaints close quickly, and repeat buying is protected by quality consistency.',
-    hook: 'Shelf-Trust Risk',
-    kpi: 'OTIF %, Fill rate %, Repeat purchase %, Complaint rate, Return rate, Promo margin impact',
-    signal_tags: ['order_fulfillment_instability', 'complaint_handling_gap', 'channel_dependency'],
-    cost: 'Lost shelf presence, reduced reorder confidence, and weaker negotiating power with distributors and retailers.',
-    cliffhanger: 'Fix Mode installs service-level control and complaint-to-correction loops that rebuild trust and repeat demand.'
-  },
-  {
-    pillar: 'Leadership',
-    leak: 'Firefighting Factory and KPI Theater are allowing recurring losses to survive because ownership and closure are weak.',
-    strength: 'Leadership runs with daily control boards, clear line ownership, and root-cause closure discipline.',
-    hook: 'Firefighting Factory',
-    kpi: 'Action closure %, KPI review compliance %, Root-cause completion %, Repeat-issue recurrence %, Ownership completeness %',
-    signal_tags: ['no_kpi_ownership', 'no_meeting_to_action', 'no_accountability_loop'],
-    cost: 'The same defects and delays recur, creating unstable weeks, extra overtime, and decision lag.',
-    cliffhanger: 'Fix Mode assigns owners and enforces weekly closure on the top recurring loss drivers.'
-  },
-  {
-    pillar: 'Innovation',
-    leak: 'Product Stagnation Risk and Process Innovation Freeze are compressing margin while competitors evolve product/pack mix.',
-    strength: 'Innovation is disciplined: trials are validated, SKU mix is optimized, and process improvements are measured for ROI.',
-    hook: 'Value-Add Blindspot',
-    kpi: 'Trial success %, Time-to-launch, SKU margin mix %, Process improvements/month, Savings captured',
-    signal_tags: ['no_product_testing_rhythm', 'sku_complexity_tax', 'pack_size_profit_blindspot'],
-    cost: 'Low-margin SKUs consume capacity and premium opportunities are missed in packaging, formulation, and mix design.',
-    cliffhanger: 'Fix Mode creates a 30-day product and process sprint tied to margin, sell-through, and repeat demand.'
-  },
-  {
-    pillar: 'Risk',
-    leak: 'Food Safety Time Bomb and Recall Nightmare exposure rise when traceability, hygiene discipline, and supplier controls are inconsistent.',
-    strength: 'Risk systems are audit-ready: traceability is fast, hygiene is controlled, and supplier quality gates protect output.',
-    hook: 'Recall Nightmare',
-    kpi: 'Traceability pass %, Audit nonconformities #, Supplier defect %, Hygiene compliance %, Recall drill score',
-    signal_tags: ['traceability_gap', 'hygiene_drift', 'supplier_variance_risk'],
-    cost: 'A single incident can trigger recalls, distribution loss, and long-term brand damage.',
-    cliffhanger: 'Fix Mode installs batch discipline, supplier controls, and recall drills so safety is provable under pressure.'
-  },
-  {
-    pillar: 'People',
-    leak: 'Operator Skill Gap, Shift Handover Failure, and Fatigue Defect Tax are creating quality swings and hidden rework costs.',
-    strength: 'People systems are stable: training, competency checks, handover standards, and coaching keep output consistent across shifts.',
-    hook: 'Shift Handover Failure',
-    kpi: 'Training hours/operator, Certification coverage %, Handover compliance %, Absenteeism %, Turnover %',
-    signal_tags: ['training_gap', 'weak_shift_handover', 'cross_function_breakdown'],
-    cost: 'Quality depends on who is on shift, defects are repeated, and overtime fatigue multiplies mistakes.',
-    cliffhanger: 'Fix Mode installs competency and handover discipline so performance is system-led, not person-led.'
-  }
-];
+    {
+      pillar: 'Risk', // P1: Food Safety, Compliance & Brand Trust
+      leak: 'Silent Recall Risk and Allergen Roulette are creating hidden liability that audit certificates mask but do not fix.',
+      strength: 'Risk is controlled by system: HACCP is alive, traceability is instant, and branding/label controls are rigorous.',
+      hook: 'Silent Recall Risk',
+      kpi: 'CCP compliance %, Mock recall time, First-pass label verification %, Audit findings closure',
+      signal_tags: ['silent_recall_risk', 'allergen_roulette', 'traceability_fog', 'audit_panic_tax'],
+      cost: 'One recall or major withdrawal can wipe out a year of profit and destroy retail trust permanently.',
+      cliffhanger: 'Deep Scan will build a "recall-ready" defense: simple, verified controls that survive any audit.'
+    },
+    {
+      pillar: 'Innovation', // P2: Product Portfolio, Differentiation & Pricing Power
+      leak: 'SKU Sprawl and Promo Profit Trap are diluting margins, while Complexity Tax eats capacity silently.',
+      strength: 'Portfolio is disciplined: winners are protected, complexity is capped, and NPI follows strict margin gates.',
+      hook: 'SKU Sprawl',
+      kpi: 'Gross margin by SKU, Complexity turnover, NPI success rate, Promo ROI',
+      signal_tags: ['sku_sprawl', 'promo_profit_trap', 'packaging_bleed', 'complexity_tax'],
+      cost: 'You are manufacturing variety instead of profit—changeovers and slow-movers are killing efficiency.',
+      cliffhanger: 'Deep Scan will rationalize the tail and install a "margin-first" gate for all new products.'
+    },
+    {
+      pillar: 'Market', // P3: Marketing & Demand Engine
+      leak: 'Forecast Fantasy and Promo Whiplash are causing Stockout Tax and Overstock Rot in equal measure.',
+      strength: 'Demand is signal-driven: sales and ops align on one number, and promotions are capacity-checked before launch.',
+      hook: 'Forecast Fantasy',
+      kpi: 'Forecast accuracy, Stockout rate, Promo uplift vs plan, Obsolescence cost',
+      signal_tags: ['forecast_fantasy', 'promo_whiplash', 'stockout_tax', 'overstock_rot'],
+      cost: 'Operations is always reacting to surprise orders or idle time, destroying labor recovery and service levels.',
+      cliffhanger: 'Deep Scan will install a simple S&OP rhythm to align trusted demand with realistic supply.'
+    },
+    {
+      pillar: 'Leadership', // P4: Sales, Trade Terms & Channel Discipline
+      leak: 'Big Customer Squeeze and Trade Spend Black Hole are allowing volume growth to mask margin erosion.',
+      strength: 'Commercial leadership is disciplined: terms are enforced, leakage is tracked, and unprofitable volume is renegotiated.',
+      hook: 'Trade Spend Black Hole',
+      kpi: 'Net margin by customer, Trade spend %, Chargeback rate, OTIF penalty cost',
+      signal_tags: ['trade_spend_black_hole', 'chargeback_creep', 'price_realization_slip', 'term_stretch_trap'],
+      cost: 'You are acting as a bank for your customers while absorbed costs (penalties, terms, returns) eat the bottom line.',
+      cliffhanger: 'Deep Scan will expose customer-level profitability and arm you to renegotiate leaky terms.'
+    },
+    {
+      pillar: 'Operations', // P5: Production, Quality Execution
+      leak: 'Yield Leakage and Changeover Tax are bleeding cash, while Downtime Drain kills capacity recovery.',
+      strength: 'Operations runs on rhythm: changeovers are staged, yield is locked, and flow is predictable.',
+      hook: 'Yield Leakage',
+      kpi: 'OEE, Yield %, Changeover time, Schedule adherence',
+      signal_tags: ['yield_leakage', 'changeover_tax', 'downtime_drain', 'scrap_cascade'],
+      cost: 'Valuable ingredients are leaving as waste, and expensive lines sit idle during chaotic changeovers.',
+      cliffhanger: 'Deep Scan will install "pit-crew" changeovers and yield clamps to recover lost margin immediately.'
+    },
+    {
+      pillar: 'Money', // P6: Finance & Profit Control
+      leak: 'COGS Fog and Variance Blindness mean you are pricing based on standard costs that do not match reality.',
+      strength: 'Finance is granular: you know true cost-to-serve, and variance analysis drives weekly operational fixes.',
+      hook: 'COGS Fog',
+      kpi: 'Material usage variance, Labor efficiency variance, Waste cost %, Cash conversion cycle',
+      signal_tags: ['cogs_fog', 'variance_blindness', 'waste_tax', 'busy_but_broke'],
+      cost: 'You are selling products you think are profitable, but actual production variance is erasing the margin.',
+      cliffhanger: 'Deep Scan will connect finance to the floor: weekly variance visibility that drives action.'
+    },
+    {
+      pillar: 'People', // P7: People & Culture
+      leak: 'Hero Dependency and Shift-to-Shift Chaos mean quality depends on who is working, not on the standard.',
+      strength: 'Culture is standard-led: training is verified, handovers are rigorous, and "stop-and-fix" is rewarded.',
+      hook: 'Hero Dependency',
+      kpi: 'Training verification %, Turnover rate, Near-miss reporting, Shift output variance',
+      signal_tags: ['hero_dependency', 'shift_to_shift_chaos', 'training_theater', 'turnover_drag'],
+      cost: 'Inconsistency creates scrap and rework, forcing your best people to burn out fixing preventable problems.',
+      cliffhanger: 'Deep Scan will replace "heroics" with reliable standards and role-based competency checks.'
+    }
+  ];
 
 const species1 = 'Bakery / Flour / Grain-based processing';
 const species2 = 'Dairy processing (milk, yoghurt, cheese)';
@@ -179,63 +179,64 @@ const missionBriefRows: LibraryItem[] = [
   })
 ];
 
-const generatedRows: LibraryItem[] = baseRows.flatMap((row) => {
-  const idBase = row.pillar.toUpperCase();
-  return [
-    {
-      id: `LIB_FNB_${idBase}_LEAK`,
-      industry: 'manufacturing',
-      line_type: ['all'],
-      pillar: row.pillar,
-      signal_tags: row.signal_tags,
-      severity_fit: ['Critical', 'Watch', 'Emergency'],
-      business_size_fit: allSizes,
-      text: row.leak,
-      type: 'leak',
-      hook_text: row.hook,
-      cost_text: row.cost,
-      cliffhanger_text: row.cliffhanger,
-      kpi_text: row.kpi
-    },
-    {
-      id: `LIB_FNB_${idBase}_STR`,
-      industry: 'manufacturing',
-      line_type: ['all'],
-      pillar: row.pillar,
-      signal_tags: row.signal_tags,
-      severity_fit: ['Stable', 'Strong'],
-      business_size_fit: allSizes,
-      text: row.strength,
-      type: 'strength',
-      hook_text: row.hook,
-      kpi_text: row.kpi
-    },
-    {
-      id: `LIB_FNB_${idBase}_HOOK`,
-      industry: 'manufacturing',
-      line_type: ['all'],
-      pillar: row.pillar,
-      signal_tags: [],
-      severity_fit: allSeverity,
-      business_size_fit: allSizes,
-      text: row.hook,
-      type: 'hook',
-      hook_text: row.hook,
-      kpi_text: row.kpi
-    },
-    {
-      id: `LIB_FNB_${idBase}_KPI`,
-      industry: 'manufacturing',
-      line_type: ['all'],
-      pillar: row.pillar,
-      signal_tags: [],
-      severity_fit: allSeverity,
-      business_size_fit: allSizes,
-      text: row.kpi,
-      type: 'kpi',
-      kpi_text: row.kpi
-    }
-  ];
-});
-
-export const library: LibraryItem[] = [...generatedRows, ...missionBriefRows];
+export const library: LibraryItem[] = [
+  ...baseRows.flatMap((row) => {
+    const idBase = row.pillar.toUpperCase();
+    return [
+      {
+        id: `LIB_FNB_${idBase}_LEAK`,
+        industry: 'manufacturing',
+        line_type: ['all'],
+        pillar: row.pillar,
+        signal_tags: row.signal_tags,
+        severity_fit: ['Critical', 'Watch', 'Emergency'],
+        business_size_fit: allSizes,
+        text: row.leak,
+        type: 'leak',
+        hook_text: row.hook,
+        cost_text: row.cost,
+        cliffhanger_text: row.cliffhanger,
+        kpi_text: row.kpi
+      },
+      {
+        id: `LIB_FNB_${idBase}_STR`,
+        industry: 'manufacturing',
+        line_type: ['all'],
+        pillar: row.pillar,
+        signal_tags: row.signal_tags,
+        severity_fit: ['Stable', 'Strong'],
+        business_size_fit: allSizes,
+        text: row.strength,
+        type: 'strength',
+        hook_text: row.hook,
+        kpi_text: row.kpi
+      },
+      {
+        id: `LIB_FNB_${idBase}_HOOK`,
+        industry: 'manufacturing',
+        line_type: ['all'],
+        pillar: row.pillar,
+        signal_tags: [],
+        severity_fit: allSeverity,
+        business_size_fit: allSizes,
+        text: row.hook,
+        type: 'hook',
+        hook_text: row.hook,
+        kpi_text: row.kpi
+      },
+      {
+        id: `LIB_FNB_${idBase}_KPI`,
+        industry: 'manufacturing',
+        line_type: ['all'],
+        pillar: row.pillar,
+        signal_tags: [],
+        severity_fit: allSeverity,
+        business_size_fit: allSizes,
+        text: row.kpi,
+        type: 'kpi',
+        kpi_text: row.kpi
+      }
+    ] as LibraryItem[];
+  }),
+  ...missionBriefRows
+];

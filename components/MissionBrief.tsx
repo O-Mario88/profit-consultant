@@ -7,6 +7,9 @@ import {
 import {
    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from 'recharts';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { RichTextRenderer } from './RichTextRenderer';
 
 export interface MissionBriefProps {
    report: GeneratedReport;
@@ -16,6 +19,7 @@ export interface MissionBriefProps {
 }
 
 const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocked, onStartDeepScan }) => {
+   const reportRef = React.useRef<HTMLDivElement>(null);
 
    const handleUnlockClick = () => {
       onUnlock({
@@ -27,8 +31,33 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
       });
    };
 
-   const handleDownloadPDF = () => {
-      window.print();
+   const handleDownloadPDF = async () => {
+      if (!reportRef.current) return;
+
+      try {
+         const canvas = await html2canvas(reportRef.current, {
+            scale: 2, // Higher quality
+            useCORS: true, // Handle external images if any
+            backgroundColor: '#0f172a', // Match slate-900
+            logging: false
+         });
+
+         const imgData = canvas.toDataURL('image/png');
+         const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+         });
+
+         const imgWidth = 210; // A4 width in mm
+         const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+         pdf.save(`${report.profileContext?.businessName || 'Business'}_QuickScan_Report.pdf`);
+      } catch (err) {
+         console.error("PDF Generation failed:", err);
+         alert("Failed to generate PDF. Please try again.");
+      }
    };
 
    const getPillarIcon = (name: string) => {
@@ -53,13 +82,16 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
    const sortedPillars = [...report.pillars].sort((a, b) => b.riskScore - a.riskScore);
 
    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-sans text-white print:bg-white print:text-black">
+      <div ref={reportRef} className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-sans text-white print:bg-white print:text-black">
 
          {/* Sticky Header */}
          <div className="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex justify-between items-center print:hidden">
             <div>
                <h1 className="text-lg font-bold text-white">Quick Scan Report</h1>
-               <p className="text-xs text-slate-400">{report.profileContext?.businessName || 'Business Assessment'} • {report.date}</p>
+               <div className="flex items-center gap-2">
+                  <p className="text-xs text-slate-400">{report.profileContext?.businessName || 'Business Assessment'} • {report.date}</p>
+                  <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-slate-300">Powered by OpenAI</span>
+               </div>
             </div>
             <div className="flex gap-3">
                {isUnlocked && (
@@ -88,11 +120,11 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
                   <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
                      <div className="flex-1 space-y-6">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-500/20 border border-brand-500/30 rounded-full text-brand-300 text-xs font-bold uppercase tracking-widest">
-                           <Activity className="w-3.5 h-3.5" /> Quick Scan Results
+                           <Activity className="w-3.5 h-3.5" /> Quick Scan Report
                         </div>
                         <h2 className="text-4xl md:text-5xl font-black leading-tight">
-                           Business Health<br />
-                           <span className="bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent">Snapshot</span>
+                           {report.profileContext?.businessName || 'Business'} Health<br />
+                           <span className="bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent">Preliminary Report</span>
                         </h2>
                         <p className="text-slate-300 text-lg leading-relaxed max-w-xl">
                            We scanned {report.pillars.length} profit pillars and identified <span className="text-white font-bold">{sortedPillars.filter(p => p.riskScore > 50).length} critical leaks</span> in your business operations.
@@ -147,9 +179,9 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
                                     <p className="text-[10px] font-bold uppercase text-slate-400">{pillar.band}</p>
                                  </div>
                               </div>
-                              <p className="text-sm text-slate-300 leading-relaxed line-clamp-3">
-                                 {pillar.quickScanAnalysis?.insight || pillar.hiddenCost}
-                              </p>
+                              <div className="text-sm text-slate-300 leading-relaxed">
+                                 <RichTextRenderer text={pillar.quickScanAnalysis?.insight || pillar.hiddenCost} theme="dark" size="sm" />
+                              </div>
                               <div className="mt-4 flex items-center gap-2 text-xs text-red-400 font-medium">
                                  <TrendingUp className="w-3.5 h-3.5" />
                                  {pillar.profitConsequence?.[0] || 'Directly impacts margin'}
@@ -232,7 +264,7 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
                            Unlock Now <span className="text-brand-200 font-normal">— $19</span>
                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
-                        <p className="text-[11px] text-slate-500 mt-4">One-time payment • Instant access • PDF download included</p>
+                        <p className="text-[11px] text-slate-500 mt-4">One-time payment • Instant access • PDF download included • Powered by OpenAI</p>
                      </div>
                   </div>
                </div>
@@ -271,9 +303,9 @@ const MissionBrief: React.FC<MissionBriefProps> = ({ report, onUnlock, isUnlocke
                                     ></div>
                                  </div>
 
-                                 <p className="text-sm text-slate-300 leading-relaxed mb-3">
-                                    {pillar.quickScanAnalysis?.insight || pillar.hiddenCost}
-                                 </p>
+                                 <div className="text-sm text-slate-300 leading-relaxed mb-3">
+                                    <RichTextRenderer text={pillar.quickScanAnalysis?.insight || pillar.hiddenCost} theme="dark" size="sm" />
+                                 </div>
 
                                  <div className="flex items-center gap-2 text-xs font-bold">
                                     <span className={`px-2 py-0.5 rounded ${pillar.riskScore > 60 ? 'bg-red-500/20 text-red-300' : pillar.riskScore > 40 ? 'bg-amber-500/20 text-amber-300' : 'bg-green-500/20 text-green-300'}`}>

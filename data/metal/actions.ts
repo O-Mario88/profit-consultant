@@ -1,297 +1,186 @@
-import { ActionDefinition } from '../../types';
 
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
+import { SignalTag } from '../../types';
 
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
-  {
-    action_id: 'ACT_METAL_OPS_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['no_standard_work'],
-    title: 'Drawing/Spec Lock Rule (No fabrication from WhatsApp only)',
+export const actions = {
+  // P1: Risk
+  fit_up_checklist: {
+    title: 'Fit-up & Weld Checklist',
+    description: 'Enforce a single FPFT checklist at fit-up + final stage—no "ship and hope."',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dispute_rate'],
-    proof_required: ['signed_spec_sheet'],
-    impact_score: 9
+    pillar: 'Risk',
+    signal_tags: ['weld_roulette', 'inspection_surprise_tax'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_OPS_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['waste_not_costed'],
-    title: 'Scrap & Rework Baseline (Top 5 causes)',
+  weld_kill_list: {
+    title: 'Weld Defect Kill List',
+    description: 'Choose top 3 recurring weld issues; tie them to one procedure + one inspection point.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['scrap_rate', 'rework_hours'],
-    proof_required: ['scrap_log'],
-    impact_score: 9
+    pillar: 'Risk',
+    signal_tags: ['rework_factory'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_OPS_7_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['measurement_blindspot'],
-    title: 'Measurement Verification System (2-person check before cutting)',
+  hot_work_permit: {
+    title: 'Hot Work Permit System',
+    description: 'Implement permits/fire watch for high-risk areas; remove combustibles.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['refabrication_incidents'],
-    proof_required: ['measurement_checklist'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_OPS_7_04',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['inventory_blindspot'],
-    title: 'Consumables Staging Checklist',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['consumable_stockout_incidents'],
-    proof_required: ['staging_sheet'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_OPS_7_05',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['flow_instability'],
-    title: 'Fit-Up Standard (tack sequence + clamp rules)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['distortion_defects'],
-    proof_required: ['fitup_sop'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_OPS_7_06',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['bottleneck_bounce'],
-    title: 'Bottleneck Machine Plan (schedule + preventive maintenance)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['idle_payroll_leak'],
-    proof_required: ['machine_schedule'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_OPS_7_07',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'QC Gates (fit-up -> weld -> finish)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['first_pass_quality'],
-    proof_required: ['qc_stamps'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_METAL_MONEY_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['cashflow_visibility_gap'],
-    title: 'Deposit Policy Enforcement (minimum to start)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['deposit_collection_rate'],
-    proof_required: ['deposit_policy'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_METAL_MONEY_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['pricing_margin_blindspot'],
-    title: 'Change Order Form (scope creep pricing)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['scope_revenue_captured'],
-    proof_required: ['signed_change_orders'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_LEAD_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_meeting_to_action'],
-    title: 'Daily 15-min Job Board (Plan vs Actual)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['on_time_completion'],
-    proof_required: ['job_board_photos'],
-    impact_score: 7
+    pillar: 'Risk',
+    signal_tags: ['hot_work_risk_debt', 'fire_risk_drift'] as SignalTag[]
   },
 
-  // 30-Day Build Control
-  {
-    action_id: 'ACT_METAL_MONEY_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'Job Costing Engine (materials + hours + consumables + overhead + margin)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['quote_accuracy', 'profit_per_job'],
-    proof_required: ['costing_template'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_METAL_OPS_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['no_standard_work'],
-    title: 'Standard Job Cards + Templates for Repeat Work',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['cycle_time'],
-    proof_required: ['job_card_library'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_INNOV_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  // P2: Innovation
+  readiness_gate: {
+    title: 'Job Readiness Gate',
+    description: 'No cutting/welding without complete pack (drawings, BOM, WPS).',
+    link: '#',
+    days: 7,
     pillar: 'Innovation',
-    signal_tags: ['sku_complexity_tax'],
-    title: 'Jigs & Fixtures Program (Top 10 repeat components)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['scrap_reduction', 'speed_improvement'],
-    proof_required: ['jig_set'],
-    impact_score: 9
+    signal_tags: ['job_readiness_debt', 'print_ambiguity_tax'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_PEOPLE_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'People',
-    signal_tags: ['training_gap'],
-    title: 'Weld Quality Standard (internal skill test + SOP)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rework_reduction'],
-    proof_required: ['weld_test_records'],
-    impact_score: 9
+  drawing_checklist: {
+    title: 'Drawing Review Checklist',
+    description: 'Standardize a drawing checklist (tolerances, weld symbols, finish, inspection notes).',
+    link: '#',
+    days: 7,
+    pillar: 'Innovation',
+    signal_tags: ['spec_drift'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_MONEY_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['inventory_blindspot'],
-    title: 'Inventory Min/Max for Steel + Consumables',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['stockout_reduction'],
-    proof_required: ['reorder_rules'],
-    impact_score: 8
+  time_library_starter: {
+    title: 'Operation Time Library',
+    description: 'Start a simple time library for the top 10 operations (cut/weld/grind).',
+    link: '#',
+    days: 7,
+    pillar: 'Innovation',
+    signal_tags: ['quote_optimism_trap'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_LEAD_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_kpi_ownership'],
-    title: 'Capacity Planning Gate (jobs accepted vs shop capacity)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['overtime_reduction'],
-    proof_required: ['capacity_sheet'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_METAL_MARKET_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+
+  // P3: Market
+  follow_up_cadence: {
+    title: 'Lead Follow-up Cadence',
+    description: 'Implement a follow-up cadence (stop losing "warm" leads).',
+    link: '#',
+    days: 7,
     pillar: 'Market',
-    signal_tags: ['weak_proof_pack'],
-    title: 'Portfolio + Proof Pack (photos, specs, testimonials)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['quote_to_deposit_conversion'],
-    proof_required: ['portfolio_pack'],
-    impact_score: 8
+    signal_tags: ['lead_leak', 'communication_silence_cost'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_RISK_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['contract_gap'],
-    title: 'Contract + Change Clause System',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dispute_reduction'],
-    proof_required: ['contract_templates'],
-    impact_score: 8
+  quote_scope_shield: {
+    title: 'Quote Scope Shield',
+    description: 'Standardize quotes with scope boundaries and acceptance criteria.',
+    link: '#',
+    days: 7,
+    pillar: 'Market',
+    signal_tags: ['scope_creep_tax', 'quote_fog'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_RISK_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['hygiene_drift'],
-    title: 'Safety System (PPE, fire, gas, grinder rules + audits)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['incident_reduction'],
-    proof_required: ['safety_audits'],
-    impact_score: 9
+  referral_system: {
+    title: 'Post-Delivery Referral',
+    description: 'Launch post-delivery referral/testimonial capture.',
+    link: '#',
+    days: 7,
+    pillar: 'Market',
+    signal_tags: ['no_proof_selling'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_METAL_INNOV_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['no_market_feedback_loop'],
-    title: 'Digital Tracking (job status, deadlines, payments)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['visibility_rate', 'delay_reduction'],
-    proof_required: ['tracking_dashboard'],
-    impact_score: 8
+
+  // P4: Leadership
+  margin_floor: {
+    title: 'Margin Floor Rule',
+    description: 'Set a margin floor and enforce it on new quotes.',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['busy_but_broke_pricing', 'discount_drift'] as SignalTag[]
+  },
+  change_order_fee: {
+    title: 'Change Order Fee Trigger',
+    description: 'Introduce standard change-order fees for the top 5 common changes.',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['free_change_syndrome'] as SignalTag[]
+  },
+  deposit_rule: {
+    title: 'Procurement Deposit Rule',
+    description: 'Tie deposits to procurement (no deposit, no buying).',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['deposit_weakness_penalty'] as SignalTag[]
+  },
+
+  // P5: Operations
+  daily_huddle: {
+    title: 'Daily Plan Huddle',
+    description: 'Run daily 10-minute plan vs actual huddles with reason codes.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['rush_job_chaos', 'bottleneck_choke'] as SignalTag[]
+  },
+  wip_cap: {
+    title: 'WIP Limit Cap',
+    description: 'Cap WIP—stop starting new jobs until bottleneck clears.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['wip_swamp', 'search_and_move_tax'] as SignalTag[]
+  },
+  quick_pm: {
+    title: 'Quick PM Checks',
+    description: 'Implement quick PM checks for top failure machines/tools.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['downtime_theft'] as SignalTag[]
+  },
+
+  // P6: Money
+  cycle_count: {
+    title: 'Stock Cycle Count',
+    description: 'Cycle-count top 30 fast movers and set min/max.',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['stockout_stall', 'shrinkage_shadow_loss'] as SignalTag[]
+  },
+  job_closeout: {
+    title: 'Job Costing Closeout',
+    description: 'Close out last 5 jobs with actual cost and margin.',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['profit_blind_spot', 'ghost_margin'] as SignalTag[]
+  },
+  wip_aging: {
+    title: 'WIP Aging List',
+    description: 'Build WIP aging list; prioritize oldest to cash first.',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['wip_money_pit', 'cash_locked_in_steel'] as SignalTag[]
+  },
+
+  // P7: People
+  skill_matrix: {
+    title: 'Bottleneck Skill Matrix',
+    description: 'Build a skill matrix for the bottleneck station; train a backup.',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['skill_bottleneck', 'supervisor_lottery'] as SignalTag[]
+  },
+  s5_sprint: {
+    title: '5S Sprint',
+    description: 'Run a 5S sprint on the highest-traffic area.',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['clutter_drag', 'near_miss_silence'] as SignalTag[]
+  },
+  near_miss: {
+    title: 'Near Miss Reporting',
+    description: 'Start near miss reporting with 48-hour closure targets.',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['near_miss_silence', 'fire_risk_drift'] as SignalTag[]
   }
-];
+};

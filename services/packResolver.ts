@@ -3,6 +3,8 @@ import { AGRO_PACK } from "../data/agro";
 import { AGRI_PACK } from "../data/agri";
 import { MINING_PACK } from "../data/mining";
 import { OIL_GAS_PACK } from "../data/oilGas";
+import { ARTISANAL_MINING_PACK } from "../data/artisanal_mining";
+import { MINING_SERVICES_PACK } from "../data/mining_services";
 import { FNB_PACK } from "../data/fnb";
 import { TEXTILE_PACK } from "../data/textile";
 import { FURNITURE_PACK } from "../data/furniture";
@@ -22,6 +24,15 @@ import { PIGGERY_PACK } from "../data/piggery";
 import { POULTRY_PACK } from "../data/poultry";
 import { DAIRY_PACK } from "../data/dairy";
 import { FARM_MACHINERY_PACK } from '../data/farm_machinery';
+import { PRODUCE_AGGREGATION_PACK } from '../data/produce_aggregation';
+import { EXPORT_PRODUCE_PACK } from '../data/export_produce';
+import { STORAGE_WAREHOUSING_PACK } from '../data/storage_warehousing';
+import { FORESTRY_PACK } from '../data/forestry';
+import { BAKERY_PACK } from "../data/bakery";
+import { BEVERAGES_PACK } from "../data/beverages";
+import { SNACKS_PACK } from "../data/snacks";
+import { BUTCHERY_PACK } from "../data/butchery";
+import { CHEMICAL_PACK } from "../data/chemical";
 import {
     FNB_SUB_INDUSTRIES,
     TEXTILE_SUB_INDUSTRIES,
@@ -31,6 +42,7 @@ import {
     SOAP_SUB_INDUSTRIES,
     BRICKS_SUB_INDUSTRIES,
     WATER_SUB_INDUSTRIES,
+    CHEMICAL_SUB_INDUSTRIES,
     ASSEMBLY_SUB_INDUSTRIES
 } from '../data/manufacturingSubIndustries';
 import {
@@ -51,6 +63,7 @@ export interface IndustryFlags {
     isSoapManufacturing: boolean;
     isBricksManufacturing: boolean;
     isWaterManufacturing: boolean;
+    isChemicalManufacturing: boolean;
     isFashionRetail: boolean;
     isHardwareRetail: boolean;
     isElectronicsRetail: boolean;
@@ -65,6 +78,11 @@ export interface IndustryFlags {
     isFarmMachinery: boolean;
     isCropFarming: boolean;
     isCattle: boolean;
+    isProduceAggregation: boolean;
+    isExportProduce: boolean;
+    isStorageWarehousing: boolean;
+    isForestry: boolean;
+    isArtisanalMining: boolean;
 }
 
 export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags => ({
@@ -76,6 +94,7 @@ export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags =>
     isSoapManufacturing: profile.industry === 'manufacturing' && SOAP_SUB_INDUSTRIES.includes(profile.subIndustry),
     isBricksManufacturing: profile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(profile.subIndustry),
     isWaterManufacturing: profile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(profile.subIndustry),
+    isChemicalManufacturing: profile.industry === 'manufacturing' && CHEMICAL_SUB_INDUSTRIES.includes(profile.subIndustry),
     isFashionRetail: profile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(profile.subIndustry),
     isHardwareRetail: profile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(profile.subIndustry),
     isElectronicsRetail: profile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry),
@@ -101,7 +120,21 @@ export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags =>
     isPiggery: profile.industry === 'agriculture' && profile.subIndustry.toLowerCase().includes('pig'),
     isPoultry: profile.industry === 'agriculture' && profile.subIndustry.toLowerCase().includes('poultry'),
     isDairy: profile.industry === 'agriculture' && (profile.subIndustry.toLowerCase().includes('dairy') || profile.subIndustry.toLowerCase().includes('milk')),
+    isProduceAggregation: profile.industry === 'agriculture' &&
+        profile.subIndustry === 'Produce aggregation & trading',
+    isExportProduce: profile.industry === 'agriculture' &&
+        profile.subIndustry === 'Export / cross-border produce trade',
+    isStorageWarehousing: profile.industry === 'agriculture' &&
+        profile.subIndustry.startsWith('Storage'),
+    isForestry: profile.industry === 'agriculture' &&
+        profile.subIndustry === 'Forestry & timber production',
+    isArtisanalMining: profile.industry === 'mining' && (
+        profile.subIndustry.toLowerCase().includes('artisanal') ||
+        profile.subIndustry.toLowerCase().includes('asm')
+    )
 });
+
+import { SMALL_RUMINANTS_PACK } from "../data/small_ruminants";
 
 const PACK_BY_BASE_INDUSTRY: Record<string, { questions: QuestionDefinition[]; library: any[]; actions: any }> = {
     agri_input: AGRI_PACK,
@@ -116,7 +149,42 @@ export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFla
     if (flags.isPiggery) return PIGGERY_PACK;
     if (flags.isPoultry) return POULTRY_PACK;
     if (flags.isDairy) return DAIRY_PACK;
-    if (flags.isFnbManufacturing) return FNB_PACK;
+    if (flags.isProduceAggregation) return PRODUCE_AGGREGATION_PACK;
+    if (flags.isExportProduce) return EXPORT_PRODUCE_PACK;
+    if (flags.isStorageWarehousing) return STORAGE_WAREHOUSING_PACK;
+    if (flags.isForestry) return FORESTRY_PACK;
+    if (flags.isForestry) return FORESTRY_PACK;
+
+    // MINING
+    if (profile.industry === 'mining') {
+        if (flags.isArtisanalMining) return ARTISANAL_MINING_PACK;
+        const sub = profile.subIndustry.toLowerCase();
+        if (sub.includes('services') || sub.includes('contract') || sub.includes('supplies') || sub.includes('drilling')) {
+            return MINING_SERVICES_PACK;
+        }
+    }
+
+    if (flags.isCattle) {
+        // If there's a specific Cattle pack, return it. Otherwise fall through or use AGRO_PACK/generic.
+        // Assuming there isn't a dedicated imported CATTLE_PACK variable in this file context yet,
+        // or it needs to be imported. Existing code didn't show it imported.
+        // Reviewing imports... I see no CATTLE_PACK import.
+        // But the user task is for Small Ruminants.
+    }
+    // Check for Goat/Sheep
+    if (profile.subIndustry === 'Goat farming' || profile.subIndustry === 'Sheep farming') {
+        return SMALL_RUMINANTS_PACK;
+    }
+
+
+
+    if (flags.isFnbManufacturing) {
+        if (profile.subIndustry === 'Bakery / Flour / Grain-based processing') return BAKERY_PACK;
+        if (profile.subIndustry === 'Beverages (juice, soda, water)') return BEVERAGES_PACK;
+        if (profile.subIndustry === 'Snacks & packaged foods') return SNACKS_PACK;
+        if (profile.subIndustry === 'Meat processing') return BUTCHERY_PACK;
+        return FNB_PACK;
+    }
     if (flags.isTextileManufacturing) return TEXTILE_PACK;
     if (flags.isFurnitureManufacturing) return FURNITURE_PACK;
     if (flags.isMetalManufacturing) return METAL_PACK;
@@ -124,6 +192,7 @@ export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFla
     if (flags.isSoapManufacturing) return SOAP_PACK;
     if (flags.isBricksManufacturing) return BRICKS_PACK;
     if (flags.isWaterManufacturing) return WATER_PACK;
+    if (flags.isChemicalManufacturing) return CHEMICAL_PACK;
     if (flags.isFashionRetail) return FASHION_PACK;
     if (flags.isHardwareRetail) return HARDWARE_PACK;
     if (flags.isElectronicsRetail) return ELECTRONICS_PACK;
@@ -180,5 +249,15 @@ export const getWhyItMatters = (profile: BusinessProfile, flags: IndustryFlags):
         return 'Poultry profitability depends on low mortality, feed conversion efficiency, and biosecurity discipline.';
     if (flags.isDairy)
         return 'Dairy profitability is built on cold chain discipline, route efficiency, and strict quality control.';
+    if (flags.isProduceAggregation)
+        return 'Produce trading profitability is decided by shrink control, grading discipline, and smart sourcing.';
+    if (flags.isExportProduce)
+        return 'Export produce profit is decided by spec discipline, cold-chain control, doc accuracy, and Incoterms mastery.';
+    if (flags.isStorageWarehousing)
+        return 'Storage & warehousing profit is decided by condition control, traceability discipline, throughput efficiency, and cost-to-serve pricing.';
+    if (flags.isForestry)
+        return 'Forestry profitability is decided by harvest planning discipline, recovery control, and market-aligned sorting.';
+    if (flags.isChemicalManufacturing)
+        return 'Chemical margin is protected by formula discipline, regulatory compliance speed, and yield-safe filling control.';
     return 'Agro-processing requires tight control of yield and flow.';
 };

@@ -77,6 +77,18 @@ export const WATER_SUB_INDUSTRIES = [
   'Distributor / Private Label Bottling'
 ];
 
+export const CHEMICAL_SUB_INDUSTRIES = [
+  'Chemical / Light Industrial Production',
+  'Detergents & Industrial Cleaners (bulk/commercial)',
+  'Paints & Coatings (decorative/industrial)',
+  'Adhesives, Sealants & Construction Chemicals',
+  'Lubricants, Greases & Oils',
+  'Solvents & Thinners',
+  'Agro-chemicals (fertilizers, pesticides - mixing only)',
+  'Water Treatment Chemicals',
+  'Contract Manufacturing / "Mix & Pack"'
+];
+
 export const ASSEMBLY_SUB_INDUSTRIES = [
   'Assembly / OEM',
   'Assembly / OEM (electronics, components)',

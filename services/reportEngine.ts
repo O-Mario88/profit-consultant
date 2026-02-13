@@ -30,6 +30,8 @@ import {
   renderAssemblySeverityVariant
 } from "./assemblyEngine";
 import { resolveIndustryFlags, resolveIndustryPack, getWhyItMatters } from "./packResolver";
+import { buildStrengthsData, generatePillarStrengthsFactor } from "./strengthsEngine";
+import { ReportStrengthsData } from "../types/strengths";
 
 // Re-export for backward compat
 export { calculateLeakIndices } from "./scoring";
@@ -38,7 +40,8 @@ export const generateStrategicReport = async (
   scores: PillarScores,
   archetype: Archetype,
   profile?: BusinessProfile,
-  quickScanAnswers?: Record<string, string> // New param
+  quickScanAnswers?: Record<string, string>,
+  strengthsAnswers?: number[]
 ): Promise<GeneratedReport | null> => {
 
   const indices = calculateLeakIndices(scores);
@@ -61,7 +64,37 @@ export const generateStrategicReport = async (
 
     const whyItMatters = injectLexicon(briefTemplate.controls, industry);
     const hiddenCost = injectLexicon(briefTemplate.costing, industry);
-    const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry);
+    const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry)
+      .replace('{STATUS}', `**${pillarName}**`) // Bold the status
+      .replace('{COST}', `**${briefTemplate.costing}**`) // Bold the cost
+    // Note: LOST_REVENUE, TIME_WASTED, RISK_LEVEL might not be in the template string in this file, check logic.
+    // Ah, previously I saw `.replace('{LOST_REVENUE}', lostRevenue)` in my memory but looking at view_file lines 67-68,
+    // it seems `injectLexicon` returns the string and then it's assigned to `deepInsight`.
+    // Wait, line 67 in `view_file` is: `const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry);`
+    // It DOES NOT have the chain of replaces I thought it had in the previous failed attempt context.
+    // The previous failed attempt tried to replace lines 193+ which don't match.
+    // Lines 67 just calls injectLexicon.
+    // I need to see where `{STATUS}` etc are replaced.
+    // It seems they might NOT be replaced here in `generateStrategicReport`?
+    // Let me look at `data/missionBriefLibrary.ts`. It has placeholders like `{lead}`, `{order}` in controls.
+    // But `cliffhanger` text: "The Deep Scan will map your entire delivery workflow step-by-step to identify the exact 'Constraint Step'..."
+    // It doesn't seem to have `{STATUS}` placeholders in `cliffhanger` for `Engine`.
+    // However, `deepInsight` logic in `generateSignalBasedReport` (lines 372+) DOES have complex replacement logic.
+    // Lines 373: `let text = ...`
+    // Lines 382: `text = text.replace(/{STATUS}/g, statusLabel);`
+    // I should update THAT part in `generateSignalBasedReport`.
+
+    // BUT, what about `generateStrategicReport` (Deep Scan report)?
+    // Line 67: `const deepInsight = injectLexicon(briefTemplate.cliffhanger, industry);`
+    // `injectLexicon` likely handles some replacements or just dictionary swap.
+    // If I want to bold things in Deep Scan report, I might need to update `injectLexicon` or modify `deepInsight` here if it had placeholders.
+    // The user wants bolding.
+    // In `missionBriefLibrary.ts`, I already added markdown to the text itself!
+    // So `briefTemplate.cliffhanger` ALREADY has `**'Constraint Step'**`.
+    // So checking `generateStrategicReport` might be unnecessary if I just want the static text to be bold.
+    // However, I should check if there are dynamic replacements I want to bold.
+    // `generateSignalBasedReport` definitely has dynamic replacements.
+    // Let's modify `generateSignalBasedReport` replacements.
 
     // Use helper for industry-aware fix plan (passing subIndustry)
     const fixPlan = getFixPlan(industry, pillarName, profile?.subIndustry);
@@ -151,8 +184,8 @@ export const generateStrategicReport = async (
   // Use AI executive summary if available
   const summary = aiData?.executiveSummary || (
     criticalPillars.length > 0
-      ? `Your business shows critical vulnerabilities in ${criticalPillars.join(', ')}. While you have strengths in other areas, these leaks are likely capping your growth and causing silent profit erosion.`
-      : `Your business is generally stable with strong systems. Focus is now on optimization and scaling rather than repair.`
+      ? `Your business shows **critical vulnerabilities** in **${criticalPillars.join(', ')}**. While you have strengths in other areas, these leaks are likely capping your growth and causing **silent profit erosion**.`
+      : `Your business is generally stable with **strong systems**. Focus is now on **optimization** and **scaling** rather than repair.`
   );
 
   // 4. Calculate Agro Indices if applicable
@@ -162,6 +195,18 @@ export const generateStrategicReport = async (
     agroIndices = getTopIndices(scores as any, profile);
     if (profile) {
       deepScanScores = calculateDeepScanScores(profile);
+    }
+  }
+
+  // 5. Build CliftonStrengths data if assessment was completed
+  let strengthsData: ReportStrengthsData | undefined;
+  if (strengthsAnswers && strengthsAnswers.length > 0) {
+    strengthsData = buildStrengthsData(strengthsAnswers, industry, scores);
+    // Populate per-pillar strengths factors
+    for (const p of pillars) {
+      const sf = generatePillarStrengthsFactor(p.name, p.score, strengthsData.profile);
+      p.strengthsFactor = sf.factor;
+      p.strengthsFix = sf.fix;
     }
   }
 
@@ -176,13 +221,15 @@ export const generateStrategicReport = async (
     recommendedKPIs: [],
     agroIndices,
     deepScanScores,
-    profileContext: profile
+    profileContext: profile,
+    strengthsData
   };
 };
 
 export const generateSignalBasedReport = async (
   answers: Record<string, number>,
-  profile: BusinessProfile
+  profile: BusinessProfile,
+  strengthsAnswers?: number[]
 ): Promise<GeneratedReport> => {
 
   // 1. Resolve industry pack and flags
@@ -195,7 +242,10 @@ export const generateSignalBasedReport = async (
     lineType.includes('all') || !selectedLineType || lineType.includes(selectedLineType);
 
   const relevantQuestions = pack.questions.filter(q => matchesLineType(q.line_type));
-  const scopedQuestions = relevantQuestions.length > 0 ? relevantQuestions : pack.questions;
+  // FIX: Only score against questions that were actually answered.
+  // This prevents the "50/100" bug where Quick Scan answers (14 questions) are divided by total questions (84).
+  const scopedQuestions = (relevantQuestions.length > 0 ? relevantQuestions : pack.questions)
+    .filter(q => answers.hasOwnProperty(q.qid));
   // @ts-ignore
   const { pillarResults, signalScores } = calculateSignalScores(answers, scopedQuestions);
   const archetype = deriveSignalArchetype(pillarResults as Record<string, PillarResult>);
@@ -358,7 +408,7 @@ export const generateSignalBasedReport = async (
         // 1. STATUS
         const statusLabel = isAssemblyManufacturing
           ? assemblySeverityStatus!
-          : (status === 'Emergency' || status === 'Critical' ? 'Critical Leak' : status === 'Watch' ? 'Warning' : 'Stable');
+          : (status === 'Emergency' || status === 'Critical' ? '**Critical Leak**' : status === 'Watch' ? '**Warning**' : '**Stable**');
         text = text.replace(/{STATUS}/g, statusLabel);
 
         // 2. DETECTED SIGNALS
@@ -471,7 +521,22 @@ export const generateSignalBasedReport = async (
     } as unknown as PillarReport;
   });
 
-  const baseSummary = `Analysis complete. Top profit leaks identified in: ${pillars.filter(p => p.riskScore > 50).map(p => p.name).join(', ')}.`;
+  const baseSummary = (() => {
+    const leaks = pillars.filter(p => p.riskScore > 50).map(p => p.name);
+    const strengths = pillars.filter(p => p.score >= 70).map(p => p.name);
+
+    if (leaks.length === 0 && strengths.length > 0) {
+      return `Your business is showing real control. ${strengths.join(' and ')} ${strengths.length > 1 ? 'are' : 'is'} performing well — which gives you a strong foundation to build on. The opportunities ahead are about optimization and scale, not survival.`;
+    }
+    if (leaks.length >= 4) {
+      return `There are several areas that need attention — ${leaks.slice(0, 3).join(', ')}, and ${leaks[3]} in particular. The good news: these aren't unique problems, and they're fixable. The priority is to stop the biggest bleeds first, then build systems that prevent them from recurring.`;
+    }
+    if (leaks.length > 0) {
+      return `Your biggest opportunities sit in ${leaks.join(' and ')}. These are the areas where fixing the underlying patterns would have the fastest impact on your bottom line.${strengths.length > 0 ? ` Meanwhile, ${strengths.join(' and ')} ${strengths.length > 1 ? 'are' : 'is'} working in your favor — leverage that.` : ''}`;
+    }
+    return `Across the board, your business is in a solid position. There are refinement opportunities, but no critical leaks demanding emergency action. Focus on systematizing what works and pushing your strongest pillars even further.`;
+  })();
+
   const assemblyTagSummary = isAssemblyManufacturing
     ? (() => {
       const critical = assemblyAutoTags.filter(tag => tag.severity === 'Critical').slice(0, 3);
@@ -487,6 +552,43 @@ export const generateSignalBasedReport = async (
     })()
     : '';
 
+  // Calculate real leak indices from pillar scores
+  const pillarScores: Record<string, number> = {};
+  pillars.forEach(p => { pillarScores[p.name.toLowerCase()] = p.score; });
+  const realIndices = calculateLeakIndices({
+    operations: pillarScores['operations'] ?? 50,
+    money: pillarScores['money'] ?? 50,
+    market: pillarScores['market'] ?? 50,
+    leadership: pillarScores['leadership'] ?? 50,
+    innovation: pillarScores['innovation'] ?? 50,
+    risk: pillarScores['risk'] ?? 50,
+    people: pillarScores['people'] ?? 50
+  });
+
+  // Build CliftonStrengths data if assessment was completed
+  let strengthsData: ReportStrengthsData | undefined;
+  if (strengthsAnswers && strengthsAnswers.length > 0) {
+    strengthsData = buildStrengthsData(
+      strengthsAnswers,
+      profile.industry,
+      {
+        operations: pillarScores['operations'] ?? 50,
+        money: pillarScores['money'] ?? 50,
+        market: pillarScores['market'] ?? 50,
+        leadership: pillarScores['leadership'] ?? 50,
+        innovation: pillarScores['innovation'] ?? 50,
+        risk: pillarScores['risk'] ?? 50,
+        people: pillarScores['people'] ?? 50
+      }
+    );
+    // Populate per-pillar strengths factors
+    for (const p of pillars) {
+      const sf = generatePillarStrengthsFactor(p.name, p.score, strengthsData.profile);
+      p.strengthsFactor = sf.factor;
+      p.strengthsFix = sf.fix;
+    }
+  }
+
   return {
     id: crypto.randomUUID(),
     date: new Date().toLocaleDateString(),
@@ -494,10 +596,11 @@ export const generateSignalBasedReport = async (
     executiveSummary: `${baseSummary}${assemblyTagSummary}`.trim(),
     pillars: pillars,
     unlocks: [],
-    indices: { timeLeak: 0, cashLeak: 0, riskExposure: 0 }, // Calc these if needed
+    indices: realIndices,
     recommendedKPIs: [],
-    agroIndices: [], // Can populate from signals
+    agroIndices: [],
     deepScanScores: undefined,
-    profileContext: profile
+    profileContext: profile,
+    strengthsData
   };
 };

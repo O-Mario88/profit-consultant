@@ -1,297 +1,142 @@
-import { ActionDefinition } from '../../types';
-
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
-
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
-  {
-    action_id: 'ACT_FNB_OPS_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['measurement_blindspot'],
-    title: 'Daily OEE + Loss Map (Top 3 losses)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['oee', 'downtime_hours'],
-    proof_required: ['daily_board_screenshots'],
-    impact_score: 9
+export const actions = {
+  // P1: Risk
+  haccp_plan_template: {
+    title: 'HACCP Plan & Flow Diagram Template',
+    description: 'A structured template to map hazards and controls compliant with Codex.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_OPS_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['yield_bleed'],
-    title: 'Yield & Scrap Baseline (by SKU/line)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['yield_percent', 'scrap_rate'],
-    proof_required: ['baseline_sheet'],
-    impact_score: 9
+  allergen_matrix_checklist: {
+    title: 'Allergen Matrix & Label Sign-Off',
+    description: 'A grid to map allergens by line/product and verify labels before runs.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_OPS_7_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['changeover_black_hole'],
-    title: 'Changeover Quick Fix (standard steps + tool staging)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['changeover_minutes'],
-    proof_required: ['changeover_checklist'],
-    impact_score: 8
+  line_clearance_checklist: {
+    title: 'Line Clearance Checklist',
+    description: 'Standard check to remove old labels/product before starting new runs.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_OPS_7_04',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Rework Kill List (top 3 defects + fixes)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rework_rate'],
-    proof_required: ['defect_tracker'],
-    impact_score: 8
+  supplier_approval_pack: {
+    title: 'Supplier Approval & Audit Pack',
+    description: 'Risk-based rules and forms for approving and monitoring suppliers.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_OPS_7_05',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['inventory_blindspot'],
-    title: 'Critical Inventory Check (raw + packaging)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['stockouts_count'],
-    proof_required: ['min_max_list'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FNB_RISK_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['traceability_gap'],
-    title: 'Batch Record Discipline (lot/batch completeness)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['traceability_pass_rate'],
-    proof_required: ['sample_batch_records'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_FNB_MONEY_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['shrinkage_leak'],
-    title: 'Expiry/Spoilage Sweep',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['shrinkage_cost_ugx'],
-    proof_required: ['writeoff_log'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FNB_LEAD_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_meeting_to_action'],
-    title: 'Line Huddle Routine (15 mins)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['action_closure_rate'],
-    proof_required: ['huddle_notes'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_FNB_MONEY_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['zombie_costs'],
-    title: 'Top 10 Zombie Costs Audit',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['monthly_savings_ugx'],
-    proof_required: ['cost_cut_list'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FNB_MARKET_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['complaint_handling_gap'],
-    title: 'Customer Complaint Triage (48-hour closure)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['complaint_closure_time'],
-    proof_required: ['complaint_log'],
-    impact_score: 7
+  mock_recall_script: {
+    title: 'Mock Recall Script & Log',
+    description: 'Step-by-step guide to running and timing a traceability drill.',
+    link: '#'
   },
 
-  // 30-Day Build Control
-  {
-    action_id: 'ACT_FNB_MONEY_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'SKU-Level Costing Model (COGS per unit)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['margin_per_sku'],
-    proof_required: ['costing_sheet'],
-    impact_score: 9
+  // P2: Innovation
+  sku_profitability_scoreboard: {
+    title: 'SKU Profitability Scoreboard',
+    description: 'A simple rank of products by contribution margin to identify winners/losers.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_OPS_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['preventive_maintenance_gap'],
-    title: 'Preventive Maintenance Schedule + Spares Plan',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['downtime_hours'],
-    proof_required: ['pm_logs', 'spares_plan'],
-    impact_score: 9
+  npi_stage_gate_checklist: {
+    title: 'NPI Stage-Gate Checklist',
+    description: 'Go/No-Go criteria (margin, capacity, shelf life) for new products.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_RISK_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['traceability_gap'],
-    title: 'Traceability + Recall Drill',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['traceability_pass_rate'],
-    proof_required: ['drill_report'],
-    impact_score: 9
+  sku_rationalization_playbook: {
+    title: 'SKU Rationalization Playbook',
+    description: 'Rules for killing or merging low-margin tail products.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_RISK_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['supplier_variance_risk'],
-    title: 'Supplier Quality Scorecard',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['supplier_defect_rate'],
-    proof_required: ['supplier_scorecard'],
-    impact_score: 8
+
+  // P3: Market
+  demand_calendar_template: {
+    title: 'Demand Calendar Template',
+    description: 'One view for promos, launches, and seasonals to align sales and ops.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_PEOPLE_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'People',
-    signal_tags: ['training_gap'],
-    title: 'Standard Work + Training System',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['training_compliance'],
-    proof_required: ['sops', 'training_logs'],
-    impact_score: 8
+  promo_roi_calculator: {
+    title: 'Promo ROI Simple Tracker',
+    description: 'Calculator to estimate if a promo adds profit or just volume.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_MONEY_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['inventory_blindspot'],
-    title: 'Inventory Min/Max + Reorder Rules',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['stockouts_count', 'inventory_turns'],
-    proof_required: ['inventory_rules'],
-    impact_score: 8
+  service_level_dashboard: {
+    title: 'Service Level & Stockout Dashboard',
+    description: 'Tracker for OTIF and fill rate gaps.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_MONEY_30_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['discounting_leak'],
-    title: 'Promotion Profit Control',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['promo_margin_impact'],
-    proof_required: ['promo_approval_template'],
-    impact_score: 8
+
+  // P4: Leadership (Commercial)
+  trade_terms_checklist: {
+    title: 'Trade Terms & Discounts Checklist',
+    description: 'Review sheet for rebates, listing fees, and penalties.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_OPS_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Quality Built-In Gates (in-process checks)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['first_pass_quality'],
-    proof_required: ['in_process_checklists'],
-    impact_score: 9
+  customer_profitability_model: {
+    title: 'Customer Profitability Model',
+    description: 'Template to calculate net margin after trade spend and cost-to-serve.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_PEOPLE_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'People',
-    signal_tags: ['weak_shift_handover'],
-    title: 'Shift Handover Standard',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['handover_compliance'],
-    proof_required: ['handover_logs'],
-    impact_score: 8
+  claims_chargeback_tracker: {
+    title: 'Claims & Chargeback Tracker',
+    description: 'Log to identify and root-cause top deduction drivers.',
+    link: '#'
   },
-  {
-    action_id: 'ACT_FNB_INNOV_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['no_market_feedback_loop'],
-    title: 'Continuous Improvement Rhythm (weekly Kaizen)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['ci_savings_ugx', 'defect_reduction'],
-    proof_required: ['ci_board'],
-    impact_score: 8
+
+  // P5: Operations
+  downtime_pareto_template: {
+    title: 'Downtime Tracking & Pareto Template',
+    description: 'Sheet to log stops and visualize top causes for focused fixing.',
+    link: '#'
+  },
+  changeover_checklist_smed: {
+    title: 'Changeover Checklist (SMED Style)',
+    description: 'Steps to stage and execute fast, standardized changeovers.',
+    link: '#'
+  },
+  yield_scrap_tracker: {
+    title: 'Yield & Scrap Tracker',
+    description: 'Daily log for material loss by SKU and cause.',
+    link: '#'
+  },
+
+  // P6: Money
+  waste_cost_scoreboard: {
+    title: 'Waste Cost Scoreboard',
+    description: 'Tracker for scrap, rework, expiry, and returns in dollar terms.',
+    link: '#'
+  },
+  pricing_exception_form: {
+    title: 'Pricing Exception Approval Form',
+    description: 'Gatekeeper form for non-standard discounts.',
+    link: '#'
+  },
+  variance_review_agenda: {
+    title: 'Weekly Variance Review Agenda',
+    description: 'Meeting structure to explain and fix usage/labor variances.',
+    link: '#'
+  },
+
+  // P7: People
+  competency_matrix: {
+    title: 'Competency Matrix Template',
+    description: 'Visual map of who is qualified to do what (role-based).',
+    link: '#'
+  },
+  tier_meeting_agenda: {
+    title: 'Tier Meeting Agenda',
+    description: 'Standard 10-minute huddle script for shifts.',
+    link: '#'
+  },
+  leader_standard_work: {
+    title: 'Leader Standard Work Checklist',
+    description: 'Daily routine list for supervisors to prevent drift.',
+    link: '#'
+  },
+
+  // FIX PLANS
+  stabilize_profit_plan: {
+    title: '7-Day "Stabilize Profit" Plan',
+    description: 'Immediate actions: 2-hour mock recall, label lock, downtime pareto, and waste scoreboard.',
+    link: '#'
+  },
+  build_control_plan: {
+    title: '30-Day "Build Control" Plan',
+    description: 'System actions: HACCP backbone, SKU rationalization, S&OP lite, and variance review rhythm.',
+    link: '#'
   }
-];
+};

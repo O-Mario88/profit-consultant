@@ -1,297 +1,146 @@
-import { ActionDefinition } from '../../types';
 
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
+import { SignalTag } from '../../types';
 
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
-  {
-    action_id: 'ACT_PLASTICS_OPS_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['waste_not_costed'],
-    title: 'Scrap Storm Baseline (Top 5 defects by SKU + shift)',
+export const actions = {
+  // P1: Risk
+  ctq_lock: {
+    title: 'CTQ Spec Lock',
+    description: 'Lock top 10 SKUs’ CTQs (gauge/weight/seal) and enforce "ship only within spec."',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['scrap_rate'],
-    proof_required: ['defect_pareto'],
-    impact_score: 9
+    pillar: 'Risk',
+    signal_tags: ['spec_drift_tax', 'quality_on_hope_shipping'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_OPS_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['downtime_drain'],
-    title: 'Downtime Drain Log (unplanned stops + causes)',
+  traceability_drill: {
+    title: '15-Min Traceability Drill',
+    description: 'Implement a 15-minute traceability drill: prove you can identify affected lots fast.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['uptime'],
-    proof_required: ['downtime_board'],
-    impact_score: 9
+    pillar: 'Risk',
+    signal_tags: ['traceability_fog', 'audit_panic_cost'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_OPS_7_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['changeover_black_hole'],
-    title: 'Changeover Tax Sprint (standard setup checklist)',
+
+  // P2: Innovation
+  golden_settings: {
+    title: 'Golden Settings Sheet',
+    description: 'Create "golden settings" for top 10 SKUs and enforce shift handover.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['changeover_minutes'],
-    proof_required: ['setup_checklist'],
-    impact_score: 8
+    pillar: 'Innovation',
+    signal_tags: ['tribal_settings_drift', 'unstable_process_churn'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_OPS_7_04',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['supplier_variance_risk'],
-    title: 'Material Moisture Control (storage + conditioning routine)',
+  startup_scrap_attack: {
+    title: 'Startup Scrap Attack',
+    description: 'Measure startup scrap daily and attack the top 2 causes.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['defect_rate'],
-    proof_required: ['moisture_sop'],
-    impact_score: 8
+    pillar: 'Innovation',
+    signal_tags: ['startup_scrap_tax', 'startup_scrap_burn'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_OPS_7_05',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'In-Process QC Gate (first 10 units approval per run)',
+
+  // P3: Market
+  rfq_cadence: {
+    title: 'RFQ Follow-up Rhythm',
+    description: 'Implement a follow-up cadence for RFQs and sampling.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rerun_rate'],
-    proof_required: ['qc_signoff'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_PLASTICS_MONEY_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['energy_burn_spiral'],
-    title: 'Energy Leak Check (peak usage + idle running audit)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['energy_per_kg'],
-    proof_required: ['energy_audit'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_PLASTICS_MARKET_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
     pillar: 'Market',
-    signal_tags: ['spec_drift_discount'],
-    title: 'Spec Lock Pack (gauge, dimensions, seal, print) + sign-off',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dispute_rate'],
-    proof_required: ['signed_spec_sheets'],
-    impact_score: 8
+    signal_tags: ['silent_lost_rfqs', 'account_churn_bleed'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_OPS_7_06',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['inventory_blindspot'],
-    title: 'Consumables Staging (inks/additives/blades/solvents)',
+  capacity_promise: {
+    title: 'Capacity-Based Promises',
+    description: 'Tie promised lead times to capacity reality (stop expedite addiction).',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['stoppage_incidents'],
-    proof_required: ['staging_list'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_PLASTICS_MARKET_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
     pillar: 'Market',
-    signal_tags: ['complaint_handling_gap'],
-    title: 'Customer Complaint 48-hour Closure Rule',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['complaint_closure_time'],
-    proof_required: ['closure_log'],
-    impact_score: 8
+    signal_tags: ['overpromise_penalty', 'expedite_addiction'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_LEAD_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+
+  // P4: Leadership
+  discount_freeze: {
+    title: 'Margin Floor & Discount Freeze',
+    description: 'Identify bottom 20% margin SKUs and freeze discounts immediately.',
+    link: '#',
+    days: 7,
     pillar: 'Leadership',
-    signal_tags: ['weak_shift_handover'],
-    title: 'Daily 15-min Shift Handover (yield, defects, downtime)',
+    signal_tags: ['discount_drift', 'margin_evaporation'] as SignalTag[]
+  },
+  resin_clause: {
+    title: 'Resin Index Clause',
+    description: 'Add resin change clauses for new quotes (or shorten validity).',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['shift_variance'],
-    proof_required: ['handover_notes'],
-    impact_score: 7
+    pillar: 'Leadership',
+    signal_tags: ['resin_swing_ambush', 'cashflow_choke'] as SignalTag[]
   },
 
-  // 30-Day Build Control
-  {
-    action_id: 'ACT_PLASTICS_MONEY_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'True Unit Cost Engine per SKU (resin + energy + labor + overhead)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['margin_per_sku'],
-    proof_required: ['costing_sheet'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_PLASTICS_OPS_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  // P5: Operations
+  oee_start: {
+    title: 'Daily OEE Tracking',
+    description: 'Start daily OEE tracking with reason codes on top 2 lines.',
+    link: '#',
+    days: 7,
     pillar: 'Operations',
-    signal_tags: ['no_kpi_ownership'],
-    title: 'OEE Dashboard per line (availability, performance, quality)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['oee'],
-    proof_required: ['oee_dashboard'],
-    impact_score: 8
+    signal_tags: ['oee_leak', 'downtime_theft'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_OPS_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  wip_flush: {
+    title: 'WIP Flush',
+    description: 'Cap WIP and clear the oldest work first to release cash.',
+    link: '#',
+    days: 7,
     pillar: 'Operations',
-    signal_tags: ['reactive_maintenance'],
-    title: 'Preventive Maintenance Calendar (critical machines first)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['unplanned_downtime'],
-    proof_required: ['pm_logs'],
-    impact_score: 9
+    signal_tags: ['wip_swamp', 'cash_locked_in_resin'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_INNOV_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['sku_complexity_tax'],
-    title: 'SKU Rationalization (cut low-margin chaos SKUs)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['changeover_minutes', 'profitability'],
-    proof_required: ['sku_rationalization_list'],
-    impact_score: 8
+  changeover_standard: {
+    title: 'Standard Changeover',
+    description: 'Implement a standard changeover checklist and measure time.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['changeover_tax', 'changeover_drag'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_RISK_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['traceability_gap'],
-    title: 'Quality System Upgrade (specs, tests, traceability, batch IDs)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['return_rate'],
-    proof_required: ['quality_sop_pack'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_PLASTICS_MONEY_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
+
+  // P6: Money
+  stockout_killer: {
+    title: 'Stockout Killer (Min/Max)',
+    description: 'Cycle count top 30 items and set reorder points to kill stockouts.',
+    link: '#',
+    days: 7,
     pillar: 'Money',
-    signal_tags: ['cashflow_visibility_gap'],
-    title: 'Working Capital Control (inventory min/max + credit terms)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['inventory_days', 'dso'],
-    proof_required: ['working_capital_policy'],
-    impact_score: 8
+    signal_tags: ['stockout_stall', 'inventory_fiction'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_MARKET_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['weak_proof_pack'],
-    title: 'Tender & Compliance Proof Pack (certs, tests, track record)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['tender_win_rate'],
-    proof_required: ['bid_pack'],
-    impact_score: 8
+  wip_cash_list: {
+    title: 'WIP-to-Cash List',
+    description: 'Build WIP aging list and prioritize "oldest-to-cash first."',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['wip_money_pit', 'overdue_cash_choke'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_PEOPLE_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  pellet_loss_sweep: {
+    title: 'Pellet Loss Sweep',
+    description: 'Start a simple pellet loss prevention routine (sweep, containment).',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['pellet_loss_leak', 'scrap_culture_tax'] as SignalTag[]
+  },
+
+  // P7: People
+  skill_backup: {
+    title: 'Bottleneck Backup Training',
+    description: 'Build a skill matrix for bottleneck roles and train one backup.',
+    link: '#',
+    days: 7,
     pillar: 'People',
-    signal_tags: ['training_gap'],
-    title: 'Shift Certification (operators trained on standard settings)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['shift_variance'],
-    proof_required: ['operator_certification_list'],
-    impact_score: 8
+    signal_tags: ['hero_dependency', 'shift_to_shift_drift'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_PLASTICS_RISK_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['compliance_blocker_risk'],
-    title: 'Waste Strategy (regrind rules + disposal compliance)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['waste_cost'],
-    proof_required: ['waste_sop'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_PLASTICS_INNOV_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['no_product_testing_rhythm'],
-    title: 'Innovation Sprint (one packaging/material upgrade pilot)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['new_revenue_share'],
-    proof_required: ['pilot_results'],
-    impact_score: 8
+  action_huddle: {
+    title: 'Action-Closing Huddles',
+    description: 'Launch daily huddles that close 1–2 actions/day (no backlog growth).',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['meeting_without_closure', 'improvement_drought'] as SignalTag[]
   }
-];
+};

@@ -92,6 +92,74 @@ export const CATTLE_HOOKS: Record<string, string[]> = {
   ]
 };
 
+export const ARTISANAL_MINING_HOOKS: Record<string, string[]> = {
+  'Risk': [
+    "One dispute could shut you down forever.",
+    "Your permit is a paper shield; relationships are the real law.",
+    "You are mining on borrowed time and borrowed permission."
+  ],
+  'Innovation': [
+    "You sell 'mystery rock' and get paid 'mystery prices'.",
+    "Mixed lots destroy your reputation before the truck even leaves.",
+    "Without traceability, you are just a smuggler with a permit."
+  ],
+  'Market': [
+    "One buyer owns you. That’s not a business, it’s a trap.",
+    "You wait for buyers to call; you don't control your destiny.",
+    "Documentation is the key to the real market, and you don't have it."
+  ],
+  'Leadership': [
+    "You negotiate like a beggar, not a business owner.",
+    "Discounts are your only sales strategy.",
+    "You fund your buyers with free credit and late payments."
+  ],
+  'Operations': [
+    "You mine for cash today and pay for it with downtime tomorrow.",
+    "Recovery bleed is the invisible tax on every shovel.",
+    "Your site runs on luck, not logic."
+  ],
+  'Money': [
+    "You confuse cash flow with profit.",
+    "Small bribes and fees are eating your margin alive.",
+    "You don't know your cost per gram, so you don't know if you're winning."
+  ],
+  'People': [
+    "Your safety plan is 'be careful'.",
+    "You rely on heroes, but heroes get tired and hurt.",
+    "Injuries are just waiting to bankrupt you."
+  ]
+};
+
+export const FORESTRY_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Price-taker syndrome: you accept whatever the buyer offers.",
+    "One-customer dependency is a single point of failure.",
+    "Quote-to-cash slowdown kills your working capital.",
+    "Silent discount culture erodes your margin."
+  ],
+  'Money': [
+    "Stump-to-stack leakage: invisible loss at every step.",
+    "Hidden yield tax: paying for wood (or transport) you don't sell.",
+    "Inventory rot: value loss while logs sit in the yard.",
+    "Cash-cycle starvation: paying cash for harvest but waiting 60 days for sales."
+  ],
+  'Operations': [
+    "Conversion bleed: poor recovery is throwing money into the waste pile.",
+    "Downtime hemorrhage: when the saw stops, the money stops.",
+    "Log yard chaos tax: finding the right log takes too long.",
+    "Sort failure: putting high-value logs into low-value products."
+  ],
+  'People': [
+    "Safety drag: incidents destroy capacity and morale.",
+    "'We think' accounting: guessing numbers instead of measuring them.",
+    "No-data management: decisions based on feelings."
+  ],
+  'Innovation': [
+    "Chain-of-custody break: documentation gaps block your best markets.",
+    "Compliance exposure: legal risks you aren't pricing in."
+  ]
+};
+
 // Map industry ID to specific leak symptoms for Mission Brief
 export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   retail: ['stock-outs', 'shrinkage', 'expiry loss', 'supplier terms'],
@@ -115,7 +183,9 @@ export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   poultry: ['mortality', 'bad FCR', 'feed waste', 'heat stress', 'wet litter'],
   dairy: ["Mastitis", "Somatic Cell Count", "Cold Chain", "Feed Conversion"],
   beekeeping: ["Varroa", "Swarm Control", "Extraction Yield", "Queen Quality"],
-  input_supply: ["Expired Stock", "Counterfeit", "Regulatory Fine", "Batch Traceability", "Credit Drift"]
+  input_supply: ["Expired Stock", "Counterfeit", "Regulatory Fine", "Batch Traceability", "Credit Drift"],
+  produce_aggregation: ["shrinkage", "rejected loads", "price volatility", "storage rot"],
+  forestry: ["stump_stack_leak", "grade_drift", "moisture_penalty", "conversion_bleed", "inventory_rot", "sort_failure"]
 };
 
 export const INPUT_SUPPLY_HOOKS = {
@@ -182,6 +252,43 @@ export const CATTLE_QUIZ_COPY = {
   surveySubtitle: "Assess your 8 Pillars of Profitability in 5-7 minutes."
 };
 
+export const SMALL_RUMINANTS_QUIZ_COPY = {
+  welcomeTitle: "Sheep & Goat Profit Scan",
+  welcomeSubtitle: "Identify profit leaks in your flock management, market strategy, and feed costs.",
+  surveyTitle: "Small Ruminants Diagnostic",
+  surveySubtitle: "Assess your 8 Pillars of Profitability in 5-7 minutes."
+};
+
+export const FORESTRY_QUIZ_COPY = {
+  welcomeTitle: "Forestry & Timber Profit Scan",
+  welcomeSubtitle: "Identify hidden leaks in harvest, milling, and market strategy.",
+  surveyTitle: "Forestry Diagnostic",
+  surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes."
+};
+
+export const SMALL_RUMINANTS_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Selling 'whenever' kills your margin.",
+    "Blind pricing means the buyer keeps your profit.",
+    "Weight guessing is a tax on your income."
+  ],
+  'Operations': [
+    "Inbreeding is a silent productivity thief.",
+    "Feeding everyone the same wastes feed and stunts growth.",
+    "Parasites eat your profit before you see them."
+  ],
+  'Money': [
+    "If you don't separate cash, you don't have a business.",
+    "Keeping unproductive animals is an expensive hobby.",
+    "Feed waste is money on the floor."
+  ],
+  'People': [
+    "Training by watching leads to mistakes by guessing.",
+    "One person doing everything means nothing is done perfectly.",
+    "Routine beats heroic effort every time."
+  ]
+};
+
 export const INPUT_SUPPLY_QUIZ_COPY = {
   intro: {
     title: "Input Supplier Profit Scan",
@@ -243,11 +350,23 @@ export const INDUSTRY_LEXICON_TOKENS: Record<string, Record<string, string>> = {
     'service': 'Delivery',
     'competitor': 'Other Farm'
   },
+  'produce_aggregation': {
+    'customer': 'Buyer / Market',
+    'product': 'Produce / Batch',
+    'service': 'Sourcing',
+    'competitor': 'Middleman'
+  },
   'cattle': {
     'customer': 'Buyer / Abattoir',
     'product': 'Animal / Batch',
     'service': 'Transport',
     'competitor': 'Other Producer'
+  },
+  'forestry': {
+    'customer': 'Buyer / Mill',
+    'product': 'Timber / Log',
+    'service': 'Harvest / Transport',
+    'competitor': 'Other Mill'
   }
 };
 
@@ -272,10 +391,20 @@ export const INDUSTRY_QUIZ_TOKENS: Record<string, Record<string, string>> = {
     'margin': 'Job Margin',
     'waste': 'Idle Time'
   },
+  'produce_aggregation': {
+    'leak': 'Spoilage / Shrink',
+    'margin': 'Trading Margin',
+    'waste': 'Rot / Rejects'
+  },
   'input_supply': {
     'leak': 'Stock Loss / Leak',
     'margin': 'Product Margin',
     'waste': 'Expired Stock'
+  },
+  'forestry': {
+    'leak': 'Yield / Value Leak',
+    'margin': 'Recovery Margin',
+    'waste': 'Offcuts / Waste'
   }
 };
 
@@ -441,6 +570,16 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     cash_risk: 'waste',
     staff: 'team'
   },
+  produce_aggregation: {
+    customer: 'buyer/wholesaler',
+    order: 'load/truck',
+    delivery: 'dispatch',
+    stock: 'produce stock',
+    lead: 'buyer contract',
+    quality: 'grade/freshness',
+    cash_risk: 'spoilage/rejection',
+    staff: 'handlers'
+  },
   piggery: {
     customer: 'buyer/trader',
     order: 'sale/batch',
@@ -450,6 +589,16 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     quality: 'weight/health',
     cash_risk: 'disease/mortality',
     staff: 'workers'
+  },
+  forestry: {
+    customer: 'buyer/client',
+    order: 'contract/order',
+    delivery: 'dispatch',
+    stock: 'logs/lumber',
+    lead: 'inquiry',
+    quality: 'grade/recovery',
+    cash_risk: 'claims/rejects',
+    staff: 'crew'
   }
 };
 
@@ -937,6 +1086,126 @@ export const MINING_QUIZ_COPY = {
     cost: 'speed is rewarded while recovery quality and discipline decay',
     cliffhanger: 'Deep Scan will redesign training and incentives around recovery and loss prevention.'
   }
+};
+
+export const FNB_HOOKS = {
+  Risk: "Silent Recall Risk",
+  Innovation: "SKU Sprawl",
+  Market: "Forecast Fantasy",
+  Leadership: "Trade Spend Black Hole",
+  Operations: "Yield Leakage",
+  Money: "COGS Fog",
+  People: "Hero Dependency"
+};
+
+export const SNACKS_HOOKS = {
+  Risk: "Dry Plant Illusion",
+  Innovation: "Seasoning Permeability",
+  Market: "Reactive Marketing",
+  Leadership: "Pricing Guesswork",
+  Operations: "Trim Tax",
+  Money: "Cash Blindness",
+  People: "Hero Dependency"
+};
+
+export const BUTCHERY_HOOKS = {
+  Risk: "Cold Chain Drift",
+  Innovation: "SKU Sprawl",
+  Market: "Reactive Marketing",
+  Leadership: "Pricing Guesswork",
+  Operations: "Trim Tax",
+  Money: "Cash Blindness",
+  People: "Hero Dependency"
+};
+
+export const TEXTILE_HOOKS = {
+  Risk: "Quality Drift Tax",
+  Innovation: "Readiness Debt",
+  Market: "Promise Inflation",
+  Leadership: "Phantom Margin",
+  Operations: "Firefighting Factory",
+  Money: "Cash Trapped in WIP",
+  People: "Overtime Culture"
+};
+
+export const FURNITURE_HOOKS = {
+  Risk: "Warranty Factory",
+  Innovation: "Drawing Drift",
+  Market: "Quote Fog",
+  Leadership: "Busy-But-Broke Pricing",
+  Operations: "WIP Swamp",
+  Money: "Cash Locked in Wood",
+  People: "Skill Bottleneck"
+};
+
+export const METAL_HOOKS = {
+  Risk: "Rework Factory",
+  Innovation: "Print Ambiguity Tax",
+  Market: "Lead Leak",
+  Leadership: "Busy-But-Broke Pricing",
+  Operations: "WIP Swamp",
+  Money: "Cash Locked in Steel",
+  People: "Skill Bottleneck"
+};
+
+export const PLASTICS_HOOKS = {
+  Risk: "Spec Drift Tax",
+  Innovation: "Tribal Settings Drift",
+  Market: "Overpromise Penalty",
+  Leadership: "Resin Swing Ambush",
+  Operations: "Changeover Tax",
+  Money: "Cash Locked in Resin",
+  People: "Shift-to-Shift Drift"
+};
+
+export const SOAP_HOOKS = {
+  Risk: "Label Drift Tax",
+  Innovation: "Formula Drift",
+  Market: "Promo Profit Illusion",
+  Leadership: "Margin Evaporation",
+  Operations: "Changeover Tax",
+  Money: "Cash Locked in Cartons",
+  People: "Training Debt"
+};
+
+export const BRICKS_HOOKS = {
+  Risk: "Strength Lottery",
+  Innovation: "Cement Creep",
+  Market: "Breakage Burn",
+  Leadership: "Margin Evaporation",
+  Operations: "Downtime Theft",
+  Money: "Inventory Fiction",
+  People: "Safety-Under-Pressure Slip"
+};
+
+export const WATER_HOOKS = {
+  Risk: "Trust Tax",
+  Innovation: "Biofilm Tax",
+  Market: "Route Profit Illusion",
+  Leadership: "Unit Economics Fog",
+  Operations: "Capacity Leak",
+  Money: "Packaging Choke",
+  People: "Hygiene Slip"
+};
+
+export const CHEMICAL_HOOKS = {
+  Risk: "Compliance Fog",
+  Innovation: "Batch Lottery",
+  Market: "Channel Chaos Tax",
+  Leadership: "Margin Evaporation",
+  Operations: "Hidden Yield Loss",
+  Money: "Inventory Fiction",
+  People: "Spill Bleed"
+};
+
+export const OIL_GAS_HOOKS = {
+  Risk: "Prequal Panic",
+  Innovation: "Commodity Trap",
+  Market: "Tender Chasing Addiction",
+  Leadership: "Scope Creep Tax",
+  Operations: "Mobilization Leakage",
+  Money: "Profit Fog",
+  People: "HSE Theater"
 };
 
 export const OIL_GAS_QUIZ_COPY = {
@@ -1978,6 +2247,10 @@ export const INDUSTRY_DATA: Record<string, IndustryData> = {
   agro_processing: {
     weights: { engine: 20, fuel: 18, shield: 16, tribe: 12, voice: 12, brain: 12, pulse: 10 },
     kpis: []
+  },
+  produce_aggregation: {
+    weights: { voice: 18, engine: 18, fuel: 16, shield: 14, tribe: 12, brain: 12, pulse: 10 },
+    kpis: []
   }
 };
 
@@ -2091,3 +2364,55 @@ export const DAIRY_QUIZ_COPY = {
   Market: { detection: "buyer dependence + price taking", cost: "margin squeeze and risk of total volume loss", cliffhanger: "Deep Scan will build a Buyer Power Upgrade." },
   Money: { detection: "cash leakage + weak controls", cost: "funding losses you can't see until month-end", cliffhanger: "Deep Scan will build a Cash Discipline Wall." }
 };
+
+export const PRODUCE_AGGREGATION_HOOKS = [
+  "Margin gets murdered in the middle. Shrink is invisible theft.",
+  "You don't have a supply chain—you have a surprise chain.",
+  "Cash is bleeding in slow motion through weight loss.",
+  "Buying without specs is donating profit to farmers.",
+  "No lot code means no defense against claims.",
+  "Selling to whoever calls is the fastest way to lose value.",
+  "Storage rot is money evaporating into the air.",
+  "Quality fade during transport is a tax you pay every trip.",
+  "If you can't trace the batch, you own the risk.",
+  "Volume is vanity; margin after shrink is sanity."
+];
+
+export const PRODUCE_AGGREGATION_QUIZ_COPY = {
+  Market: { detection: "selling blind + reactive deals", cost: "selling mixed grades and losing premiums", cliffhanger: "Deep Scan will build a Market Grade Ladder." },
+  Operations: { detection: "reactive buying + storage rot", cost: "weight loss resets your profit backward", cliffhanger: "Deep Scan will build a Shrink Shield." },
+  Money: { detection: "blind pricing + cash mixing", cost: "paying for waste and losing margin", cliffhanger: "Deep Scan will build a Profit Control System." },
+  Risk: { detection: "traceability gaps + rejection", cost: "one bad load ruins the month's profit", cliffhanger: "Deep Scan will build a Quality Defense Wall." },
+  Innovation: { detection: "grading drift + no standards", cost: "selling gold at bronze prices", cliffhanger: "Deep Scan will Lock in Grade Standards." },
+  People: { detection: "fraud risk + role mixing", cost: "leakage at buying points and scales", cliffhanger: "Deep Scan will build a Role Integrity System." },
+  Leadership: { detection: "chasing volume over margin", cost: "busy work with no retained profit", cliffhanger: "Deep Scan will build a Margin First Strategy." }
+};
+
+export const MINING_SERVICES_HOOKS = [
+  "Prequalification panic costs you contracts before you even bid.",
+  "Facilitation payments are a tax on your reputation and your margin.",
+  "Unvetted subcontractors are a shadow risk waiting to explode.",
+  "Paper shield safety doesn't stop incidents—it just documents them.",
+  "Scope creep is a tax you pay for not defining boundaries.",
+  "One-off chaos prevents you from building recurring revenue.",
+  "Waiting for the phone to ring is not a sales strategy.",
+  "Unclear quotes are an invitation for margin bleed.",
+  "Downtime is a penalty you pay for reactive maintenance.",
+  "Stockouts are a choice to lose revenue.",
+  "Being busy but broke is the ultimate profit leak."
+];
+
+export const MINING_SERVICES_QUIZ_COPY = {
+  welcomeTitle: "Mining Services Profit Audit",
+  welcomeSubtitle: "Identify profit leaks in your contracting, supply, or service operations.",
+  surveyTitle: "Mining Services Diagnostic",
+  surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes.",
+  Risk: { detection: "prequal panic + compliance gaps", cost: "losing tenders and risking site access", cliffhanger: "Deep Scan will build a Compliance Shield." },
+  Innovation: { detection: "commodity trap + scope creep", cost: "working for free and losing margin", cliffhanger: "Deep Scan will build an Offer Differentiation Map." },
+  Market: { detection: "tender chasing + weak pipeline", cost: "low win rates and revenue unpredictability", cliffhanger: "Deep Scan will build a Tender Engine." },
+  Leadership: { detection: "contract blindness + discount addiction", cost: "bleeding margin at the signing table", cliffhanger: "Deep Scan will build Commercial Discipline." },
+  Operations: { detection: "downtime + emergency freight", cost: "erasing profit with reactive fixes", cliffhanger: "Deep Scan will build a Delivery Control System." },
+  Money: { detection: "profit fog + cash drag", cost: "funding clients with your working capital", cliffhanger: "Deep Scan will build a Job Costing Lock." },
+  People: { detection: "culture debt + safety gaps", cost: "incidents, turnover, and rework", cliffhanger: "Deep Scan will build an Execution Culture." }
+};
+

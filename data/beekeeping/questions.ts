@@ -628,7 +628,7 @@ export const BEEKEEPING_QUESTIONS: QuestionDefinition[] = [
         industry: 'agriculture',
         weight: 1,
         textA: "Not evaluated.",
-        textB: "Evaluated each inspection.',
+        textB: "Evaluated each inspection.",
         line_type: ['all'],
         signal_tags: ['colony_strength_queen_system']
     },

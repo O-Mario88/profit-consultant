@@ -89,33 +89,32 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
     const [isGenerating, setIsGenerating] = useState(false);
     const [generationProgress, setGenerationProgress] = useState('');
 
-    // Generate targeted questions based on weak pillars
+    // Generate targeted questions (NOW: All 7 Pillars for full depth)
     const questions = useMemo(() => {
-        const sortedPillars = [...report.pillars].sort((a, b) => a.score - b.score);
+        // We want a full 360 scan, so we take ALL pillars
+        const allPillars = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'];
         const allQuestions: DeepScanItem[] = [];
 
-        // 1. Get bottom 3 pillars (or all if fewer than 3)
-        const targetPillars = sortedPillars.slice(0, 3).map(p => p.name);
-
-        // 2. Filter questions for these pillars
+        // 1. Filter questions for ALL pillars
         const relevantQuestions = DEEP_SCAN_DATA.filter(q =>
-            targetPillars.includes(q.pillar) ||
-            targetPillars.includes(PILLAR_ALIASES[q.pillar] || '')
+            allPillars.includes(q.pillar) ||
+            allPillars.includes(PILLAR_ALIASES[q.pillar] || '')
         );
 
-        // 3. Take up to 2 per pillar to keep it short (max 6 questions)
+        // 2. Group by pillar
         const grouped: Record<string, DeepScanItem[]> = {};
         relevantQuestions.forEach(q => {
             if (!grouped[q.pillar]) grouped[q.pillar] = [];
             grouped[q.pillar].push(q);
         });
 
+        // 3. Take up to 3 per pillar (7 * 3 = 21 questions)
         Object.values(grouped).forEach(qs => {
-            allQuestions.push(...qs.slice(0, 2)); // Limit to 2 per pillar
+            allQuestions.push(...qs);
         });
 
         return allQuestions;
-    }, [report.pillars]);
+    }, []);
 
     const currentQuestion = questions[currentStep];
     const progress = ((currentStep + 1) / questions.length) * 100;
@@ -145,22 +144,24 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                     };
                 });
 
-                setGenerationProgress('Consulting Gemini 1.5 Pro for personalized analysis...');
+                setGenerationProgress('Consulting OpenAI for personalized analysis...');
                 const result = await generateDeepScanReport(report, deepAnswers);
 
                 if (result) {
                     setGenerationProgress('Compiling your personalized report...');
                     await new Promise(r => setTimeout(r, 1000)); // Brief pause for UX
                     onComplete(result.chapters, result.executiveSummary);
+                    return;
                 } else {
-                    setGenerationProgress('Error generating report. Using fallback analysis...');
-                    await new Promise(r => setTimeout(r, 1500));
-                    // onComplete will still receive fallback from the service
+                    setGenerationProgress('Could not complete generation. Please try again.');
+                    await new Promise(r => setTimeout(r, 1200));
+                    setIsGenerating(false);
                 }
             } catch (err) {
                 console.error('Deep scan generation failed:', err);
-                setGenerationProgress('Using offline analysis...');
-                // Fallback handled in gemini.ts
+                setGenerationProgress('Generation failed. Returning to the assessment.');
+                await new Promise(r => setTimeout(r, 1200));
+                setIsGenerating(false);
             }
         } else {
             setCurrentStep(prev => prev + 1);
@@ -192,7 +193,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                     <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                         <div className="bg-gradient-to-r from-brand-500 to-purple-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
                     </div>
-                    <p className="text-[11px] text-slate-500">Powered by Gemini 1.5 Pro • Personalized to your business</p>
+                    <p className="text-[11px] text-slate-500">Powered by OpenAI • Personalized to your business</p>
                 </div>
             </div>
         );

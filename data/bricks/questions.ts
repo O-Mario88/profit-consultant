@@ -1,129 +1,242 @@
-import { PillarId, QuestionDefinition, SignalTag } from '../../types';
 
-const q = (
-  qid: string,
-  pillar: PillarId,
-  signal_tags: SignalTag[],
-  textA: string,
-  textB: string,
-  weight = 1.0,
-  line_type: string[] = ['all']
-): QuestionDefinition => ({
-  qid,
-  industry: 'manufacturing',
-  line_type,
-  pillar,
-  signal_tags,
-  weight,
-  textA,
-  textB
-});
+import { QuestionDefinition } from '../../types';
+
+const defaultProps = {
+  line_type: ['Bricks & blocks / concrete products', 'Clay bricks / ceramics'],
+  industry: 'bricks',
+  signal_tags: []
+};
+
+// P1: Risk (Quality, Standards)
+const p1_qs = [
+  { qid: 'QS_RISK_1', textA: 'We can show recent test results per SKU on request', textB: 'We rely on reputation and visual inspection' },
+  { qid: 'QS_RISK_2', textA: 'Pallets are tagged by batch and curing zone', textB: 'Pallets are mixed and identified by memory' },
+  { qid: 'QS_RISK_3', textA: 'Yard handling has a strict stacking/transport rule', textB: 'Yard handling is "whatever gets it done"' },
+  { qid: 'QS_RISK_4', textA: 'When a defect appears, we isolate and investigate', textB: 'We discount and move product fast' }
+];
+
+const p1_ds = [
+  { qid: 'DS_RISK_1', textA: 'Strength trend charts drive settings changes', textB: 'Strength results are archived' },
+  { qid: 'DS_RISK_2', textA: 'Mold wear is measured and controlled', textB: 'Mold wear is noticed when complaints rise' },
+  { qid: 'DS_RISK_3', textA: 'Absorption/density is tracked for durability risk', textB: 'Absorption/density is rarely checked' },
+  { qid: 'DS_RISK_4', textA: 'Quarantine tags are used consistently', textB: 'Holds are verbal' },
+  { qid: 'DS_RISK_5', textA: 'Breakage is coded by cause (handling/curing/tooling)', textB: 'Breakage is one number' },
+  { qid: 'DS_RISK_6', textA: 'Calibration is scheduled and recorded', textB: 'Calibration is "when something seems off"' },
+  { qid: 'DS_RISK_7', textA: 'Visual standards exist (chips, cracks, voids)', textB: '“Looks fine” varies by person' },
+  { qid: 'DS_RISK_8', textA: 'Customer complaints trigger root cause analysis', textB: 'Customer complaints trigger refunds' },
+  { qid: 'DS_RISK_9', textA: 'Traceability can isolate affected lots quickly', textB: 'We isolate “everything” first' },
+  { qid: 'DS_RISK_10', textA: 'We keep a retention sample/record for major runs', textB: 'We don’t retain evidence' },
+  { qid: 'DS_RISK_11', textA: 'Curing records exist (time/condition)', textB: 'Curing is assumed' },
+  { qid: 'DS_RISK_12', textA: 'Damaged pallets are rejected', textB: 'Pallets are reused until failure' },
+  { qid: 'DS_RISK_13', textA: 'QC and Production meet weekly for trends', textB: 'QC and Production meet when problems happen' },
+  { qid: 'DS_RISK_14', textA: 'Product is protected from rain/rapid drying', textB: 'Product exposure depends on space' },
+  { qid: 'DS_RISK_15', textA: 'We separate SKUs and batches in storage', textB: 'We stack wherever there is room' },
+  { qid: 'DS_RISK_16', textA: 'We can prove compliance to a stated standard', textB: 'Standards are referenced but not verified' },
+  { qid: 'DS_RISK_17', textA: 'Dispatch checks product condition pre-load', textB: 'Dispatch focuses on counts only' },
+  { qid: 'DS_RISK_18', textA: 'We track “first-time acceptance” by customers', textB: 'We track only revenue' },
+  { qid: 'DS_RISK_19', textA: 'Quality issues trigger a temporary stop', textB: 'Quality issues are fixed later' },
+  { qid: 'DS_RISK_20', textA: 'Supervisors have clear quality accountability', textB: 'Quality accountability is shared vaguely' }
+];
+
+// P2: Innovation (Mix & Process)
+const p2_qs = [
+  { qid: 'QS_INNOVATION_1', textA: 'We measure sand moisture and correct batch water', textB: 'We adjust water by feel' },
+  { qid: 'QS_INNOVATION_2', textA: 'Curing time is tracked per pallet/batch', textB: 'Curing depends on space and urgency' },
+  { qid: 'QS_INNOVATION_3', textA: 'Machine settings are standardized and reset', textB: 'Machine settings vary by operator' },
+  { qid: 'QS_INNOVATION_4', textA: 'Material substitutions require sign-off', textB: 'Material substitutions happen to avoid downtime' }
+];
+
+const p2_ds = [
+  { qid: 'DS_INNOVATION_1', textA: 'Each SKU has a locked mix card', textB: 'Recipes live in people’s heads' },
+  { qid: 'DS_INNOVATION_2', textA: 'Moisture checks are daily', textB: 'Moisture checks are occasional' },
+  { qid: 'DS_INNOVATION_3', textA: 'Cement type changes trigger a quick risk check', textB: 'Cement is “cement”' },
+  { qid: 'DS_INNOVATION_4', textA: 'Water source/quality is controlled', textB: 'Water varies with availability' },
+  { qid: 'DS_INNOVATION_5', textA: 'Aggregate gradation is monitored', textB: 'Aggregate quality is assumed' },
+  { qid: 'DS_INNOVATION_6', textA: 'Admixture dosing is verified', textB: 'Admixture dosing is “close enough”' },
+  { qid: 'DS_INNOVATION_7', textA: 'Mix time is standardized', textB: 'Mix time varies with urgency' },
+  { qid: 'DS_INNOVATION_8', textA: 'Machine vibration/pressure is checked', textB: 'Machine settings drift' },
+  { qid: 'DS_INNOVATION_9', textA: 'Mold wear is measured', textB: 'Mold wear is guessed' },
+  { qid: 'DS_INNOVATION_10', textA: 'Curing conditions are protected', textB: 'Curing is exposed as needed' },
+  { qid: 'DS_INNOVATION_11', textA: 'Pallets are turned/stacked with a rule', textB: 'Pallets are stacked wherever' },
+  { qid: 'DS_INNOVATION_12', textA: 'Strength failures trigger containment', textB: 'Strength failures trigger discounts' },
+  { qid: 'DS_INNOVATION_13', textA: 'Density checks are routine', textB: 'Density checks happen after issues' },
+  { qid: 'DS_INNOVATION_14', textA: 'Shrinkage/cracking rates are tracked', textB: 'Cracks are treated as normal' },
+  { qid: 'DS_INNOVATION_15', textA: 'We track cement kg per unit vs target', textB: 'We track only cement purchases' },
+  { qid: 'DS_INNOVATION_16', textA: 'New materials are trialed before full use', textB: 'New materials are used immediately' },
+  { qid: 'DS_INNOVATION_17', textA: 'Weather triggers process adjustments', textB: 'Weather is ignored' },
+  { qid: 'DS_INNOVATION_18', textA: 'Production run sheets capture actual dosages', textB: 'Production captures totals only' },
+  { qid: 'DS_INNOVATION_19', textA: 'Supervisors audit mix compliance weekly', textB: 'Supervisors manage by output only' },
+  { qid: 'DS_INNOVATION_20', textA: 'There’s a defined response to strength drift', textB: 'Drift is accepted until complaints rise' }
+];
+
+// P3: Market (Sales & Delivery)
+const p3_qs = [
+  { qid: 'QS_MARKET_1', textA: 'We use pre-load checks and document pallet condition', textB: 'We load fast and trust handling' },
+  { qid: 'QS_MARKET_2', textA: 'Delivery routes are planned by cost and breakage risk', textB: 'Routes are planned by habit' },
+  { qid: 'QS_MARKET_3', textA: 'Lead times are standardized and protected', textB: 'Lead times are promised per customer pressure' },
+  { qid: 'QS_MARKET_4', textA: 'Complaints are coded and reviewed weekly', textB: 'Complaints are handled case-by-case' }
+];
+
+const p3_ds = [
+  { qid: 'DS_MARKET_1', textA: 'OTIF is tracked daily', textB: 'OTIF is discussed informally' },
+  { qid: 'DS_MARKET_2', textA: 'Breakage is measured per route', textB: 'Breakage is measured monthly only' },
+  { qid: 'DS_MARKET_3', textA: 'Loading patterns are standardized', textB: 'Loading varies by driver' },
+  { qid: 'DS_MARKET_4', textA: 'Pallet strapping/protection is consistent', textB: 'Protection depends on time' },
+  { qid: 'DS_MARKET_5', textA: 'Large orders trigger special QA checks', textB: 'Large orders ship like normal' },
+  { qid: 'DS_MARKET_6', textA: 'Sales uses capacity-aware promises', textB: 'Sales sells first, operations reacts' },
+  { qid: 'DS_MARKET_7', textA: 'Disputes follow a documented workflow', textB: 'Disputes are negotiated' },
+  { qid: 'DS_MARKET_8', textA: 'Customer feedback changes production settings', textB: 'Feedback stays in sales' },
+  { qid: 'DS_MARKET_9', textA: 'Returns are analyzed for root cause', textB: 'Returns are treated as normal' },
+  { qid: 'DS_MARKET_10', textA: 'Delivery cost per unit is known', textB: 'Delivery costs are overhead' },
+  { qid: 'DS_MARKET_11', textA: 'Order batching reduces changeover/freight waste', textB: 'Orders are produced randomly' },
+  { qid: 'DS_MARKET_12', textA: 'Export customers get compliance packs', textB: 'Export is treated like domestic' },
+  { qid: 'DS_MARKET_13', textA: 'Retail vs contractor service is different', textB: 'All customers are treated the same' },
+  { qid: 'DS_MARKET_14', textA: 'Price includes handling complexity', textB: 'Handling complexity is absorbed' },
+  { qid: 'DS_MARKET_15', textA: 'We track repeat-rate by customer segment', textB: 'We track only total sales' },
+  { qid: 'DS_MARKET_16', textA: 'Customer onboarding explains handling', textB: 'Customers learn by trial' },
+  { qid: 'DS_MARKET_17', textA: 'Damaged pallets are refused before dispatch', textB: 'Damaged pallets are shipped' },
+  { qid: 'DS_MARKET_18', textA: 'Peak season has a capacity plan', textB: 'Peak season is firefighting' },
+  { qid: 'DS_MARKET_19', textA: 'Quotes include realistic lead times', textB: 'Quotes are optimistic' },
+  { qid: 'DS_MARKET_20', textA: 'Delivery proof reduces credit disputes', textB: 'Credit disputes are frequent' }
+];
+
+// P4: Leadership (Pricing)
+const p4_qs = [
+  { qid: 'QS_LEADERSHIP_1', textA: 'We know margin by SKU and customer type', textB: 'We track only total profit' },
+  { qid: 'QS_LEADERSHIP_2', textA: 'Discounts require approval', textB: 'Discounts are negotiated freely' },
+  { qid: 'QS_LEADERSHIP_3', textA: 'Freight and breakage are allocated to orders', textB: 'Freight/breakage are treated as overhead' },
+  { qid: 'QS_LEADERSHIP_4', textA: 'We price rush and special sizes', textB: 'We absorb complexity to win orders' }
+];
+
+const p4_ds = [
+  { qid: 'DS_LEADERSHIP_1', textA: 'Cost model is updated monthly', textB: 'Cost model is updated rarely' },
+  { qid: 'DS_LEADERSHIP_2', textA: 'Cement kg per unit is tracked', textB: 'Cement use is tracked by purchase' },
+  { qid: 'DS_LEADERSHIP_3', textA: 'Energy per 1,000 units is visible', textB: 'Energy is overhead' },
+  { qid: 'DS_LEADERSHIP_4', textA: 'Margin floors exist per channel', textB: 'Any price is possible' },
+  { qid: 'DS_LEADERSHIP_5', textA: 'Discounts are measured as leakage', textB: 'Discounts are just “sales”' },
+  { qid: 'DS_LEADERSHIP_6', textA: 'Special sizes have a fee', textB: 'Special sizes are priced like standard' },
+  { qid: 'DS_LEADERSHIP_7', textA: 'Small runs are priced higher', textB: 'Small runs are priced the same' },
+  { qid: 'DS_LEADERSHIP_8', textA: 'Loss-making SKUs get redesigned/removed', textB: 'Loss-making SKUs persist' },
+  { qid: 'DS_LEADERSHIP_9', textA: 'Breakage is costed to route/order', textB: 'Breakage is ignored in costing' },
+  { qid: 'DS_LEADERSHIP_10', textA: 'Freight is tracked by route', textB: 'Freight is one total' },
+  { qid: 'DS_LEADERSHIP_11', textA: 'Customer profitability is reviewed quarterly', textB: 'Customer profitability is assumed' },
+  { qid: 'DS_LEADERSHIP_12', textA: 'Price lists are version controlled', textB: 'Price lists vary by salesperson' },
+  { qid: 'DS_LEADERSHIP_13', textA: 'Price changes follow triggers', textB: 'Price changes are reactive' },
+  { qid: 'DS_LEADERSHIP_14', textA: 'Promotions are ROI-checked', textB: 'Promotions are competitor-driven' },
+  { qid: 'DS_LEADERSHIP_15', textA: 'Production time scheduled by contribution/hour', textB: 'Scheduled by urgency' },
+  { qid: 'DS_LEADERSHIP_16', textA: 'Pack/pallet costs are included in unit cost', textB: 'Pack costs are considered overhead' },
+  { qid: 'DS_LEADERSHIP_17', textA: 'Bad debt risk is priced', textB: 'Bad debt is accepted' },
+  { qid: 'DS_LEADERSHIP_18', textA: 'Contract pricing has adjustment clauses', textB: 'Contracts are fixed regardless of inputs' },
+  { qid: 'DS_LEADERSHIP_19', textA: 'Margin reports are trusted and timely', textB: 'Margin reports are delayed' },
+  { qid: 'DS_LEADERSHIP_20', textA: 'Sales is trained on margin drivers', textB: 'Sales is trained on volume' }
+];
+
+// P5: Operations (Excellence)
+const p5_qs = [
+  { qid: 'QS_OPERATIONS_1', textA: 'We track downtime causes daily', textB: 'We track downtime informally' },
+  { qid: 'QS_OPERATIONS_2', textA: 'Mold/tool wear is monitored with a plan', textB: 'Molds are used until failure' },
+  { qid: 'QS_OPERATIONS_3', textA: 'Curing is treated as a controlled stage', textB: 'Curing is treated as storage' },
+  { qid: 'QS_OPERATIONS_4', textA: 'PM is scheduled and measured', textB: 'PM happens when breakdowns force it' }
+];
+
+const p5_ds = [
+  { qid: 'DS_OPERATIONS_1', textA: 'OEE is reviewed daily', textB: 'OEE is unknown' },
+  { qid: 'DS_OPERATIONS_2', textA: 'Downtime has standard codes', textB: 'Downtime is described differently each time' },
+  { qid: 'DS_OPERATIONS_3', textA: 'Repeat breakdowns trigger RCA', textB: 'Repeat breakdowns are accepted' },
+  { qid: 'DS_OPERATIONS_4', textA: 'Critical spares are stocked', textB: 'Spares are bought in emergencies' },
+  { qid: 'DS_OPERATIONS_5', textA: 'Mold inspections are scheduled', textB: 'Mold inspections are random' },
+  { qid: 'DS_OPERATIONS_6', textA: 'Changeovers are timed and improved', textB: 'Changeovers are accepted' },
+  { qid: 'DS_OPERATIONS_7', textA: 'Setup has a checklist', textB: 'Setup relies on experience' },
+  { qid: 'DS_OPERATIONS_8', textA: 'Start-up scrap is measured', textB: 'Start-up scrap is ignored' },
+  { qid: 'DS_OPERATIONS_9', textA: 'Scrap is coded by cause', textB: 'Scrap is one number' },
+  { qid: 'DS_OPERATIONS_10', textA: 'Curing time is enforced', textB: 'Curing is shortened under pressure' },
+  { qid: 'DS_OPERATIONS_11', textA: 'Curing capacity is planned', textB: 'Curing space is improvised' },
+  { qid: 'DS_OPERATIONS_12', textA: 'Forklift handling rules protect product', textB: 'Handling is “as fast as possible”' },
+  { qid: 'DS_OPERATIONS_13', textA: 'PM compliance is above target', textB: 'PM compliance is not tracked' },
+  { qid: 'DS_OPERATIONS_14', textA: 'Machine settings are standardized', textB: 'Machine settings drift by operator' },
+  { qid: 'DS_OPERATIONS_15', textA: 'Maintenance has a weekly plan', textB: 'Maintenance is reactive' },
+  { qid: 'DS_OPERATIONS_16', textA: 'Shift handover is structured', textB: 'Handover is verbal' },
+  { qid: 'DS_OPERATIONS_17', textA: 'Production schedule respects constraints', textB: 'Schedule changes hourly' },
+  { qid: 'DS_OPERATIONS_18', textA: 'Quality stops are allowed', textB: 'Quality issues are fixed later' },
+  { qid: 'DS_OPERATIONS_19', textA: 'Output is measured per machine hour', textB: 'Output is measured per day only' },
+  { qid: 'DS_OPERATIONS_20', textA: 'Improvement actions have owners/dates', textB: 'Improvements are suggestions' }
+];
+
+// P6: Money (Supply Chain)
+const p6_qs = [
+  { qid: 'QS_MONEY_1', textA: 'We have min/max rules for cement/pallets', textB: 'We reorder when we notice shortages' },
+  { qid: 'QS_MONEY_2', textA: 'Cycle counting keeps inventory accurate', textB: 'Inventory is corrected during crises' },
+  { qid: 'QS_MONEY_3', textA: 'Credit limits are enforced', textB: 'Credit is relationship-based' },
+  { qid: 'QS_MONEY_4', textA: 'Finished goods aging drives production', textB: 'Production runs by habit' }
+];
+
+const p6_ds = [
+  { qid: 'DS_MONEY_1', textA: 'Supplier OTIF is measured', textB: 'Supplier OTIF is assumed' },
+  { qid: 'DS_MONEY_2', textA: 'Cement variability is managed', textB: 'Cement is treated as identical' },
+  { qid: 'DS_MONEY_3', textA: 'Aggregate quality is checked', textB: 'Aggregate quality is assumed' },
+  { qid: 'DS_MONEY_4', textA: 'Inventory accuracy is measured', textB: 'Inventory accuracy is unknown' },
+  { qid: 'DS_MONEY_5', textA: 'Emergency buys are logged', textB: 'Emergency buys are normal' },
+  { qid: 'DS_MONEY_6', textA: 'Pallets are tracked and recovered', textB: 'Pallets disappear' },
+  { qid: 'DS_MONEY_7', textA: 'Stockouts are coded by root cause', textB: 'Stockouts are accepted' },
+  { qid: 'DS_MONEY_8', textA: 'Finished goods aging is visible', textB: 'Aging is ignored' },
+  { qid: 'DS_MONEY_9', textA: 'Slow movers get action plans', textB: 'Slow movers stay forever' },
+  { qid: 'DS_MONEY_10', textA: 'WIP is limited', textB: 'WIP grows with pressure' },
+  { qid: 'DS_MONEY_11', textA: 'Lead times are recorded and planned', textB: 'Lead times are guessed' },
+  { qid: 'DS_MONEY_12', textA: 'Credit limits exist', textB: 'Credit is flexible' },
+  { qid: 'DS_MONEY_13', textA: 'Collections follows a cadence', textB: 'Collections happens when cash is tight' },
+  { qid: 'DS_MONEY_14', textA: 'Overdue accounts are escalated', textB: 'Overdue accounts are tolerated' },
+  { qid: 'DS_MONEY_15', textA: 'Forecasting uses sales signals', textB: 'Forecasting uses last month only' },
+  { qid: 'DS_MONEY_16', textA: 'Supplier disputes trigger actions', textB: 'Supplier disputes trigger blame' },
+  { qid: 'DS_MONEY_17', textA: 'Procurement has approval rules', textB: 'Procurement is whoever reacts fastest' },
+  { qid: 'DS_MONEY_18', textA: 'Cash conversion is tracked', textB: 'Cash conversion is unknown' },
+  { qid: 'DS_MONEY_19', textA: 'Production schedules respect materials', textB: 'Production waits for materials' },
+  { qid: 'DS_MONEY_20', textA: 'Pricing reflects cash/credit risk', textB: 'Pricing ignores payment behavior' }
+];
+
+// P7: People (EHS)
+const p7_qs = [
+  { qid: 'QS_PEOPLE_1', textA: 'Safety holds even under rush pressure', textB: 'Safety becomes flexible under pressure' },
+  { qid: 'QS_PEOPLE_2', textA: 'Dust controls are enforced consistently', textB: 'Dust controls depend on the supervisor' },
+  { qid: 'QS_PEOPLE_3', textA: 'Skills are mapped and cross-trained', textB: 'Skills are concentrated in a few people' },
+  { qid: 'QS_PEOPLE_4', textA: 'Improvements have owners and deadlines', textB: 'Improvements are suggestions' }
+];
+
+const p7_ds = [
+  { qid: 'DS_PEOPLE_1', textA: 'Near misses are reported without fear', textB: 'Near misses are handled quietly' },
+  { qid: 'DS_PEOPLE_2', textA: 'Dust controls are documented and audited', textB: 'Dust controls are informal' },
+  { qid: 'DS_PEOPLE_3', textA: 'Cutting/grinding uses engineered controls', textB: 'Relies mostly on PPE' },
+  { qid: 'DS_PEOPLE_4', textA: 'Forklift traffic has defined rules', textB: 'Forklift traffic is ad hoc' },
+  { qid: 'DS_PEOPLE_5', textA: 'Machine guarding is inspected', textB: 'Guarding is assumed' },
+  { qid: 'DS_PEOPLE_6', textA: 'Training is role-based and logged', textB: 'Training is “shadowing”' },
+  { qid: 'DS_PEOPLE_7', textA: 'Bottleneck roles have backups', textB: 'Bottleneck roles rely on one person' },
+  { qid: 'DS_PEOPLE_8', textA: 'Housekeeping is daily discipline', textB: 'Housekeeping is weekly cleanup' },
+  { qid: 'DS_PEOPLE_9', textA: 'Quality and safety can stop production', textB: 'Production always wins' },
+  { qid: 'DS_PEOPLE_10', textA: 'Incidents trigger learning reviews', textB: 'Incidents trigger blame' },
+  { qid: 'DS_PEOPLE_11', textA: 'PPE compliance is coached', textB: 'PPE depends on mood' },
+  { qid: 'DS_PEOPLE_12', textA: 'Waste is measured and targeted', textB: 'Waste is hidden' },
+  { qid: 'DS_PEOPLE_13', textA: 'Energy usage is monitored', textB: 'Energy is overhead' },
+  { qid: 'DS_PEOPLE_14', textA: 'Water usage is monitored', textB: 'Water usage is ignored' },
+  { qid: 'DS_PEOPLE_15', textA: 'Maintenance safety lockout is respected', textB: 'Lockout is bypassed under pressure' },
+  { qid: 'DS_PEOPLE_16', textA: 'Improvement backlog is ranked by impact', textB: 'Improvement backlog is random' },
+  { qid: 'DS_PEOPLE_17', textA: 'Actions close on time', textB: 'Actions linger' },
+  { qid: 'DS_PEOPLE_18', textA: 'Leadership reviews safety monthly', textB: 'Leadership reviews after incidents' },
+  { qid: 'DS_PEOPLE_19', textA: 'Environmental risks are managed', textB: 'Environmental risks are reactive' },
+  { qid: 'DS_PEOPLE_20', textA: 'Sustainability claims are evidence-based', textB: 'Claims are marketing-led' }
+];
 
 export const questions: QuestionDefinition[] = [
-  // QUICK SCAN (2 per pillar)
-  q('QS_OPS_01', 'Operations', ['no_standard_work'], 'When production is busy, we rely on supervisor experience to keep things moving.', 'When production is busy, we rely on a visible batch sheet so everyone stays aligned.', 1.1),
-  q('QS_OPS_02', 'Operations', ['quality_built_late'], 'We dispatch as soon as orders are ready to keep cash moving.', 'We dispatch when curing and quality timing is satisfied to protect repeat orders.', 1.2),
-
-  q('QS_MONEY_01', 'Money', ['costing_gap'], 'Delivery pricing is negotiated per customer depending on distance and relationship.', 'Delivery pricing follows a standard rule that protects trip economics.', 1.1),
-  q('QS_MONEY_02', 'Money', ['pricing_margin_blindspot'], 'We track performance mainly by units sold this week.', 'We track performance mainly by margin per product line and cash collected.', 1.2),
-
-  q('QS_MARKET_01', 'Market', ['spec_drift_discount'], 'Customers usually describe what they want by call or chat and we deliver.', 'Customers usually confirm a simple spec sheet so site expectations are aligned.', 1.2),
-  q('QS_MARKET_02', 'Market', ['channel_dependency'], 'Our best customers come through referrals and contractors we know.', 'Our best customers come through referrals plus stable channels we intentionally manage.', 1.0),
-
-  q('QS_LEAD_01', 'Leadership', ['no_variance_review'], 'When issues appear, we handle them quickly and move to the next order.', 'When issues appear, we update the standard so the issue reduces over time.', 1.0),
-  q('QS_LEAD_02', 'Leadership', ['decision_bottleneck'], 'Payments and approvals feel safer when controlled by one or two key people.', 'Payments and approvals move faster when clear limits are delegated.', 1.1),
-
-  q('QS_INNOV_01', 'Innovation', ['no_product_testing_rhythm'], 'We add new products when customers ask frequently.', 'We add new products after a small trial proves demand and margin.', 1.0),
-  q('QS_INNOV_02', 'Innovation', ['pack_size_profit_blindspot'], 'We focus on popular standard items most of the time.', 'We protect time for at least one premium line that increases pricing power.', 1.0),
-
-  q('QS_RISK_01', 'Risk', ['traceability_gap'], 'Quality confidence comes from experience and customer trust over time.', 'Quality confidence comes from experience plus simple batch and test documentation.', 1.1),
-  q('QS_RISK_02', 'Risk', ['hygiene_drift'], 'Safety is mostly handled through common sense and careful workers.', 'Safety is handled through common sense plus routine checks and PPE discipline.', 1.1),
-
-  q('QS_PEOPLE_01', 'People', ['training_gap'], 'New workers learn fastest by working alongside experienced staff.', 'New workers learn fastest with shadowing plus a short checklist for critical steps.', 1.0),
-  q('QS_PEOPLE_02', 'People', ['cross_function_breakdown'], 'Output improves most when workers push hard to meet orders.', 'Output improves most when workers push hard while quality steps stay protected.', 1.0),
-
-  // DEEP SCAN (10 per pillar)
-  // Operations
-  q('DS_OPS_01', 'Operations', ['measurement_blindspot'], 'Mix decisions are adjusted based on how materials feel that day.', 'Mix decisions are adjusted using a consistent measurement routine.', 1.1),
-  q('DS_OPS_02', 'Operations', ['measurement_blindspot'], 'Water is added until the mix looks right.', 'Water is added to a target ratio and recorded.', 1.1),
-  q('DS_OPS_03', 'Operations', ['quality_built_late'], 'Curing time is flexible when customers need urgent delivery.', 'Curing time is protected with a minimum standard.', 1.2),
-  q('DS_OPS_04', 'Operations', ['reactive_maintenance'], 'Molds are replaced only when they obviously fail.', 'Molds are inspected and maintained routinely.', 1.0),
-  q('DS_OPS_05', 'Operations', ['quality_built_late'], 'Strength checks happen mainly on complaints or big orders.', 'Strength checks happen on a routine schedule.', 1.1),
-  q('DS_OPS_06', 'Operations', ['waste_not_costed'], 'Breakage is accepted as part of loading and delivery.', 'Breakage is tracked by stage and reduced deliberately.', 1.0),
-  q('DS_OPS_07', 'Operations', ['flow_instability'], 'Yard stacking depends on available space each day.', 'Yard stacking follows a planned layout and rotation.', 1.0),
-  q('DS_OPS_08', 'Operations', ['reactive_maintenance'], 'Machines are fixed when they break.', 'Machines are maintained to reduce breakdowns.', 1.0),
-  q('DS_OPS_09', 'Operations', ['quality_built_late'], 'QC happens mostly at dispatch.', 'QC includes first-batch checks to prevent mass defects.', 1.0),
-  q('DS_OPS_10', 'Operations', ['planning_gap'], 'We prioritize speed only when demand is high.', 'We prioritize speed while protecting quality-critical steps.', 0.9),
-
-  // Money
-  q('DS_MONEY_01', 'Money', ['costing_gap'], 'Cement usage is monitored mainly by eye and experience.', 'Cement usage is monitored against expected batch consumption.', 1.1),
-  q('DS_MONEY_02', 'Money', ['costing_gap'], 'Transport cost is assumed and adjusted when fuel rises.', 'Transport cost per trip is tracked and priced by rule.', 1.1),
-  q('DS_MONEY_03', 'Money', ['discounting_leak'], 'Discounts are applied whenever customers hesitate.', 'Discounts are tied to volume, terms, and margin rules.', 1.0),
-  q('DS_MONEY_04', 'Money', ['credit_terms_risk'], 'We allow flexible payment terms to keep customers.', 'We allow structured payment terms to protect cash flow.', 1.0),
-  q('DS_MONEY_05', 'Money', ['pricing_margin_blindspot'], 'We measure success by output and sales volume.', 'We measure success by profit per line and cash collected.', 1.1),
-  q('DS_MONEY_06', 'Money', ['waste_not_costed'], 'Material losses are treated as normal operations.', 'Material losses are tracked and investigated as variance.', 1.0),
-  q('DS_MONEY_07', 'Money', ['inventory_blindspot'], 'Inventory is produced whenever the team is free.', 'Inventory is produced based on demand and stock policy.', 1.0),
-  q('DS_MONEY_08', 'Money', ['purchase_panic'], 'Spare parts are bought when breakdowns happen.', 'Spare parts are planned for critical equipment.', 0.9),
-  q('DS_MONEY_09', 'Money', ['pricing_margin_blindspot'], 'Pricing is based mainly on competitor rates.', 'Pricing is based on market rates plus cost and margin targets.', 1.0),
-  q('DS_MONEY_10', 'Money', ['payment_delay_chokehold'], 'Collections are handled when customers are ready.', 'Collections follow a routine and escalation rule.', 1.0),
-
-  // Market
-  q('DS_MARKET_01', 'Market', ['spec_drift_discount'], 'Specs are agreed mostly through conversation and trust.', 'Specs are agreed through simple written confirmation.', 1.1),
-  q('DS_MARKET_02', 'Market', ['pricing_positioning_gap'], 'Customers accept some variation as long as delivery is fast.', 'Customers accept premium pricing when consistency is visible.', 1.0),
-  q('DS_MARKET_03', 'Market', ['order_fulfillment_instability'], 'Delivery dates are estimated from current workload.', 'Delivery dates are committed based on a dispatch plan.', 1.1),
-  q('DS_MARKET_04', 'Market', ['complaint_handling_gap'], 'Complaints are handled case by case.', 'Complaints are logged and closed to prevent repetition.', 1.0),
-  q('DS_MARKET_05', 'Market', ['channel_dependency'], 'Most sales come from relationships only.', 'Sales come from relationships plus stable channels.', 1.0),
-  q('DS_MARKET_06', 'Market', ['pricing_positioning_gap'], 'We serve all customer types equally.', 'We focus on segments that improve margin and repeat business.', 1.0),
-  q('DS_MARKET_07', 'Market', ['sku_complexity_tax'], 'Product variety helps capture more orders.', 'Product variety helps when it is controlled and profitable.', 0.9),
-  q('DS_MARKET_08', 'Market', ['pricing_positioning_gap'], 'We win customers mainly through price.', 'We win through reliability, proof, and service.', 1.1),
-  q('DS_MARKET_09', 'Market', ['weak_proof_pack'], 'Marketing is mostly word of mouth.', 'Marketing uses referrals plus simple proof assets.', 0.9),
-  q('DS_MARKET_10', 'Market', ['planning_gap'], 'Seasonality is handled as it comes.', 'Seasonality is planned with stock and pricing adjustments.', 1.0),
-
-  // Leadership
-  q('DS_LEAD_01', 'Leadership', ['panic_scheduling'], 'Production plans change daily from urgent orders.', 'Production plans adapt, but the core schedule is protected.', 1.1),
-  q('DS_LEAD_02', 'Leadership', ['no_standard_work'], 'Quality is enforced mainly through supervision.', 'Quality is enforced through supervision plus visible standards.', 1.0),
-  q('DS_LEAD_03', 'Leadership', ['decision_bottleneck'], 'Decisions feel safer when centralized.', 'Decisions move faster when delegated with limits.', 1.0),
-  q('DS_LEAD_04', 'Leadership', ['no_meeting_to_action'], 'Meetings happen when issues arise.', 'Reviews happen routinely with action owners.', 1.0),
-  q('DS_LEAD_05', 'Leadership', ['hero_operator_dependence'], 'Problems are solved by the most experienced person.', 'Problems are solved by updating systems anyone can repeat.', 1.0),
-  q('DS_LEAD_06', 'Leadership', ['priority_whiplash'], 'Teams focus only on today\'s orders.', 'Teams focus on today while protecting next-month stability.', 0.9),
-  q('DS_LEAD_07', 'Leadership', ['no_kpi_ownership'], 'KPIs are checked when needed.', 'KPIs are checked daily and weekly with visibility.', 1.0),
-  q('DS_LEAD_08', 'Leadership', ['hiring_mismatch'], 'Hiring prioritizes availability and willingness.', 'Hiring prioritizes availability plus skill tests for critical roles.', 0.9),
-  q('DS_LEAD_09', 'Leadership', ['training_planning_gap'], 'Training happens informally while working.', 'Training happens informally plus critical-step checklists.', 0.9),
-  q('DS_LEAD_10', 'Leadership', ['no_accountability_loop'], 'Accountability is shared without clear owners.', 'Accountability has clear owners per shift and process.', 1.0),
-
-  // Innovation
-  q('DS_INNOV_01', 'Innovation', ['no_product_testing_rhythm'], 'We introduce products when competitors do.', 'We introduce products when pilots prove demand and margin.', 1.0),
-  q('DS_INNOV_02', 'Innovation', ['pack_size_profit_blindspot'], 'Premium products feel risky because demand is uncertain.', 'Premium products are tested because they protect pricing power.', 0.9),
-  q('DS_INNOV_03', 'Innovation', ['slow_bug_fix'], 'Processes improve only when breakdowns force change.', 'Processes improve through routine experiments.', 0.9),
-  q('DS_INNOV_04', 'Innovation', ['value_story_gap'], 'Branding is secondary to production capacity.', 'Branding supports production with trust and price strength.', 0.9),
-  q('DS_INNOV_05', 'Innovation', ['slow_bug_fix'], 'Molds are upgraded only when they fail completely.', 'Molds are upgraded when ROI is clear.', 1.0),
-  q('DS_INNOV_06', 'Innovation', ['sku_complexity_tax'], 'We keep many options to satisfy all customers.', 'We keep options that are profitable and controllable.', 1.0),
-  q('DS_INNOV_07', 'Innovation', ['value_story_gap'], 'Delivery is only a cost we endure.', 'Delivery is a value-add service that improves repeat orders.', 0.9),
-  q('DS_INNOV_08', 'Innovation', ['low_margin_skus'], 'We rarely measure true product winners.', 'We rank products by profit and scale winners.', 1.0),
-  q('DS_INNOV_09', 'Innovation', ['no_variance_review'], 'Quality improvements happen mainly after complaints.', 'Quality improvements happen before complaints through QA routines.', 0.9),
-  q('DS_INNOV_10', 'Innovation', ['no_product_testing_rhythm'], 'We avoid changes that might disrupt production.', 'We adopt small safe changes that compound over time.', 0.9),
-
-  // Risk
-  q('DS_RISK_01', 'Risk', ['hygiene_drift'], 'Safety is managed mainly through careful behavior.', 'Safety is managed through behavior plus routine checks.', 1.0),
-  q('DS_RISK_02', 'Risk', ['hygiene_drift'], 'Dust is controlled only as needed.', 'Dust is controlled with consistent practices.', 1.0),
-  q('DS_RISK_03', 'Risk', ['contract_gap'], 'Contracts are simple and relationship-based.', 'Contracts include acceptance, rejection, and defect rules.', 1.1),
-  q('DS_RISK_04', 'Risk', ['traceability_gap'], 'Product claims rely on experience and reputation.', 'Product claims are supported by testing and traceability.', 1.0),
-  q('DS_RISK_05', 'Risk', ['contract_gap'], 'Disputes are settled mainly by negotiation.', 'Disputes are reduced through clear documentation.', 1.0),
-  q('DS_RISK_06', 'Risk', ['fear_index'], 'Incidents are handled quietly to avoid noise.', 'Incidents are logged so they reduce over time.', 0.9),
-  q('DS_RISK_07', 'Risk', ['hygiene_drift'], 'Equipment hazards are handled only through supervision.', 'Equipment hazards are handled through supervision plus SOPs.', 0.9),
-  q('DS_RISK_08', 'Risk', ['compliance_blocker_risk'], 'Compliance is handled when inspectors appear.', 'Compliance is managed proactively to avoid panic.', 1.0),
-  q('DS_RISK_09', 'Risk', ['traceability_gap'], 'Batch details are remembered by staff.', 'Batch details are recorded for traceability.', 1.1),
-  q('DS_RISK_10', 'Risk', ['compliance_blocker_risk'], 'Environmental concerns are occasional issues.', 'Environmental concerns are managed to prevent escalations.', 0.9),
-
-  // People
-  q('DS_PEOPLE_01', 'People', ['training_gap'], 'Skills are built mainly through experience.', 'Skills are built through experience plus training checklists.', 1.0),
-  q('DS_PEOPLE_02', 'People', ['hero_operator_dependence'], 'The best workers carry most quality load.', 'The system carries quality instead of a few stars.', 1.0),
-  q('DS_PEOPLE_03', 'People', ['cross_function_breakdown'], 'Overtime is a normal way to meet demand.', 'Overtime is used carefully to avoid quality drop.', 1.0),
-  q('DS_PEOPLE_04', 'People', ['role_clarity_gap'], 'Performance is judged mostly by how hard people work.', 'Performance is judged by output plus quality consistency.', 1.0),
-  q('DS_PEOPLE_05', 'People', ['weak_shift_handover'], 'Handovers happen naturally through conversation.', 'Handovers follow a quick structure each shift.', 1.0),
-  q('DS_PEOPLE_06', 'People', ['low_psych_safety'], 'Motivation comes only from daily pay and stability.', 'Motivation includes pay plus recognition and growth.', 0.9),
-  q('DS_PEOPLE_07', 'People', ['role_clarity_gap'], 'People handle roles flexibly without clear ownership.', 'People handle roles flexibly with clear ownership of critical steps.', 1.0),
-  q('DS_PEOPLE_08', 'People', ['blame_culture'], 'Mistakes are corrected quickly and work continues.', 'Mistakes are corrected and process is improved to prevent repeats.', 1.0),
-  q('DS_PEOPLE_09', 'People', ['onboarding_gap'], 'New workers start quickly with minimal onboarding.', 'New workers start quickly with a short onboarding routine.', 0.9),
-  q('DS_PEOPLE_10', 'People', ['hero_operator_dependence'], 'The team relies mostly on a strong supervisor.', 'The team relies on supervision plus standards that hold without one person.', 1.0)
-];
+  ...p1_qs.map(q => ({ ...q, pillar: 'Risk', weight: 1, ...defaultProps })),
+  ...p1_ds.map(q => ({ ...q, pillar: 'Risk', weight: 1, ...defaultProps })),
+  ...p2_qs.map(q => ({ ...q, pillar: 'Innovation', weight: 1, ...defaultProps })),
+  ...p2_ds.map(q => ({ ...q, pillar: 'Innovation', weight: 1, ...defaultProps })),
+  ...p3_qs.map(q => ({ ...q, pillar: 'Market', weight: 1, ...defaultProps })),
+  ...p3_ds.map(q => ({ ...q, pillar: 'Market', weight: 1, ...defaultProps })),
+  ...p4_qs.map(q => ({ ...q, pillar: 'Leadership', weight: 1, ...defaultProps })),
+  ...p4_ds.map(q => ({ ...q, pillar: 'Leadership', weight: 1, ...defaultProps })),
+  ...p5_qs.map(q => ({ ...q, pillar: 'Operations', weight: 1, ...defaultProps })),
+  ...p5_ds.map(q => ({ ...q, pillar: 'Operations', weight: 1, ...defaultProps })),
+  ...p6_qs.map(q => ({ ...q, pillar: 'Money', weight: 1, ...defaultProps })),
+  ...p6_ds.map(q => ({ ...q, pillar: 'Money', weight: 1, ...defaultProps })),
+  ...p7_qs.map(q => ({ ...q, pillar: 'People', weight: 1, ...defaultProps })),
+  ...p7_ds.map(q => ({ ...q, pillar: 'People', weight: 1, ...defaultProps }))
+] as QuestionDefinition[];

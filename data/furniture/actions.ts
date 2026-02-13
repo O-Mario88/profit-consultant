@@ -1,297 +1,194 @@
-import { ActionDefinition } from '../../types';
 
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
+import { SignalTag } from '../../types';
 
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
-  {
-    action_id: 'ACT_FUR_OPS_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['waste_not_costed'],
-    title: 'Offcut Baseline + Cutting Plan Rule',
+export const actions = {
+  // P1: Risk
+  fit_and_finish_checklist: {
+    title: 'Fit & Finish Acceptance Checklist',
+    description: 'Create one "acceptance checklist" (fit, finish, hardware, safety edges) and enforce it on every job.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['wood_waste_percent'],
-    proof_required: ['offcut_log', 'cutting_plans'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_FUR_OPS_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['measurement_blindspot'],
-    title: 'Double-Check Measurement System (2-person verify)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rework_incidents'],
-    proof_required: ['measurement_verification_checklist'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FUR_LEAD_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_accountability_loop'],
-    title: 'Job Card for Every Order',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['on_time_completion_percent'],
-    proof_required: ['job_cards'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FUR_OPS_7_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['bottleneck_bounce'],
-    title: 'Finishing Bottleneck Fix (staging + drying schedule)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['cycle_time_days'],
-    proof_required: ['finishing_schedule_board'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FUR_OPS_7_04',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['planning_gap'],
-    title: 'Material Readiness Checklist (fittings/varnish/screws)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['stoppages_due_missing_items'],
-    proof_required: ['material_readiness_checklist'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_FUR_RISK_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
     pillar: 'Risk',
-    signal_tags: ['order_fulfillment_instability'],
-    title: 'Packing Standard + Damage Prevention',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['delivery_damage_rate'],
-    proof_required: ['packing_photos'],
-    impact_score: 8
+    signal_tags: ['warranty_factory', 'fitment_roulette', 'callback_bleed'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_MONEY_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['cashflow_visibility_gap'],
-    title: 'Deposit Rule Enforcement (minimum % to start)',
+  moisture_sop: {
+    title: 'Moisture SOP & Timer',
+    description: 'Standardize moisture/storage SOP and use an acclimatization timer.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['deposit_collection_rate'],
-    proof_required: ['deposit_policy'],
-    impact_score: 9
+    pillar: 'Risk',
+    signal_tags: ['wood_movement_surprise_tax'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_MONEY_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['pricing_margin_blindspot'],
-    title: 'Scope Change Script + Change Order Form',
+  finish_standard: {
+    title: 'Finish System Standard',
+    description: 'Lock one sanding/spray standard for 7 days (same grit steps, same cleaning rule).',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['scope_change_revenue_captured'],
-    proof_required: ['signed_change_orders'],
-    impact_score: 8
+    pillar: 'Risk',
+    signal_tags: ['finish_rework_spiral', 'last_day_panic_sanding'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_OPS_7_05',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['reactive_maintenance'],
-    title: 'Tool Maintenance Sprint (sharpen, calibrate, repair)',
+  dust_routine: {
+    title: 'Dust Control & Housekeeping',
+    description: 'Daily 20-minute cleanup + check extractor/bags/hoses; log hazards.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['tool_downtime_hours'],
-    proof_required: ['tool_maintenance_log'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_FUR_LEAD_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_meeting_to_action'],
-    title: 'Daily 15-min Planning Huddle',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['action_closure_rate'],
-    proof_required: ['huddle_notes'],
-    impact_score: 7
+    pillar: 'Risk',
+    signal_tags: ['dust_debt_hazard'] as SignalTag[]
   },
 
-  // 30-Day Build Control
-  {
-    action_id: 'ACT_FUR_MONEY_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'Pricing Engine (Material + Labor + Overhead + Profit)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['profit_per_job', 'material_cost_variance'],
-    proof_required: ['pricing_template'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_FUR_INNOV_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  // P2: Innovation
+  readiness_gate: {
+    title: 'Job Readiness Gate',
+    description: 'No job enters cutting without drawings + BOM + materials confirmed.',
+    link: '#',
+    days: 7,
     pillar: 'Innovation',
-    signal_tags: ['sku_complexity_tax'],
-    title: 'Standard Designs Library (Top 10 best sellers)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['revenue_standard_designs_percent'],
-    proof_required: ['design_catalog'],
-    impact_score: 8
+    signal_tags: ['job_readiness_debt', 'drawing_drift'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_INNOV_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  site_measure_checklist: {
+    title: 'Site Measure Checklist',
+    description: 'Standardize the site measurement checklist for built-ins (plumb/level, obstacles, services).',
+    link: '#',
+    days: 7,
     pillar: 'Innovation',
-    signal_tags: ['slow_bug_fix'],
-    title: 'Jigs/Templates for Accuracy & Speed',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['lead_time_reduction', 'rework_reduction'],
-    proof_required: ['jig_set'],
-    impact_score: 8
+    signal_tags: ['site_surprise_rebuild'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_OPS_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  wastage_factor: {
+    title: 'BOM Wastage Factor',
+    description: 'Use a simple wastage factor in BOMs (sheet/board) and track variance.',
+    link: '#',
+    days: 7,
+    pillar: 'Innovation',
+    signal_tags: ['bom_blind_spot', 'nesting_waste_tax'] as SignalTag[]
+  },
+
+  // P3: Market
+  lead_tracker: {
+    title: 'Lead Tracker & Follow-up',
+    description: 'Implement a lead tracker + mandatory follow-up cadence (Day 0/1/3/7).',
+    link: '#',
+    days: 7,
+    pillar: 'Market',
+    signal_tags: ['lead_leak', 'follow_up_gap'] as SignalTag[]
+  },
+  quote_template: {
+    title: 'Standard Quote Template',
+    description: 'Standardize quote template with scope boundaries and timelines.',
+    link: '#',
+    days: 7,
+    pillar: 'Market',
+    signal_tags: ['quote_fog', 'scope_creep_politely_killing_margin'] as SignalTag[]
+  },
+  referral_ask: {
+    title: 'Referral System',
+    description: 'Launch a simple referral ask after successful delivery.',
+    link: '#',
+    days: 7,
+    pillar: 'Market',
+    signal_tags: ['callback_reputation_bleed'] as SignalTag[]
+  },
+
+  // P4: Leadership
+  margin_floor: {
+    title: 'Margin Floor Rule',
+    description: 'Set a margin floor and enforce it on new quotes (decline script).',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['busy_but_broke_pricing', 'quote_optimism'] as SignalTag[]
+  },
+  change_order_fees: {
+    title: 'Change Order Trigger',
+    description: 'Activate change-order fees for the top 3 common changes.',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['free_change_syndrome', 'scope_creep_tax'] as SignalTag[]
+  },
+  deposit_rule: {
+    title: 'Mandatory Deposits',
+    description: 'Standardize deposits before material purchasing.',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['deposit_weakness_penalty', 'material_cash_lock'] as SignalTag[]
+  },
+
+  // P5: Operations
+  daily_huddle: {
+    title: 'Daily Plan Huddle',
+    description: 'Run a daily 10-minute plan vs actual huddle with reason codes.',
+    link: '#',
+    days: 7,
     pillar: 'Operations',
-    signal_tags: ['flow_instability'],
-    title: 'Workshop Layout Optimization (flow mapping)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['cycle_time_days'],
-    proof_required: ['layout_map'],
-    impact_score: 8
+    signal_tags: ['late_stage_surprises', 'rush_overtime_burn'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_MONEY_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
+  wip_limit: {
+    title: 'WIP Limit Cap',
+    description: 'Cap WIP: stop starting new jobs until bottleneck station clears.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['wip_swamp', 'rework_second_factory'] as SignalTag[]
+  },
+  tool_check: {
+    title: 'Tool & Blade Maintenance',
+    description: 'Implement blade/bit check routine (reduce cutting scrap immediately).',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['tool_downtime_theft', 'scrap_cascade'] as SignalTag[]
+  },
+
+  // P6: Money
+  cycle_count: {
+    title: 'Stock Cycle Count',
+    description: 'Cycle count top 30 items (hinges, screws, glue) and fix reorder points.',
+    link: '#',
+    days: 7,
     pillar: 'Money',
-    signal_tags: ['inventory_blindspot'],
-    title: 'Inventory Min/Max for Timber & Fittings',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['stockouts_count', 'inventory_days'],
-    proof_required: ['reorder_rules'],
-    impact_score: 8
+    signal_tags: ['hardware_stockout_stalls', 'slow_moving_inventory_graveyard'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_OPS_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Quality Gates (cut, assemble, finish, pack)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['first_pass_quality_percent'],
-    proof_required: ['quality_gate_checklists'],
-    impact_score: 9
+  job_closeout: {
+    title: 'Job Costing Closeout',
+    description: 'Start job closeouts on the last 5 jobs (actual hours/materials).',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['profit_blind_quoting', 'ghost_margin'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_MARKET_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['spec_drift_discount'],
-    title: 'Customer Spec Pack (drawing + finish + timeline)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dispute_rate'],
-    proof_required: ['spec_pack_samples'],
-    impact_score: 8
+  collections_cadence: {
+    title: 'Collections Cadence',
+    description: 'Begin collections cadence on overdue invoices.',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['overdue_cash_choke'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_MARKET_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['low_repeat_orders'],
-    title: 'Referral Engine (ask + incentive + follow-up)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['referral_rate'],
-    proof_required: ['referral_tracker'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_FUR_PEOPLE_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+
+  // P7: People
+  skill_matrix_backup: {
+    title: 'Skill Matrix & Backups',
+    description: 'Create one skill matrix for the bottleneck station and train backups.',
+    link: '#',
+    days: 7,
     pillar: 'People',
-    signal_tags: ['training_gap'],
-    title: 'Training Ladder for Apprentices (skills stages)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['skill_certification_coverage'],
-    proof_required: ['training_plan'],
-    impact_score: 8
+    signal_tags: ['skill_bottleneck', 'supervisor_lottery'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_FUR_RISK_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['contract_gap'],
-    title: 'Delivery & Installation SOP + Acceptance Sign-off',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['delivery_incident_rate', 'dispute_rate'],
-    proof_required: ['signed_acceptance_forms'],
-    impact_score: 9
+  s5_sprint: {
+    title: '5S Sprint',
+    description: 'Run a 5S sprint on the highest-traffic area (cutting/assembly/finish).',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['clutter_drag', 'search_and_move_tax'] as SignalTag[]
+  },
+  near_miss_reporting: {
+    title: 'Near Miss Reporting',
+    description: 'Launch near-miss reporting with 48-hour closure targets.',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['near_miss_silence'] as SignalTag[]
   }
-];
+};

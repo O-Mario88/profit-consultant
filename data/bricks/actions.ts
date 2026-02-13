@@ -1,297 +1,130 @@
-import { ActionDefinition } from '../../types';
 
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
+import { SignalTag } from '../../types';
 
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
-  {
-    action_id: 'ACT_BRICKS_OPS_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['measurement_blindspot'],
-    title: 'Water Ratio Lock (measuring tools + visible batch sheet)',
+export const actions = {
+  // P1: Risk
+  tag_batch: {
+    title: 'Batch ID Tagging',
+    description: 'Implement batch tags (date, shift, mix) + pallet IDs to trace defects.',
+    link: '#',
     days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['reject_rate'],
-    proof_required: ['signed_batch_logs'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_BRICKS_OPS_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Curing Protection Rule (no dispatch before minimum cure)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['return_rate'],
-    proof_required: ['curing_tags'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_BRICKS_OPS_7_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['waste_not_costed'],
-    title: 'Breakage Audit (yard/load/road/offload map)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['breakage_rate'],
-    proof_required: ['breakage_map'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_OPS_7_04',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['reactive_maintenance'],
-    title: 'Mold Check & Repair Sprint (top 10 molds)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dimensional_pass_rate'],
-    proof_required: ['mold_checklist_photos'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_MARKET_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Market',
-    signal_tags: ['spec_drift_discount'],
-    title: 'Site Spec Sheet (size/strength/curing expectations signed)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['site_rejection_rate'],
-    proof_required: ['signed_spec_sheet'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_MONEY_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'Transport Pricing Reality Check (trip cost + minimum order)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['margin_per_order'],
-    proof_required: ['delivery_cost_sheet'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_LEAD_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_kpi_ownership'],
-    title: 'Daily Output + Reject Board (visible at yard)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['output_stability'],
-    proof_required: ['daily_board_photo'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_BRICKS_MONEY_7_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['waste_not_costed'],
-    title: 'Materials Gate (cement/sand receipt + usage tracking)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['cement_variance'],
-    proof_required: ['usage_log'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_OPS_7_05',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'First-Article QC (first 20 units tested per batch)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['defect_escape_rate'],
-    proof_required: ['qc_signoff'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_PEOPLE_7_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'People',
-    signal_tags: ['weak_shift_handover'],
-    title: '15-min Shift Handover (mix issues/materials/breakdowns)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['shift_variance'],
-    proof_required: ['handover_notes'],
-    impact_score: 7
-  },
-
-  // 30-Day Build Control
-  {
-    action_id: 'ACT_BRICKS_MONEY_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'True Unit Cost Engine (by product line + delivery)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['margin_per_sku'],
-    proof_required: ['costing_model'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_BRICKS_RISK_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
     pillar: 'Risk',
-    signal_tags: ['traceability_gap'],
-    title: 'Batch Traceability (batch IDs + curing tags + delivery link)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['traceability_completeness'],
-    proof_required: ['traceability_sop'],
-    impact_score: 9
+    signal_tags: ['traceability_fog', 'complaint_churn'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_OPS_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_definition_gap'],
-    title: 'Strength Testing Routine (schedule + acceptance thresholds)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['strength_test_pass_rate'],
-    proof_required: ['test_logs'],
-    impact_score: 8
+  yard_audit: {
+    title: 'Yard Breakage Check',
+    description: 'Run a daily breakage audit; fix the top cause (handling, stacking) in 72 hours.',
+    link: '#',
+    days: 7,
+    pillar: 'Risk',
+    signal_tags: ['yard_damage_premium', 'breakage_burn'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_OPS_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['reactive_maintenance'],
-    title: 'Preventive Maintenance Calendar (mixer/vibro/molds)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['downtime_reduction'],
-    proof_required: ['pm_logs'],
-    impact_score: 8
+
+  // P2: Innovation
+  moisture_check: {
+    title: 'Sand Moisture Routine',
+    description: 'Daily sand moisture check + correction table to stabilize water/cement ratio.',
+    link: '#',
+    days: 7,
+    pillar: 'Innovation',
+    signal_tags: ['water_ratio_roulette', 'moisture_blindness'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_OPS_30_03',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['flow_instability'],
-    title: 'Stockyard Layout System (stacking/FIFO/damage prevention)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['breakage_rate', 'dispatch_time'],
-    proof_required: ['yard_map'],
-    impact_score: 8
+  golden_setup: {
+    title: 'Golden Machine Setup',
+    description: 'Post specific machine settings (vibration/pressure) and reset every shift.',
+    link: '#',
+    days: 7,
+    pillar: 'Innovation',
+    signal_tags: ['density_drift', 'strength_swing_tax'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_MONEY_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['credit_terms_risk'],
-    title: 'Credit + Collections Policy (terms, follow-up, stop-work rule)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dso'],
-    proof_required: ['collections_policy'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_BRICKS_MARKET_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+
+  // P3: Market
+  delivery_photos: {
+    title: 'Pre-Load Photo Proof',
+    description: 'Take pre-load photos to reduce disputes and stop shipping damage.',
+    link: '#',
+    days: 7,
     pillar: 'Market',
-    signal_tags: ['weak_proof_pack'],
-    title: 'Market Differentiation Pack (strength guarantee + proof)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['price_realization'],
-    proof_required: ['proof_pack'],
-    impact_score: 8
+    signal_tags: ['dispute_drag', 'site_rejection_tax'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_INNOV_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['sku_complexity_tax'],
-    title: 'SKU Rationalization (remove low-margin chaos items)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['changeover_time_reduction'],
-    proof_required: ['sku_decision_list'],
-    impact_score: 8
+  standard_lead_time: {
+    title: 'Standard Lead Times',
+    description: 'Publish standard lead times per SKU family and stop "urgent exceptions".',
+    link: '#',
+    days: 7,
+    pillar: 'Market',
+    signal_tags: ['rush_order_chaos', 'promise_reality_gap'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_PEOPLE_30_01',
-    industry: 'manufacturing',
-    line_type: ['all'],
+
+  // P4: Leadership
+  cost_to_serve: {
+    title: 'Cost-to-Serve Sheet',
+    description: 'Calculate price minus freight/breakage for top 20 customers.',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['freight_profit_leak', 'unpriced_complexity'] as SignalTag[]
+  },
+  margin_floor: {
+    title: 'Margin Floor Lockdown',
+    description: 'Freeze discounts on orders below a minimum gross margin percentage.',
+    link: '#',
+    days: 7,
+    pillar: 'Leadership',
+    signal_tags: ['margin_evaporation', 'discount_drift'] as SignalTag[]
+  },
+
+  // P5: Operations
+  downtime_log: {
+    title: 'Simple Downtime Log',
+    description: 'Log downtime with 6 codes; fix the #1 cause this week.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['downtime_theft', 'throughput_illusion'] as SignalTag[]
+  },
+  mold_check: {
+    title: 'Start-Shift Mold Check',
+    description: 'Inspect molds at shift start; remove worn tools before bad runs.',
+    link: '#',
+    days: 7,
+    pillar: 'Operations',
+    signal_tags: ['mold_wear_drift', 'scrap_spiral'] as SignalTag[]
+  },
+
+  // P6: Money
+  choke_point_count: {
+    title: 'Choke Point Count',
+    description: 'Cycle count cement, sand, and pallets; correct records immediately.',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['inventory_fiction', 'stop_start_tax'] as SignalTag[]
+  },
+  aging_release: {
+    title: 'Dead Stock Release',
+    description: 'Identify oldest stock blocks/pavers and sell/move them first.',
+    link: '#',
+    days: 7,
+    pillar: 'Money',
+    signal_tags: ['slow_mover_yard', 'cash_hostage_customers'] as SignalTag[]
+  },
+
+  // P7: People
+  sqdc_daily: {
+    title: 'Daily SQDC Huddle',
+    description: '10-minute standing meeting: Safety, Quality, Delivery, Cost. Close 1 action.',
+    link: '#',
+    days: 7,
     pillar: 'People',
-    signal_tags: ['training_gap'],
-    title: 'People Certification (mixing, curing, QC, machine operation)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['operator_certification_coverage'],
-    proof_required: ['certification_list'],
-    impact_score: 8
+    signal_tags: ['unowned_actions', 'improvement_drought'] as SignalTag[]
   },
-  {
-    action_id: 'ACT_BRICKS_INNOV_30_02',
-    industry: 'manufacturing',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['no_product_testing_rhythm'],
-    title: 'Innovation Sprint (1 premium line trial)',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['premium_share'],
-    proof_required: ['pilot_results'],
-    impact_score: 8
+  dust_sweep: {
+    title: 'Dust Control Sweep',
+    description: 'Check cutting/grinding zones for silica dust controls; fix exposures.',
+    link: '#',
+    days: 7,
+    pillar: 'People',
+    signal_tags: ['dust_risk_premium', 'safety_under_pressure_slip'] as SignalTag[]
   }
-];
+};

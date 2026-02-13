@@ -1,297 +1,225 @@
-import { ActionDefinition } from '../../types';
 
-const ownerMap = {
-  solo: 'Owner',
-  micro: 'Ops Lead',
-  small: 'Ops Lead',
-  small_med: 'Manager',
-  medium: 'Department Lead',
-  large: 'Department Lead',
-  enterprise: 'Function Head'
-};
+import { ActionSnippet } from '../../types';
 
-export const actions: ActionDefinition[] = [
-  // 7-Day Stabilize Profit
+export const actions: ActionSnippet[] = [
+  // RISK (Client Trust)
   {
-    action_id: 'ACT_OG_OPS_7_01',
+    id: 'ACT_OG_RISK_PREQUAL_PACK',
+    title: 'Supplier Prequalification Pack',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['no_standard_work'],
-    title: 'Job Pack Minimum Standard',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rework_rate', 'crew_idle_hours'],
-    proof_required: ['10_job_packs'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_OG_OPS_7_02',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['planning_gap'],
-    title: 'PTW Pre-Planning Routine',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['permit_lead_time'],
-    proof_required: ['ptw_checklist_logs'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_OG_OPS_7_03',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['flow_instability'],
-    title: 'Crew Idle Audit (Top 5 Causes)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['crew_idle_hours'],
-    proof_required: ['idle_report'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_OG_MONEY_7_01',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['pricing_margin_blindspot'],
-    title: 'Variation Order Rule (No Free Work)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['vo_capture_rate'],
-    proof_required: ['vo_log'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_OG_MONEY_7_02',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['payment_delay_chokehold'],
-    title: 'Close-Out Pack Rule (Invoice-Ready)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['closeout_cycle_time'],
-    proof_required: ['closeout_packs'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_OG_MONEY_7_03',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['energy_burn_spiral'],
-    title: 'Rental and Fuel Control Log',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['spend_variance'],
-    proof_required: ['rental_fuel_logs'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_OG_OPS_7_04',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Rework Kill List (Top 3 Defects)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['first_time_right'],
-    proof_required: ['defect_tracker'],
-    impact_score: 8
-  },
-  {
-    action_id: 'ACT_OG_OPS_7_05',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Operations',
-    signal_tags: ['order_fulfillment_instability'],
-    title: 'SLA Dashboard (Simple)',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['sla_compliance'],
-    proof_required: ['dashboard_screenshot'],
-    impact_score: 7
-  },
-  {
-    action_id: 'ACT_OG_RISK_7_01',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
     pillar: 'Risk',
-    signal_tags: ['data_security_gap'],
-    title: 'Invoice Fraud Prevention Script',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['fraud_attempts_detected'],
-    proof_required: ['verification_sop'],
-    impact_score: 7
+    text: 'Create a single, updated digital folder with your HSE, QA/QC, Integrity, Insurance, and key staff CVs. Assign one owner to keep it audit-ready weekly.',
+    type: 'file',
+    impact: 'High'
   },
   {
-    action_id: 'ACT_OG_LEAD_7_01',
+    id: 'ACT_OG_RISK_SUB_SCREEN',
+    title: 'Subcontractor Screening Checklist',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Leadership',
-    signal_tags: ['no_meeting_to_action'],
-    title: 'Daily 15-Min Site Huddle',
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['action_closure_rate'],
-    proof_required: ['huddle_notes'],
-    impact_score: 7
+    pillar: 'Risk',
+    text: 'Implement a "No Onboarding, No Access" rule. Use a standard checklist (HSE alignment, competency, insurance) before any sub starts work.',
+    type: 'checklist',
+    impact: 'High'
+  },
+  {
+    id: 'ACT_OG_RISK_ANTI_BRIBERY',
+    title: 'Anti-Bribery Policy & Script',
+    industry: 'oil_gas_services',
+    pillar: 'Risk',
+    text: 'Deploy a simple 1-page "No Facilitation Payments" policy and a script for staff to refuse improper requests without losing face.',
+    type: 'script',
+    impact: 'Critical'
+  },
+  {
+    id: 'ACT_OG_RISK_AUDIT_TRACKER',
+    title: 'Audit Finding Tracker',
+    industry: 'oil_gas_services',
+    pillar: 'Risk',
+    text: 'Track every audit finding (Internal or Client) to closure with evidence. Review weekly to prevent "Audit Ambush".',
+    type: 'tool',
+    impact: 'Medium'
   },
 
-  // 30-Day Build Control
+  // INNOVATION (Offer Design)
   {
-    action_id: 'ACT_OG_MONEY_30_01',
+    id: 'ACT_OG_INNOV_SLA_MENU',
+    title: 'SLA Menu & Dashboard',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['costing_gap'],
-    title: 'Job Costing by Cost Codes',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['margin_per_job'],
-    proof_required: ['cost_code_system'],
-    impact_score: 9
-  },
-  {
-    action_id: 'ACT_OG_INNOV_30_01',
-    industry: 'oil_gas_services',
-    line_type: ['all'],
     pillar: 'Innovation',
-    signal_tags: ['quality_definition_gap'],
-    title: 'Standard Template Library',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['template_adoption_rate'],
-    proof_required: ['template_library'],
-    impact_score: 9
+    text: 'Define your service tiers (Standard vs Premium) with clear response times and deliverables. Use a dashboard to prove you hit them.',
+    type: 'template',
+    impact: 'High'
   },
   {
-    action_id: 'ACT_OG_MONEY_30_02',
+    id: 'ACT_OG_INNOV_VALUE_PROOF',
+    title: 'Value Proof Sheet',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Money',
-    signal_tags: ['pricing_margin_blindspot'],
-    title: 'VO and Contract Discipline System',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['vo_capture_rate'],
-    proof_required: ['vo_approvals'],
-    impact_score: 9
+    pillar: 'Innovation',
+    text: 'Create 1-page case studies showing "Before vs After" metrics (e.g., Downtime Avoided, Speed, Safety). Stop selling effort, start selling outcomes.',
+    type: 'template',
+    impact: 'High'
   },
   {
-    action_id: 'ACT_OG_RISK_30_01',
+    id: 'ACT_OG_INNOV_COST_CALC',
+    title: 'Cost-to-Serve Calculator',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['traceability_gap'],
-    title: 'Subcontractor Compliance Program',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['subcontractor_compliance'],
-    proof_required: ['compliance_records'],
-    impact_score: 8
+    pillar: 'Innovation',
+    text: 'Map all costs including mobilization, standby, permits, and logistics. Use this to set accurate pricing floors.',
+    type: 'tool',
+    impact: 'High'
   },
+
+  // MARKET (Marketing)
   {
-    action_id: 'ACT_OG_MARKET_30_01',
+    id: 'ACT_OG_MARKET_BID_CHECK',
+    title: 'Bid/No-Bid Checklist',
     industry: 'oil_gas_services',
-    line_type: ['all'],
     pillar: 'Market',
-    signal_tags: ['compliance_blocker_risk'],
-    title: 'Prequal Readiness Vault',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['prequal_readiness_score'],
-    proof_required: ['readiness_vault'],
-    impact_score: 8
+    text: 'Stop chasing every tender. improved your win-rate by scoring opportunities (Relationship, Capability, Margin) before you start work.',
+    type: 'checklist',
+    impact: 'High'
   },
   {
-    action_id: 'ACT_OG_LEAD_30_01',
+    id: 'ACT_OG_MARKET_TARGET_LIST',
+    title: 'Top 30 Target List',
     industry: 'oil_gas_services',
-    line_type: ['all'],
+    pillar: 'Market',
+    text: 'Identify the top 30 accounts (Operators/EPCs) you want to win. Map the stakeholders and build a specific engagement plan.',
+    type: 'tool',
+    impact: 'Medium'
+  },
+  {
+    id: 'ACT_OG_MARKET_CAPABILITY',
+    title: 'Enterprise Capability Statement',
+    industry: 'oil_gas_services',
+    pillar: 'Market',
+    text: 'Update your capability profile to focus on "Buyer Risks": emphasize HSE, QA, Financial Stability, and Audit Readiness.',
+    type: 'template',
+    impact: 'High'
+  },
+
+  // LEADERSHIP (Sales/Contracting)
+  {
+    id: 'ACT_OG_LEAD_VAR_FORM',
+    title: 'Variation Order Form',
+    industry: 'oil_gas_services',
     pillar: 'Leadership',
-    signal_tags: ['management_by_memory'],
-    title: 'Supervisor Coaching Playbook',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['supervisor_score'],
-    proof_required: ['coaching_logs'],
-    impact_score: 8
+    text: 'Capture scope changes immediately. Even if you bill later, get signatures now. Stop doing free work.',
+    type: 'template',
+    impact: 'High'
   },
   {
-    action_id: 'ACT_OG_OPS_30_01',
+    id: 'ACT_OG_LEAD_HANDOVER',
+    title: 'Sales-to-Ops Handover Checklist',
     industry: 'oil_gas_services',
-    line_type: ['all'],
+    pillar: 'Leadership',
+    text: 'Ensure Operations knows exactly what was sold. detailed scope, exclusions, timelines, and safety requirements before work starts.',
+    type: 'checklist',
+    impact: 'High'
+  },
+  {
+    id: 'ACT_OG_LEAD_DISCOUNT',
+    title: 'Discount Approval Matrix',
+    industry: 'oil_gas_services',
+    pillar: 'Leadership',
+    text: 'Set clear margin floors. Require senior approval for any discount below the standard tier.',
+    type: 'policy',
+    impact: 'Medium'
+  },
+
+  // OPERATIONS
+  {
+    id: 'ACT_OG_OPS_MOB_CHECK',
+    title: 'Mobilization Checklist',
+    industry: 'oil_gas_services',
     pillar: 'Operations',
-    signal_tags: ['quality_built_late'],
-    title: 'Rework Reduction Program',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['rework_hours'],
-    proof_required: ['defect_reduction_report'],
-    impact_score: 9
+    text: 'Standardize mobilization: Personnel certs, equipment checks, logistics, and permits. Eliminate "Gate Fever" delays.',
+    type: 'checklist',
+    impact: 'Critical'
   },
   {
-    action_id: 'ACT_OG_MONEY_30_03',
+    id: 'ACT_OG_OPS_CLOSEOUT',
+    title: 'Job Closeout Pack',
     industry: 'oil_gas_services',
-    line_type: ['all'],
+    pillar: 'Operations',
+    text: 'Define the standard evidence required for invoicing (Time sheets, signed reports, photos, test charts). No pack = No invoice.',
+    type: 'template',
+    impact: 'High'
+  },
+  {
+    id: 'ACT_OG_OPS_CRIT_SPARES',
+    title: 'Critical Spares List',
+    industry: 'oil_gas_services',
+    pillar: 'Operations',
+    text: 'Identify the top 20 parts that cause downtime. Set reorder points and keep them in stock locally.',
+    type: 'tool',
+    impact: 'Medium'
+  },
+  {
+    id: 'ACT_OG_OPS_EMERGENCY',
+    title: 'Emergency Freight Log',
+    industry: 'oil_gas_services',
+    pillar: 'Operations',
+    text: 'Track every emergency shipment. Record the cost and the root cause. Reduce "Emergency Tax" by fixing planning gaps.',
+    type: 'tool',
+    impact: 'Medium'
+  },
+
+  // MONEY (Finance)
+  {
+    id: 'ACT_OG_MONEY_JOB_COST',
+    title: 'Job Costing Sheet',
+    industry: 'oil_gas_services',
     pillar: 'Money',
-    signal_tags: ['credit_terms_risk'],
-    title: 'Milestone Billing Structure',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['dso'],
-    proof_required: ['billing_terms_update'],
-    impact_score: 8
+    text: 'Track revenue vs actual costs (labor, material, equipment, travel) for every job. Know your true margin.',
+    type: 'tool',
+    impact: 'Critical'
   },
   {
-    action_id: 'ACT_OG_INNOV_30_02',
+    id: 'ACT_OG_MONEY_SPEND_MATRIX',
+    title: 'Spend Approval Matrix',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Innovation',
-    signal_tags: ['no_market_feedback_loop'],
-    title: 'Lessons Learned System',
-    days: 30,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['incident_recurrence_rate'],
-    proof_required: ['debrief_logs'],
-    impact_score: 7
+    pillar: 'Money',
+    text: 'Freeze unapproved spend. Every PO requires a code and approval based on value limits.',
+    type: 'policy',
+    impact: 'High'
   },
   {
-    action_id: 'ACT_OG_RISK_30_02',
+    id: 'ACT_OG_MONEY_WIP',
+    title: 'WIP Tracker',
     industry: 'oil_gas_services',
-    line_type: ['all'],
-    pillar: 'Risk',
-    signal_tags: ['compliance_blocker_risk'],
-    title: 'HSE/PTW Enforcement Upgrade',
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: ['ptw_compliance'],
-    proof_required: ['audit_reports'],
-    impact_score: 9
+    pillar: 'Money',
+    text: 'Track Unbilled Work (WIP) weekly. Identify blockers (missing docs, PO limits) and clear them to unlock cash.',
+    type: 'tool',
+    impact: 'High'
+  },
+
+  // PEOPLE
+  {
+    id: 'ACT_OG_PEOPLE_COMPETENCY',
+    title: 'Competency Matrix',
+    industry: 'oil_gas_services',
+    pillar: 'People',
+    text: 'Map critical roles to required skills/certs. Track expiration dates and deployment readiness.',
+    type: 'tool',
+    impact: 'High'
+  },
+  {
+    id: 'ACT_OG_PEOPLE_START_WORK',
+    title: 'Start-Work Verification',
+    industry: 'oil_gas_services',
+    pillar: 'People',
+    text: 'Implement a field check that verifies critical controls are in place before high-risk work begins.',
+    type: 'checklist',
+    impact: 'Critical'
+  },
+  {
+    id: 'ACT_OG_PEOPLE_NCR',
+    title: 'NCR & Learning Tracker',
+    industry: 'oil_gas_services',
+    pillar: 'People',
+    text: 'Log Quality Non-Conformances (NCRs) and incidents. Track actions to effectiveness, not just completion.',
+    type: 'tool',
+    impact: 'High'
   }
 ];

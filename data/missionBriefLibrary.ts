@@ -12,129 +12,129 @@ export type PillarStatus = 'Profit Leak' | 'Bottleneck Forming' | 'Controlled' |
 export const PILLAR_BRIEFS: Record<string, Record<PillarStatus, BriefTemplate>> = {
   Engine: {
     'Profit Leak': {
-      controls: "Engine controls how work moves from {lead} → {order} → {delivery} → payment.",
-      detected: "We detected manual dependency and owner/team bottlenecks.",
-      costing: "This inefficiency acts as a 'Time Tax' on every dollar earned. Currently, approximately 15-20% of your payroll is likely being consumed by non-productive activities like reworking errors, chasing missing information, or waiting for approvals. This artificially compresses your margins and makes scaling impossible without linear hiring.",
-      cliffhanger: "The Deep Scan will map your entire delivery workflow step-by-step to identify the exact 'Constraint Step'. You will see precisely where the bottleneck lies (e.g., The Review Stage) and get a specific protocol to widen that pipe immediately."
+      controls: "**Engine** controls how work moves from {lead} → {order} → {delivery} → payment.",
+      detected: "We detected **manual dependency** and owner/team bottlenecks.",
+      costing: "This inefficiency acts as a **'Time Tax'** on every dollar earned. Currently, approximately **15-20%** of your payroll is likely being consumed by non-productive activities like reworking errors, chasing missing information, or waiting for approvals. This artificially compresses your margins and makes scaling impossible without linear hiring.",
+      cliffhanger: "The Deep Scan will map your entire delivery workflow step-by-step to identify the exact **'Constraint Step'**. You will see precisely where the bottleneck lies (e.g., The Review Stage) and get a specific protocol to widen that pipe immediately."
     },
     'Bottleneck Forming': {
-      controls: "Engine controls how work moves from {lead} → {order} → {delivery} → payment.",
-      detected: "Execution looks functional, but handoffs and consistency are slipping.",
-      costing: "Small friction points are compounding into expensive delays. While you aren't bleeding cash yet, your 'Cost to Deliver' is rising faster than your revenue. This means as you grow, you will actually become less profitable due to the hidden costs of coordination chaos.",
-      cliffhanger: "The Deep Scan will isolate the top 2 workflow choke points where information is getting stuck. We will reveal exactly which handoffs are failing and provide a lightweight 'Golden Path' playbook to smooth them out."
+      controls: "**Engine** controls how work moves from {lead} → {order} → {delivery} → payment.",
+      detected: "Execution looks functional, but **handoffs and consistency** are slipping.",
+      costing: "Small friction points are compounding into expensive delays. While you aren't bleeding cash yet, your **'Cost to Deliver'** is rising faster than your revenue. This means as you grow, you will actually become less profitable due to the hidden costs of coordination chaos.",
+      cliffhanger: "The Deep Scan will isolate the **top 2 workflow choke points** where information is getting stuck. We will reveal exactly which handoffs are failing and provide a lightweight **'Golden Path'** playbook to smooth them out."
     },
     'Controlled': {
-      controls: "Engine controls how work moves from {lead} → {order} → {delivery} → payment.",
-      detected: "Your operating rhythm is mostly stable; the biggest gain is tightening repeatability.",
-      costing: "You are currently leaving 'Efficiency Dividends' on the table. While stable, manual steps in your process are preventing you from achieving the 30%+ net margins typical of optimized firms in your sector. You are paying for stability with speed.",
-      cliffhanger: "The Deep Scan will identify the specific low-value administrative tasks that can be fully automated. We will reveal a plan to reclaim 10+ hours of leadership time per week by shifting from 'Controlled' to 'Automated'."
+      controls: "**Engine** controls how work moves from {lead} → {order} → {delivery} → payment.",
+      detected: "Your operating rhythm is mostly stable; the biggest gain is **tightening repeatability**.",
+      costing: "You are currently leaving **'Efficiency Dividends'** on the table. While stable, manual steps in your process are preventing you from achieving the **30%+ net margins** typical of optimized firms in your sector. You are paying for stability with speed.",
+      cliffhanger: "The Deep Scan will identify the specific **low-value administrative tasks** that can be fully automated. We will reveal a plan to reclaim **10+ hours** of leadership time per week by shifting from 'Controlled' to 'Automated'."
     },
     'Profit Lever': {
-      controls: "Engine controls how work moves from {lead} → {order} → {delivery} → payment.",
-      detected: "Your execution system is a strength; you can scale without chaos.",
-      costing: "The primary cost here is Opportunity Cost. Your Engine is ready to handle 2x the volume, but if you don't feed it, that capacity is wasted overhead. You are effectively paying for a Ferrari engine but driving it in a school zone.",
-      cliffhanger: "The Deep Scan will reveal how to decouple your time completely from delivery. We will show you the exact delegation limits required to turn this department into a self-managing asset that grows without you."
+      controls: "**Engine** controls how work moves from {lead} → {order} → {delivery} → payment.",
+      detected: "Your execution system is a **strength**; you can scale without chaos.",
+      costing: "The primary cost here is **Opportunity Cost**. Your Engine is ready to handle **2x the volume**, but if you don't feed it, that capacity is wasted overhead. You are effectively paying for a Ferrari engine but driving it in a school zone.",
+      cliffhanger: "The Deep Scan will reveal how to **decouple your time** completely from delivery. We will show you the exact delegation limits required to turn this department into a self-managing asset that grows without you."
     }
   },
   Fuel: {
     'Profit Leak': {
-      controls: "Fuel controls margin, cash collection, pricing discipline, and survival.",
-      detected: "Signals of cash fog (profit unclear) and soft terms.",
-      costing: "You are essentially financing your customers at 0% interest while absorbing all the risk. Weak collection terms and discounting 'to close' are eroding your bottom line by an estimated 10-15%. You are working harder for 'busy broke' outcomes.",
-      cliffhanger: "The Deep Scan will audit your last 3 months of transactions to find the 'Phantom Expenses' and 'Margin Leaks' you don't see. We will reveal a 13-week cash flow forecast that predicts exactly when you might run out of money if changes aren't made."
+      controls: "**Fuel** controls margin, cash collection, pricing discipline, and survival.",
+      detected: "Signals of **cash fog** (profit unclear) and soft terms.",
+      costing: "You are essentially financing your customers at **0% interest** while absorbing all the risk. Weak collection terms and discounting 'to close' are eroding your bottom line by an estimated **10-15%**. You are working harder for 'busy broke' outcomes.",
+      cliffhanger: "The Deep Scan will audit your last 3 months of transactions to find the **'Phantom Expenses'** and **'Margin Leaks'** you don't see. We will reveal a 13-week cash flow forecast that predicts exactly when you might run out of money if changes aren't made."
     },
     'Bottleneck Forming': {
-      controls: "Fuel controls margin, cash collection, pricing discipline, and survival.",
-      detected: "Cash habits exist but lack consistent review rhythm.",
-      costing: "You are suffering from 'Death by a Thousand Cuts'. Small subscriptions, unbilled scope creep, and slightly delayed payments are silently eating 5-8% of your net profit. This prevents you from building the war chest needed for safe growth.",
-      cliffhanger: "The Deep Scan will categorize your expenses into 'Green' (Investments) and 'Red' (Waste). We will reveal the 3 highest ROI margin improvement levers you can pull immediately without hurting sales."
+      controls: "**Fuel** controls margin, cash collection, pricing discipline, and survival.",
+      detected: "Cash habits exist but lack **consistent review rhythm**.",
+      costing: "You are suffering from **'Death by a Thousand Cuts'**. Small subscriptions, unbilled scope creep, and slightly delayed payments are silently eating **5-8%** of your net profit. This prevents you from building the war chest needed for safe growth.",
+      cliffhanger: "The Deep Scan will categorize your expenses into **'Green'** (Investments) and **'Red'** (Waste). We will reveal the 3 highest ROI margin improvement levers you can pull immediately without hurting sales."
     },
     'Controlled': {
-      controls: "Fuel controls margin, cash collection, pricing discipline, and survival.",
-      detected: "Fuel looks stable.",
-      costing: "You are leaving money on the table through pricing stagnation. Inflation and value improvements haven't been captured in your current model, likely costing you 10% in pure bottom-line profit that requires no extra work to capture.",
-      cliffhanger: "The Deep Scan will analyze your unit economics against industry benchmarks. We will reveal a specific pricing power strategy to increase your Life Time Value (LTV) without increasing customer churn."
+      controls: "**Fuel** controls margin, cash collection, pricing discipline, and survival.",
+      detected: "**Fuel looks stable**.",
+      costing: "You are leaving money on the table through **pricing stagnation**. Inflation and value improvements haven't been captured in your current model, likely costing you **10% in pure bottom-line profit** that requires no extra work to capture.",
+      cliffhanger: "The Deep Scan will analyze your unit economics against industry benchmarks. We will reveal a specific **pricing power strategy** to increase your Life Time Value (LTV) without increasing customer churn."
     },
     'Profit Lever': {
-      controls: "Fuel controls margin, cash collection, pricing discipline, and survival.",
-      detected: "Cash discipline is strong.",
-      costing: "The risk is 'Lazy Capital'. Your cash reserves are likely sitting idle rather than being deployed into high-ROI growth channels. You are losing ground to competitors who are reinvesting aggressively.",
-      cliffhanger: "The Deep Scan will model different investment scenarios. We will reveal exactly where to deploy your capital surplus to generate the highest compounding return over the next 12 months."
+      controls: "**Fuel** controls margin, cash collection, pricing discipline, and survival.",
+      detected: "**Cash discipline is strong**.",
+      costing: "The risk is **'Lazy Capital'**. Your cash reserves are likely sitting idle rather than being deployed into high-ROI growth channels. You are losing ground to competitors who are reinvesting aggressively.",
+      cliffhanger: "The Deep Scan will model different investment scenarios. We will reveal exactly where to deploy your capital surplus to generate the **highest compounding return** over the next 12 months."
     }
   },
   Voice: {
     'Profit Leak': {
-      controls: "Voice controls how the market discovers you, trusts you, and pays you.",
-      detected: "Signals of inconsistent lead flow and weak follow-up rhythm.",
-      costing: "Inconsistency is the most expensive marketing strategy. By stopping and starting your outreach, you lose the 'compound interest' of visibility. Your Customer Acquisition Cost (CAC) is likely 2x higher than necessary because you are constantly restarting cold engines.",
-      cliffhanger: "The Deep Scan will audit your entire funnel from 'Stranger' to 'Customer'. We will reveal the specific drop-off point where 80% of your leads are dying and provide a script to plug that hole."
+      controls: "**Voice** controls how the market discovers you, trusts you, and pays you.",
+      detected: "Signals of **inconsistent lead flow** and weak follow-up rhythm.",
+      costing: "Inconsistency is the most expensive marketing strategy. By stopping and starting your outreach, you lose the **'compound interest'** of visibility. Your Customer Acquisition Cost (CAC) is likely **2x higher** than necessary because you are constantly restarting cold engines.",
+      cliffhanger: "The Deep Scan will audit your entire funnel from 'Stranger' to 'Customer'. We will reveal the specific drop-off point where **80% of your leads are dying** and provide a script to plug that hole."
     },
     'Bottleneck Forming': {
-      controls: "Voice controls how the market discovers you, trusts you, and pays you.",
-      detected: "Demand exists but conversion/retention is inconsistent.",
-      costing: "You are burning leads. By generating interest but failing to follow up systematically, you are paying for attention but not capturing the value. This 'Lead Waste' is costing you potential revenue every single week.",
-      cliffhanger: "The Deep Scan will analyze your lead response times and follow-up frequency. We will reveal a 'Velocity Gap' report showing how much revenue you are losing simply by being too slow or too passive."
+      controls: "**Voice** controls how the market discovers you, trusts you, and pays you.",
+      detected: "Demand exists but **conversion/retention is inconsistent**.",
+      costing: "You are burning leads. By generating interest but failing to follow up systematically, you are paying for attention but not capturing the value. This **'Lead Waste'** is costing you potential revenue every single week.",
+      cliffhanger: "The Deep Scan will analyze your lead response times and follow-up frequency. We will reveal a **'Velocity Gap'** report showing how much revenue you are losing simply by being too slow or too passive."
     },
     'Controlled': {
-      controls: "Voice controls how the market discovers you, trusts you, and pays you.",
-      detected: "Voice is stable.",
-      costing: "You are relying on linear growth (adding more leads) instead of exponential growth (referrals and retention). It costs 5x more to get a new customer than to keep an existing one, yet your focus is heavily weighted on acquisition.",
-      cliffhanger: "The Deep Scan will evaluate your customer lifecycle. We will reveal a specific 'Referral Loop' strategy to turn your existing happy clients into your most profitable marketing channel."
+      controls: "**Voice** controls how the market discovers you, trusts you, and pays you.",
+      detected: "**Voice is stable**.",
+      costing: "You are relying on linear growth (adding more leads) instead of exponential growth (referrals and retention). It costs **5x more** to get a new customer than to keep an existing one, yet your focus is heavily weighted on acquisition.",
+      cliffhanger: "The Deep Scan will evaluate your customer lifecycle. We will reveal a specific **'Referral Loop'** strategy to turn your existing happy clients into your most profitable marketing channel."
     },
     'Profit Lever': {
-      controls: "Voice controls how the market discovers you, trusts you, and pays you.",
-      detected: "Your pipeline is a strength.",
-      costing: "The danger is 'Fulfillment Break'. If you turn up the volume on Voice without fortifying the Engine, you risk damaging your reputation by selling more than you can deliver excellently.",
-      cliffhanger: "The Deep Scan will stress-test your capacity. We will reveal the safe 'Throttle Limit' for your marketing and how to align your sales velocity with your delivery capability."
+      controls: "**Voice** controls how the market discovers you, trusts you, and pays you.",
+      detected: "**Your pipeline is a strength**.",
+      costing: "The danger is **'Fulfillment Break'**. If you turn up the volume on Voice without fortifying the Engine, you risk damaging your reputation by selling more than you can deliver excellently.",
+      cliffhanger: "The Deep Scan will stress-test your capacity. We will reveal the safe **'Throttle Limit'** for your marketing and how to align your sales velocity with your delivery capability."
     }
   },
   // Default fallbacks for other pillars to ensure no errors, detailed as well
   Brain: {
-    'Profit Leak': { controls: "Brain controls priorities.", detected: "Priority chaos.", costing: "Focus switching cost is reducing team output by ~40%.", cliffhanger: "Deep Scan reveals the 'One Metric That Matters'." },
-    'Bottleneck Forming': { controls: "Brain controls priorities.", detected: "Inconsistent rhythm.", costing: "Slow decision making stalls projects.", cliffhanger: "Deep Scan reveals decision bottlenecks." },
-    'Controlled': { controls: "Brain controls priorities.", detected: "Stable cadence.", costing: "Delegation limits are too tight.", cliffhanger: "Deep Scan reveals delegation opportunities." },
-    'Profit Lever': { controls: "Brain controls priorities.", detected: "High clarity.", costing: "Risk of key-person dependency.", cliffhanger: "Deep Scan reveals succession gaps." }
+    'Profit Leak': { controls: "**Brain** controls priorities.", detected: "**Priority chaos**.", costing: "Focus switching cost is reducing team output by **~40%**.", cliffhanger: "Deep Scan reveals the **'One Metric That Matters'**." },
+    'Bottleneck Forming': { controls: "**Brain** controls priorities.", detected: "**Inconsistent rhythm**.", costing: "Slow decision making stalls projects.", cliffhanger: "Deep Scan reveals **decision bottlenecks**." },
+    'Controlled': { controls: "**Brain** controls priorities.", detected: "**Stable cadence**.", costing: "Delegation limits are too tight.", cliffhanger: "Deep Scan reveals **delegation opportunities**." },
+    'Profit Lever': { controls: "**Brain** controls priorities.", detected: "**High clarity**.", costing: "Risk of key-person dependency.", cliffhanger: "Deep Scan reveals **succession gaps**." }
   },
   Pulse: {
-    'Profit Leak': { controls: "Pulse controls quality.", detected: "Reactive quality.", costing: "Churn is erasing your growth efforts.", cliffhanger: "Deep Scan reveals the #1 churn driver." },
-    'Bottleneck Forming': { controls: "Pulse controls quality.", detected: "Inconsistent feedback.", costing: "You are guessing at what customers want.", cliffhanger: "Deep Scan reveals feature gaps." },
-    'Controlled': { controls: "Pulse controls quality.", detected: "Stable loop.", costing: "Innovation is slowing down.", cliffhanger: "Deep Scan reveals new market angles." },
-    'Profit Lever': { controls: "Pulse controls quality.", detected: "High iteration.", costing: "Spreading resources too thin.", cliffhanger: "Deep Scan reveals focus areas." }
+    'Profit Leak': { controls: "**Pulse** controls quality.", detected: "**Reactive quality**.", costing: "Churn is erasing your growth efforts.", cliffhanger: "Deep Scan reveals the **#1 churn driver**." },
+    'Bottleneck Forming': { controls: "**Pulse** controls quality.", detected: "**Inconsistent feedback**.", costing: "You are guessing at what customers want.", cliffhanger: "Deep Scan reveals **feature gaps**." },
+    'Controlled': { controls: "**Pulse** controls quality.", detected: "**Stable loop**.", costing: "Innovation is slowing down.", cliffhanger: "Deep Scan reveals **new market angles**." },
+    'Profit Lever': { controls: "**Pulse** controls quality.", detected: "**High iteration**.", costing: "Spreading resources too thin.", cliffhanger: "Deep Scan reveals **focus areas**." }
   },
   Shield: {
-    'Profit Leak': { controls: "Shield controls risk.", detected: "High exposure.", costing: "One lawsuit or hack could end the business.", cliffhanger: "Deep Scan reveals critical vulnerabilities." },
-    'Bottleneck Forming': { controls: "Shield controls risk.", detected: "Basic protection.", costing: "Growing faster than your controls.", cliffhanger: "Deep Scan reveals compliance gaps." },
-    'Controlled': { controls: "Shield controls risk.", detected: "Stable protection.", costing: "Over-compliance may slow speed.", cliffhanger: "Deep Scan reveals efficiency wins." },
-    'Profit Lever': { controls: "Shield controls risk.", detected: "Fortress mode.", costing: "Cost of insurance/audit is high.", cliffhanger: "Deep Scan reveals optimization." }
+    'Profit Leak': { controls: "**Shield** controls risk.", detected: "**High exposure**.", costing: "One lawsuit or hack could end the business.", cliffhanger: "Deep Scan reveals **critical vulnerabilities**." },
+    'Bottleneck Forming': { controls: "**Shield** controls risk.", detected: "**Basic protection**.", costing: "Growing faster than your controls.", cliffhanger: "Deep Scan reveals **compliance gaps**." },
+    'Controlled': { controls: "**Shield** controls risk.", detected: "**Stable protection**.", costing: "Over-compliance may slow speed.", cliffhanger: "Deep Scan reveals **efficiency wins**." },
+    'Profit Lever': { controls: "**Shield** controls risk.", detected: "**Fortress mode**.", costing: "Cost of insurance/audit is high.", cliffhanger: "Deep Scan reveals **optimization**." }
   },
   Tribe: {
-    'Profit Leak': { controls: "Tribe controls culture.", detected: "Toxic/Slow.", costing: "Politics is replacing productivity.", cliffhanger: "Deep Scan reveals culture rot." },
-    'Bottleneck Forming': { controls: "Tribe controls culture.", detected: "Silos forming.", costing: "Communication lag is costly.", cliffhanger: "Deep Scan reveals silo bridges." },
-    'Controlled': { controls: "Tribe controls culture.", detected: "Stable team.", costing: "Comfort zone is setting in.", cliffhanger: "Deep Scan reveals performance edges." },
-    'Profit Lever': { controls: "Tribe controls culture.", detected: "High performance.", costing: "Burnout risk is high.", cliffhanger: "Deep Scan reveals retention risks." }
+    'Profit Leak': { controls: "**Tribe** controls culture.", detected: "**Toxic/Slow**.", costing: "Politics is replacing productivity.", cliffhanger: "Deep Scan reveals **culture rot**." },
+    'Bottleneck Forming': { controls: "**Tribe** controls culture.", detected: "**Silos forming**.", costing: "Communication lag is costly.", cliffhanger: "Deep Scan reveals **silo bridges**." },
+    'Controlled': { controls: "**Tribe** controls culture.", detected: "**Stable team**.", costing: "Comfort zone is setting in.", cliffhanger: "Deep Scan reveals **performance edges**." },
+    'Profit Lever': { controls: "**Tribe** controls culture.", detected: "**High performance**.", costing: "Burnout risk is high.", cliffhanger: "Deep Scan reveals **retention risks**." }
   }
 };
 
 export const COST_COPY: Record<string, string[]> = {
   cash: [
-    "Inefficiency here acts as a leak on net margin.",
-    "Cash flow is being constrained by hidden friction.",
-    "You are effectively financing inefficiencies with your own capital."
+    "Inefficiency here acts as a **leak on net margin**.",
+    "Cash flow is being constrained by **hidden friction**.",
+    "You are effectively financing inefficiencies with **your own capital**."
   ],
   time: [
-    "Manual work is consuming valuable leadership time.",
-    "Delays in this area slow down overall delivery.",
-    "Rework is a hidden tax on your team's capacity."
+    "Manual work is consuming valuable **leadership time**.",
+    "Delays in this area slow down **overall delivery**.",
+    "Rework is a **hidden tax** on your team's capacity."
   ],
   trust: [
-    "Inconsistency is eroding customer confidence.",
-    "Brand reputation is at risk due to variable quality.",
-    "Churn risk increases when expectations are missed."
+    "Inconsistency is eroding **customer confidence**.",
+    "Brand reputation is at risk due to **variable quality**.",
+    "Churn risk increases when **expectations are missed**."
   ],
   risk: [
-    "Compliance gaps expose the business to shock.",
-    "Lack of controls creates blind spots in decision making.",
-    "Operational fragility puts business continuity at risk."
+    "Compliance gaps expose the business to **shock**.",
+    "Lack of controls creates **blind spots** in decision making.",
+    "Operational fragility puts **business continuity** at risk."
   ]
 };
 
@@ -237,54 +237,54 @@ export const INDUSTRY_BRIEFS: Record<string, Record<string, Record<PillarStatus,
   agro_processing: {
     Engine: {
       'Profit Leak': {
-        controls: "Engine controls processing flow, uptime, and throughput velocity.",
-        detected: "We detected frequent downtime and undefined changeover protocols.",
-        costing: "You are paying a 'Capacity Tax'. Every minute the line stops or runs slow reduces your total daily revenue potential, while your fixed costs (labor, rent, energy) stay the same. You are likely running at 60-70% of true capacity.",
-        cliffhanger: "The Deep Scan will reveal your OEE (Overall Equipment Effectiveness) gap. We will pinpoint the exact 'micro-stops' killing your momentum."
+        controls: "**Engine** controls processing flow, uptime, and throughput velocity.",
+        detected: "We detected **frequent downtime** and undefined changeover protocols.",
+        costing: "You are paying a **'Capacity Tax'**. Every minute the line stops or runs slow reduces your total daily revenue potential, while your fixed costs (labor, rent, energy) stay the same. You are likely running at **60-70%** of true capacity.",
+        cliffhanger: "The Deep Scan will reveal your **OEE (Overall Equipment Effectiveness)** gap. We will pinpoint the exact **'micro-stops'** killing your momentum."
       },
       'Bottleneck Forming': {
-        controls: "Engine controls processing flow.",
-        detected: "Production is steady but relies on manual intervention.",
-        costing: "Your 'Cost to Produce' is higher than necessary due to reactive maintenance and manual bottlenecks. As you scale, these friction points will multiply.",
-        cliffhanger: "The Deep Scan will identify the top 3 preventive maintenance levers to stabilize flow."
+        controls: "**Engine** controls processing flow.",
+        detected: "Production is steady but relies on **manual intervention**.",
+        costing: "Your **'Cost to Produce'** is higher than necessary due to reactive maintenance and manual bottlenecks. As you scale, these friction points will multiply.",
+        cliffhanger: "The Deep Scan will identify the **top 3 preventive maintenance levers** to stabilize flow."
       },
       'Controlled': {
-        controls: "Engine controls processing flow.",
-        detected: "Line runs smoothly.",
-        costing: "You may be over-staffed to maintain stability.",
-        cliffhanger: "The Deep Scan will show how to automate key checks to reduce labor cost per unit."
+        controls: "**Engine** controls processing flow.",
+        detected: "**Line runs smoothly**.",
+        costing: "You may be **over-staffed** to maintain stability.",
+        cliffhanger: "The Deep Scan will show how to **automate key checks** to reduce labor cost per unit."
       },
       'Profit Lever': {
-        controls: "Engine controls processing flow.",
-        detected: "High-speed execution.",
-        costing: "Idle capacity risk.",
-        cliffhanger: "The Deep Scan will model volume expansion scenarios."
+        controls: "**Engine** controls processing flow.",
+        detected: "**High-speed execution**.",
+        costing: "**Idle capacity risk**.",
+        cliffhanger: "The Deep Scan will model **volume expansion scenarios**."
       }
     },
     Fuel: {
       'Profit Leak': {
-        controls: "Fuel controls yield, unit cost, and raw material efficiency.",
-        detected: "Signals of yield loss (shrinkage) and giveaway weight.",
-        costing: "You are suffering from 'Invisible Bleed'. Buying by bulk and selling by unit creates a margin gap if yield isn't locked. A 2% yield loss often equals a 20% drop in net profit.",
-        cliffhanger: "The Deep Scan will perform a 'Mass Balance' audit to find exactly where product is vanishing."
+        controls: "**Fuel** controls yield, unit cost, and raw material efficiency.",
+        detected: "Signals of **yield loss (shrinkage)** and giveaway weight.",
+        costing: "You are suffering from **'Invisible Bleed'**. Buying by bulk and selling by unit creates a margin gap if yield isn't locked. A **2% yield loss** often equals a **20% drop** in net profit.",
+        cliffhanger: "The Deep Scan will perform a **'Mass Balance'** audit to find exactly where product is vanishing."
       },
       'Bottleneck Forming': {
-        controls: "Fuel controls yield and cost.",
-        detected: "Costs are tracked but not per-batch.",
-        costing: "Averaging your costs hides the 'Loser Batches' that drain profit.",
-        cliffhanger: "The Deep Scan will install a batch-level coating model."
+        controls: "**Fuel** controls yield and cost.",
+        detected: "Costs are tracked but **not per-batch**.",
+        costing: "Averaging your costs hides the **'Loser Batches'** that drain profit.",
+        cliffhanger: "The Deep Scan will install a **batch-level coating model**."
       },
       'Controlled': {
-        controls: "Fuel controls yield and cost.",
-        detected: "Good margin visibility.",
-        costing: "Opportunity cost in procurement timing.",
-        cliffhanger: "The Deep Scan will reveal strategic sourcing wins."
+        controls: "**Fuel** controls yield and cost.",
+        detected: "**Good margin visibility**.",
+        costing: "**Opportunity cost** in procurement timing.",
+        cliffhanger: "The Deep Scan will reveal **strategic sourcing wins**."
       },
       'Profit Lever': {
-        controls: "Fuel controls yield and cost.",
-        detected: "Strong unit economics.",
-        costing: "Cash drag from slow inventory turns.",
-        cliffhanger: "The Deep Scan will optimize inventory levels for cash flow."
+        controls: "**Fuel** controls yield and cost.",
+        detected: "**Strong unit economics**.",
+        costing: "Cash drag from **slow inventory turns**.",
+        cliffhanger: "The Deep Scan will optimize **inventory levels** for cash flow."
       }
     },
     // ... Defaults for others to avoid massive file size, specific sub-industries below
@@ -297,25 +297,25 @@ export const INDUSTRY_BRIEFS: Record<string, Record<string, Record<PillarStatus,
   milling: {
     Fuel: {
       'Profit Leak': {
-        controls: "In Milling, Fuel controls extraction rate and sieve loss.",
-        detected: "We detected unchecked losses at the sieve/separation stage.",
-        costing: "You are dusting your profit away. For every 1% of flour/grain lost to dust or spill, you lose pure margin. This 'Dust Tax' is likely costing you thousands per month.",
-        cliffhanger: "The Deep Scan will measure your exact extraction efficiency against industry standards."
+        controls: "In Milling, **Fuel** controls extraction rate and sieve loss.",
+        detected: "We detected **unchecked losses** at the sieve/separation stage.",
+        costing: "You are dusting your profit away. For every **1% of flour/grain lost** to dust or spill, you lose pure margin. This **'Dust Tax'** is likely costing you thousands per month.",
+        cliffhanger: "The Deep Scan will measure your **exact extraction efficiency** against industry standards."
       },
       'Bottleneck Forming': {
-        controls: "Fuel controls extraction.",
+        controls: "**Fuel** controls extraction.",
         detected: "Yield varies by operator.",
         costing: "Inconsistency prevents accurate pricing.",
         cliffhanger: "The Deep Scan will standardize machine settings."
       },
       'Controlled': {
-        controls: "Fuel controls extraction.",
+        controls: "**Fuel** controls extraction.",
         detected: "Stable yield.",
         costing: "Power consumption may be high.",
         cliffhanger: "The Deep Scan will look at energy-per-ton efficiency."
       },
       'Profit Lever': {
-        controls: "Fuel controls extraction.",
+        controls: "**Fuel** controls extraction.",
         detected: "High efficiency.",
         costing: "By-product value low.",
         cliffhanger: "The Deep Scan will find value in the bran/offal."
@@ -325,10 +325,10 @@ export const INDUSTRY_BRIEFS: Record<string, Record<string, Record<PillarStatus,
   drying: {
     Engine: {
       'Profit Leak': {
-        controls: "In Drying, Engine controls moisture removal speed and uniformity.",
-        detected: "Inconsistent drying causing wet pockets or over-drying.",
-        costing: "Over-drying gives away weight (money) for free. Under-drying risks whole-silo spoilage. You are losing on both ends of the spectrum.",
-        cliffhanger: "The Deep Scan will install a 'Moisture Lock' protocol."
+        controls: "In Drying, **Engine** controls moisture removal speed and uniformity.",
+        detected: "**Inconsistent drying** causing wet pockets or over-drying.",
+        costing: "Over-drying gives away weight (money) for free. Under-drying risks whole-silo spoilage. You are losing on **both ends of the spectrum**.",
+        cliffhanger: "The Deep Scan will install a **'Moisture Lock'** protocol."
       },
       'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" }
     }
@@ -336,10 +336,10 @@ export const INDUSTRY_BRIEFS: Record<string, Record<string, Record<PillarStatus,
   packaging: {
     Shield: {
       'Profit Leak': {
-        controls: "In Packaging, Shield controls seal integrity and labeling accuracy.",
-        detected: "High risk of label errors or seal failures.",
-        costing: "A labeling error triggers a mandatory recall. This is a 'Company Killer' risk that is currently controlled only by human vigilance, not system blocks.",
-        cliffhanger: "The Deep Scan will build a 'Label Verification' gate."
+        controls: "In Packaging, **Shield** controls seal integrity and labeling accuracy.",
+        detected: "**High risk** of label errors or seal failures.",
+        costing: "A labeling error triggers a **mandatory recall**. This is a **'Company Killer'** risk that is currently controlled only by human vigilance, not system blocks.",
+        cliffhanger: "The Deep Scan will build a **'Label Verification'** gate."
       },
       'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" }
     }
@@ -347,10 +347,10 @@ export const INDUSTRY_BRIEFS: Record<string, Record<string, Record<PillarStatus,
   juices: {
     Engine: {
       'Profit Leak': {
-        controls: "In Beverages, Engine controls mixing consistency and Brix levels.",
-        detected: "Taste and sweetness vary between batches.",
-        costing: "Inconsistency kills brand loyalty. If today's bottle tastes different from yesterday's, customers leave. You are burning your marketing spend.",
-        cliffhanger: "The Deep Scan will lock your formula with a 'Brix Control' system."
+        controls: "In Beverages, **Engine** controls mixing consistency and Brix levels.",
+        detected: "**Taste and sweetness vary** between batches.",
+        costing: "Inconsistency kills brand loyalty. If today's bottle tastes different from yesterday's, customers leave. You are **burning your marketing spend**.",
+        cliffhanger: "The Deep Scan will lock your formula with a **'Brix Control'** system."
       },
       'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" }
     }
@@ -358,13 +358,72 @@ export const INDUSTRY_BRIEFS: Record<string, Record<string, Record<PillarStatus,
   oils: {
     Fuel: {
       'Profit Leak': {
-        controls: "In Oils, Fuel controls extraction %, leaving less oil in the cake.",
-        detected: "Oil left in the byproduct (cake) is too high.",
-        costing: "You are selling oil (premium price) as animal feed (low price). Every 1% of oil left in the cake is a direct transfer of wealth from you to the farmer buying the feed.",
-        cliffhanger: "The Deep Scan will optimize your press settings for maximum extraction."
+        controls: "In Oils, **Fuel** controls extraction %, leaving less oil in the cake.",
+        detected: "Oil left in the byproduct (cake) is **too high**.",
+        costing: "You are selling oil (premium price) as animal feed (low price). Every **1% of oil left in the cake** is a direct transfer of wealth from you to the farmer buying the feed.",
+        cliffhanger: "The Deep Scan will optimize your press settings for **maximum extraction**."
       },
       'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" }
     }
+  },
+  forestry: {
+    Engine: {
+      'Profit Leak': {
+        controls: "**Engine** controls harvest-to-mill flow and log recovery.",
+        detected: "We detected **process breaks** where value is lost (stump, landing, or saw).",
+        costing: "You are paying a **'Waste Tax'**. Every log that is bucked wrong or sawn poorly loses 30-40% of its potential value instantly. You are doing the hard work of harvesting but burning the profit.",
+        cliffhanger: "The Deep Scan will map your **'Value Chain'** to find exactly where the grade is slipping."
+      },
+      'Bottleneck Forming': {
+        controls: "**Engine** controls flow.",
+        detected: "Volume is moving, but **grading is inconsistent**.",
+        costing: "Inconsistency scares off premium buyers. You are forced to sell to commodity markets because you can't guarantee the spec.",
+        cliffhanger: "The Deep Scan will build a **'Grade Standard'** to unlock higher prices."
+      },
+      'Controlled': {
+        controls: "**Engine** controls flow.",
+        detected: "**Stable volume flow**.",
+        costing: "You may be **high-grading** (taking only best trees) and leaving value behind.",
+        cliffhanger: "The Deep Scan will reveal **whole-stand utilization** wins."
+      },
+      'Profit Lever': {
+        controls: "**Engine** controls flow.",
+        detected: "**High recovery**.",
+        costing: "Market access may be the limit.",
+        cliffhanger: "The Deep Scan will connect operations to **export-grade specs**."
+      }
+    },
+    Fuel: {
+      'Profit Leak': {
+        controls: "**Fuel** controls cash cycle and unit cost.",
+        detected: "Signals of **cash starvation** despite good volume.",
+        costing: "Forestry is capital heavy. Delays in payment or low recovery mean you are financing the industry's wood supply with your own debt. You are likely **working for the bank**.",
+        cliffhanger: "The Deep Scan will calculate your **'Cash-to-Cash'** cycle time."
+      },
+      'Bottleneck Forming': {
+        controls: "**Fuel** controls cash.",
+        detected: "Costs are high but undefined.",
+        costing: "Repair and fuel costs are bleeding margin unnoticed.",
+        cliffhanger: "The Deep Scan will audit your **machine-level costs**."
+      },
+      'Controlled': {
+        controls: "**Fuel** controls cash.",
+        detected: "**Stable cash flow**.",
+        costing: "Capital is tied up in slow-drying inventory.",
+        cliffhanger: "The Deep Scan will optimize **inventory turnover**."
+      },
+      'Profit Lever': {
+        controls: "**Fuel** controls cash.",
+        detected: "**Strong balance sheet**.",
+        costing: "Growth is slower than resource renewal.",
+        cliffhanger: "The Deep Scan will model **acquisition or expansion**."
+      }
+    },
+    Voice: { 'Profit Leak': { controls: "Voice controls market access.", detected: "Price-taker position.", costing: "Selling to whoever shows up leads to low prices.", cliffhanger: "Deep Scan builds a 'Buyer Strategy'." }, 'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" } },
+    Brain: { 'Profit Leak': { controls: "Brain controls harvest plan.", detected: "Reactive cutting.", costing: "Cutting without orders piles up waste.", cliffhanger: "Deep Scan installs 'Order-Led Harvest'." }, 'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" } },
+    Pulse: { 'Profit Leak': { controls: "Pulse controls quality.", detected: "Reject rate high.", costing: "Customers claim credits for bad boards.", cliffhanger: "Deep Scan installs 'Sawyer Quality Checks'." }, 'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" } },
+    Shield: { 'Profit Leak': { controls: "Shield controls safety/risk.", detected: "Incident risk high.", costing: "One accident stops the show.", cliffhanger: "Deep Scan builds 'Safety First' culture." }, 'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" } },
+    Tribe: { 'Profit Leak': { controls: "Tribe controls crew.", detected: "Turnover high.", costing: "Training new sawyers kills yield.", cliffhanger: "Deep Scan builds 'Retention Plan'." }, 'Bottleneck Forming': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Controlled': { controls: "", detected: "", costing: "", cliffhanger: "" }, 'Profit Lever': { controls: "", detected: "", costing: "", cliffhanger: "" } }
   }
 };
 
@@ -394,6 +453,12 @@ export const INDUSTRY_COST_COPY: Record<string, typeof COST_COPY> = {
     time: ["Manual changeovers are eating production capacity.", "Firefighting maintenance issues kills strategic planning.", "Compliance paperwork is consuming leadership hours."],
     trust: ["Inconsistent product specs damage buyer confidence.", "Contaminants or defects risk your entire brand reputation.", "Late deliveries force buyers to look for other suppliers."],
     risk: ["One recall event could bankrupt the operation.", "Regulatory non-compliance is a ticking bomb.", "Price volatility exposes you without a yield buffer."]
+  },
+  forestry: {
+    cash: ["Low recovery means you harvest 100% but sell 40%.", "Downtime burns fuel and wages without output.", "Selling unseasoned/wet timber forces a price discount."],
+    time: ["Fixing breakdowns consumes leadership hours.", "Chasing spare parts stops production.", "Manual tallying slows down dispatch."],
+    trust: ["Inconsistent sizing forces buyers to claim credits.", "Late deliveries kill project-based contracts.", "Quality surprises destroy long-term relationships."],
+    risk: ["Safety incidents stop operations immediately.", "Fire/weather risk is unmitigated.", "Reliance on one buyer exposes you to total stop."]
   }
 };
 
@@ -413,6 +478,9 @@ const normalizeSubIndustry = (sub: string | undefined): string => {
   if (s.includes('pack') || s.includes('consumer')) return 'packaging';
   if (s.includes('juice') || s.includes('beverage')) return 'juices';
   if (s.includes('oil') || s.includes('sunflower') || s.includes('palm')) return 'oils';
+
+  // Forestry
+  if (s.includes('forestry') || s.includes('timber') || s.includes('logging') || s.includes('sawmill')) return 'forestry';
 
   // Livestock
   if (s.includes('dairy')) return 'dairy';

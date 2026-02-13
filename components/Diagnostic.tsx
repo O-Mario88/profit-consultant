@@ -48,13 +48,14 @@ import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
 import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY, GOAT_QUIZ_COPY, SHEEP_QUIZ_COPY, PIGGERY_QUIZ_COPY } from '../data/industryContext';
 
 import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
+import { STRENGTHS_PROXY_QUESTIONS } from '../data/strengths';
 
 interface DiagnosticProps {
    onComplete: (archetype: Archetype, scores: any, planType: 'basic' | 'premium', report?: GeneratedReport) => void;
    variant?: 'owner' | 'employee';
 }
 
-type Step = 'setup' | 'intro' | 'assessment' | 'analyzing' | 'result';
+type Step = 'setup' | 'intro' | 'strengths' | 'assessment' | 'analyzing' | 'result';
 
 interface ActiveQuestion {
    id: string;
@@ -154,6 +155,12 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       indices: LeakIndices;
    } | null>(null);
    const [generatedReport, setGeneratedReport] = useState<GeneratedReport | null>(null);
+   const [isError, setIsError] = useState(false);
+
+   // CliftonStrengths Assessment State
+   const [strengthsAnswers, setStrengthsAnswers] = useState<number[]>([]);
+   const [strengthsIndex, setStrengthsIndex] = useState(0);
+   const [strengthsSkipped, setStrengthsSkipped] = useState(false);
 
    // -- Initialization --
    useEffect(() => {
@@ -670,151 +677,151 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
          sessionQuestions.forEach((q, idx) => {
             agroAnswers[q.id] = finalAnswers[idx] - 1; // Convert 1-5 to 0-4
          });
-         report = await generateSignalBasedReport(agroAnswers, businessProfile);
+         report = await generateSignalBasedReport(agroAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isAgriInput) {
          const agriAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             agriAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(agriAnswers, businessProfile);
+         report = await generateSignalBasedReport(agriAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isProduceAggregation) {
          const produceAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             produceAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(produceAnswers, businessProfile);
+         report = await generateSignalBasedReport(produceAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isCropFarming) {
          const cropAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             cropAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(cropAnswers, businessProfile);
+         report = await generateSignalBasedReport(cropAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isCattle) {
          const cattleAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             cattleAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(cattleAnswers, businessProfile);
+         report = await generateSignalBasedReport(cattleAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isGoat) {
          const goatAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             goatAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(goatAnswers, businessProfile);
+         report = await generateSignalBasedReport(goatAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isSheep) {
          const sheepAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             sheepAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(sheepAnswers, businessProfile);
+         report = await generateSignalBasedReport(sheepAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isPiggery) {
          const piggeryAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             piggeryAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(piggeryAnswers, businessProfile);
+         report = await generateSignalBasedReport(piggeryAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isPoultry) {
          const poultryAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             poultryAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(poultryAnswers, businessProfile);
+         report = await generateSignalBasedReport(poultryAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isDairy) {
          const dairyAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             dairyAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(dairyAnswers, businessProfile);
+         report = await generateSignalBasedReport(dairyAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isMining) {
          const miningAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             miningAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(miningAnswers, businessProfile);
+         report = await generateSignalBasedReport(miningAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isOilGas) {
          const oilGasAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             oilGasAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(oilGasAnswers, businessProfile);
+         report = await generateSignalBasedReport(oilGasAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isFnbManufacturing) {
          const fnbAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             fnbAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(fnbAnswers, businessProfile);
+         report = await generateSignalBasedReport(fnbAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isTextileManufacturing) {
          const textileAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             textileAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(textileAnswers, businessProfile);
+         report = await generateSignalBasedReport(textileAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isFurnitureManufacturing) {
          const furnitureAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             furnitureAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(furnitureAnswers, businessProfile);
+         report = await generateSignalBasedReport(furnitureAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isMetalManufacturing) {
          const metalAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             metalAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(metalAnswers, businessProfile);
+         report = await generateSignalBasedReport(metalAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isPlasticsManufacturing) {
          const plasticsAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             plasticsAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(plasticsAnswers, businessProfile);
+         report = await generateSignalBasedReport(plasticsAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isSoapManufacturing) {
          const soapAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             soapAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(soapAnswers, businessProfile);
+         report = await generateSignalBasedReport(soapAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isBricksManufacturing) {
          const bricksAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             bricksAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(bricksAnswers, businessProfile);
+         report = await generateSignalBasedReport(bricksAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isWaterManufacturing) {
          const waterAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             waterAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(waterAnswers, businessProfile);
+         report = await generateSignalBasedReport(waterAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isAssemblyManufacturing) {
          const assemblyAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             assemblyAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(assemblyAnswers, businessProfile);
+         report = await generateSignalBasedReport(assemblyAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isFashionRetail) {
          const fashionAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             fashionAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(fashionAnswers, businessProfile);
+         report = await generateSignalBasedReport(fashionAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isHardwareRetail) {
          const hardwareAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             hardwareAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(hardwareAnswers, businessProfile);
+         report = await generateSignalBasedReport(hardwareAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isElectronicsRetail) {
          const electronicsAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             electronicsAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(electronicsAnswers, businessProfile);
+         report = await generateSignalBasedReport(electronicsAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else if (isFmcgRetail) {
          const fmcgAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             fmcgAnswers[q.id] = finalAnswers[idx] - 1;
          });
-         report = await generateSignalBasedReport(fmcgAnswers, businessProfile);
+         report = await generateSignalBasedReport(fmcgAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
       } else {
          // Create a readable map of Question -> Answer
          const answerMap: Record<string, string> = {};
@@ -828,8 +835,15 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             answerMap[q.pillar + " Question " + (idx + 1)] = answerText;
          });
 
-         report = await generateStrategicReport(finalScores, archetype, businessProfile, answerMap);
+         report = await generateStrategicReport(finalScores, archetype, businessProfile, answerMap, strengthsSkipped ? undefined : strengthsAnswers);
       }
+
+      if (!report) {
+         console.error("Report generation failed: returned null");
+         setIsError(true);
+         return;
+      }
+
       if (report) {
          report.profileContext = businessProfile;
       }
@@ -1259,6 +1273,128 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       );
    }
 
+   // ────────── STRENGTHS ASSESSMENT STEP ──────────
+   if (step === 'strengths') {
+      const currentSQ = STRENGTHS_PROXY_QUESTIONS[strengthsIndex];
+      const totalSQ = STRENGTHS_PROXY_QUESTIONS.length;
+      const progressPct = ((strengthsIndex) / totalSQ) * 100;
+
+      return (
+         <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #0c0a1a 100%)' }}>
+            <div className="max-w-2xl mx-auto px-4 py-8">
+               {/* Header */}
+               <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                     <Brain className="w-6 h-6 text-purple-400" />
+                     <span className="text-purple-300 font-bold text-sm uppercase tracking-wider">Talent DNA Assessment</span>
+                  </div>
+                  <span className="text-slate-400 text-sm">{strengthsIndex + 1} / {totalSQ}</span>
+               </div>
+
+               {/* Progress Bar */}
+               <div className="mb-8">
+                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                     <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                        style={{ width: `${progressPct}%` }} />
+                  </div>
+               </div>
+
+               {/* Question Card */}
+               <div className="rounded-2xl p-8" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+                  <p className="text-slate-300 text-center text-sm mb-6">Which statement feels more true about how your business operates today?</p>
+
+                  {/* Option A */}
+                  <button
+                     onClick={() => {
+                        setStrengthsAnswers(prev => [...prev, 1]);
+                        if (strengthsIndex + 1 < totalSQ) {
+                           setStrengthsIndex(strengthsIndex + 1);
+                        } else {
+                           setStep('assessment');
+                        }
+                     }}
+                     className="w-full text-left p-5 rounded-xl mb-4 transition-all hover:-translate-y-0.5"
+                     style={{
+                        background: 'rgba(124, 58, 237, 0.06)',
+                        border: '1px solid rgba(124, 58, 237, 0.15)',
+                        color: '#e2e8f0'
+                     }}
+                     onMouseEnter={e => {
+                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.15)';
+                        e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.4)';
+                     }}
+                     onMouseLeave={e => {
+                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.06)';
+                        e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.15)';
+                     }}
+                  >
+                     <span className="text-purple-400 font-bold text-xs mr-2">A</span>
+                     {currentSQ.statementA}
+                  </button>
+
+                  {/* Neutral */}
+                  <button
+                     onClick={() => {
+                        setStrengthsAnswers(prev => [...prev, 3]);
+                        if (strengthsIndex + 1 < totalSQ) {
+                           setStrengthsIndex(strengthsIndex + 1);
+                        } else {
+                           setStep('assessment');
+                        }
+                     }}
+                     className="w-full text-center p-3 rounded-lg mb-4 text-slate-500 text-sm hover:text-slate-300 transition-all"
+                     style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
+                  >
+                     Both equally apply
+                  </button>
+
+                  {/* Option B */}
+                  <button
+                     onClick={() => {
+                        setStrengthsAnswers(prev => [...prev, 5]);
+                        if (strengthsIndex + 1 < totalSQ) {
+                           setStrengthsIndex(strengthsIndex + 1);
+                        } else {
+                           setStep('assessment');
+                        }
+                     }}
+                     className="w-full text-left p-5 rounded-xl transition-all hover:-translate-y-0.5"
+                     style={{
+                        background: 'rgba(59, 130, 246, 0.06)',
+                        border: '1px solid rgba(59, 130, 246, 0.15)',
+                        color: '#e2e8f0'
+                     }}
+                     onMouseEnter={e => {
+                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.15)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+                     }}
+                     onMouseLeave={e => {
+                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.06)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.15)';
+                     }}
+                  >
+                     <span className="text-blue-400 font-bold text-xs mr-2">B</span>
+                     {currentSQ.statementB}
+                  </button>
+               </div>
+
+               {/* Skip Link */}
+               <div className="mt-6 text-center">
+                  <button
+                     onClick={() => {
+                        setStrengthsSkipped(true);
+                        setStep('assessment');
+                     }}
+                     className="text-slate-600 text-xs hover:text-slate-400 transition-colors underline"
+                  >
+                     Skip Talent DNA Assessment →
+                  </button>
+               </div>
+            </div>
+         </div>
+      );
+   }
+
    // ... (Assessment step same as before) ...
    if (step === 'assessment') {
       const currentQ = sessionQuestions[questionIndex];
@@ -1343,6 +1479,40 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       );
    }
 
+   if (isError) {
+      return (
+         <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white p-4">
+            <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
+               <AlertTriangle className="w-10 h-10 text-red-500" />
+            </div>
+            <h2 className="text-3xl font-bold mb-2 text-center">Connection Interrupted</h2>
+            <p className="text-slate-400 text-lg mb-8 text-center max-w-md">
+               We couldn't generate your report due to a connection issue with our AI engine.
+            </p>
+            <div className="flex gap-4">
+               <button
+                  onClick={() => {
+                     setIsError(false);
+                     calculateResults(answers);
+                  }}
+                  className="px-8 py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition-all flex items-center gap-2"
+               >
+                  <RefreshCw className="w-4 h-4" /> Retry Analysis
+               </button>
+               <button
+                  onClick={() => {
+                     setIsError(false);
+                     setStep('setup');
+                  }}
+                  className="px-8 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition-all"
+               >
+                  Restart
+               </button>
+            </div>
+         </div>
+      );
+   }
+
    if (step === 'analyzing') {
       return (
          <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
@@ -1352,7 +1522,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             </div>
             <h2 className="text-3xl font-bold mt-8 mb-2 animate-pulse">Triangulating Profit Leaks...</h2>
             <p className="text-slate-400 text-lg">Comparing against {businessProfile.industry || 'Global'} benchmarks.</p>
-            <p className="text-slate-500 text-sm mt-4">Powered by Gemini Logic Engine</p>
+            <p className="text-slate-500 text-sm mt-4">Powered by AI Analysis Engine</p>
          </div>
       );
    }
