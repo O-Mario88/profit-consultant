@@ -204,6 +204,12 @@ const ROLE_PILLAR_WEIGHTS: Record<RoleFamilyId, Record<LegacyPillar, number>> = 
 const normalizePillarKey = (value: string) =>
    value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
+const QUICK_SCAN_QID_RE = /(^QS[_-])|(_QS[_-])|(-QS[_-])/i;
+const DEEP_SCAN_QID_RE = /(^DS[_-])|(_DS[_-])|(-DS[_-])/i;
+
+const isQuickScanQid = (qid: string): boolean => QUICK_SCAN_QID_RE.test(String(qid || ''));
+const isDeepScanQid = (qid: string): boolean => DEEP_SCAN_QID_RE.test(String(qid || ''));
+
 const normalizeRoleText = (value: string) =>
    value
       .toLowerCase()
@@ -525,9 +531,11 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
       // Helper to filter QS only
       const toQuickScanSet = <T extends { qid: string }>(questions: T[]): T[] => {
-         const quickScan = questions.filter(q => q.qid.startsWith('QS_'));
+         const quickScan = questions.filter(q => isQuickScanQid(q.qid));
          if (quickScan.length > 0) return quickScan;
-         return questions.filter(q => !q.qid.startsWith('DS_'));
+         const nonDeepScan = questions.filter(q => !isDeepScanQid(q.qid));
+         if (nonDeepScan.length > 0 && nonDeepScan.length < questions.length) return nonDeepScan;
+         return questions;
       };
 
       if (isAgroProcessing) {

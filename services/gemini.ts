@@ -118,9 +118,9 @@ interface SecureAIClient {
 }
 
 const AI_PROXY_BASE =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AI_PROXY_BASE_URL) || '/api/ai';
+  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_AI_PROXY_BASE_URL) || '/api/ai';
 const ASSESSMENT_PROXY_BASE =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_ASSESSMENT_PROXY_BASE_URL) || '/api/assessment';
+  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_ASSESSMENT_PROXY_BASE_URL) || '/api/assessment';
 
 const requestJson = async <T>(basePath: string, path: string, body: JsonRecord): Promise<T> => {
   const response = await fetch(`${basePath}${path}`, {
@@ -274,6 +274,20 @@ const hydrateDeepScanFallback = (quickScanReport: GeneratedReport) => {
   return fallback;
 };
 
+const pickChapterField = (
+  incomingValue: unknown,
+  fallbackValue: string,
+  defaultValue: string
+): string => {
+  if (typeof incomingValue === 'string' && incomingValue.trim()) {
+    return incomingValue.trim();
+  }
+  if (typeof fallbackValue === 'string' && fallbackValue.trim()) {
+    return fallbackValue.trim();
+  }
+  return defaultValue;
+};
+
 const mergeDeepScanWithFallback = (
   payload: PremiumDeepScanResponse | null | undefined,
   fallbackChapters: Record<string, DeepScanChapter>,
@@ -284,15 +298,58 @@ const mergeDeepScanWithFallback = (
   const mergedChapters: Record<string, DeepScanChapter> = { ...fallbackChapters };
   for (const pillar of Object.keys(mergedChapters)) {
     const canonical = PILLAR_ALIASES[pillar] || pillar;
+    const fallback = mergedChapters[pillar];
     const incoming = payload.chapters[pillar] || payload.chapters[canonical];
+
     if (incoming && typeof incoming === 'object') {
-      mergedChapters[pillar] = incoming;
+      const incomingChapter = incoming as Partial<DeepScanChapter>;
+      mergedChapters[pillar] = {
+        theory: pickChapterField(
+          incomingChapter.theory,
+          fallback?.theory || '',
+          `${pillar}: theory unavailable in model output.`
+        ),
+        diagnosis: pickChapterField(
+          incomingChapter.diagnosis,
+          fallback?.diagnosis || '',
+          `${pillar}: diagnosis unavailable in model output.`
+        ),
+        psychology: pickChapterField(
+          incomingChapter.psychology,
+          fallback?.psychology || '',
+          `${pillar}: behavioral pattern unavailable in model output.`
+        ),
+        financials: pickChapterField(
+          incomingChapter.financials,
+          fallback?.financials || '',
+          `${pillar}: financial impact unavailable in model output.`
+        ),
+        prescription: pickChapterField(
+          incomingChapter.prescription,
+          fallback?.prescription || '',
+          `${pillar}: prescription unavailable in model output.`
+        )
+      };
+      continue;
+    }
+
+    if (!fallback) {
+      mergedChapters[pillar] = {
+        theory: `${pillar}: theory unavailable in model output.`,
+        diagnosis: `${pillar}: diagnosis unavailable in model output.`,
+        psychology: `${pillar}: behavioral pattern unavailable in model output.`,
+        financials: `${pillar}: financial impact unavailable in model output.`,
+        prescription: `${pillar}: prescription unavailable in model output.`
+      };
     }
   }
 
   return {
     chapters: mergedChapters,
-    executiveSummary: payload.executiveSummary || fallbackSummary
+    executiveSummary:
+      (typeof payload.executiveSummary === 'string' && payload.executiveSummary.trim())
+        ? payload.executiveSummary
+        : fallbackSummary
   };
 };
 

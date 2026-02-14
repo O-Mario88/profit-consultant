@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { GeneratedReport, DeepScanChapter } from '../types';
 import { generateDeepScanReport, DeepScanAssessmentAnswer } from '../services/gemini';
 import { DEEP_SCAN_DATA, DeepScanItem } from '../data/deepScanData';
+import { resolveIndustryFlags, resolveIndustryPack } from '../services/packResolver';
 import {
     Brain, Shield, Activity, Zap, Megaphone, HeartPulse, Users,
     ArrowRight, ArrowLeft, Loader2, CheckCircle2, AlertTriangle
@@ -93,6 +94,9 @@ const ADAPTIVE_PILLAR_TO_LEGACY: Record<string, string> = {
     P7: 'People'
 };
 
+const DEEP_SCAN_QID_RE = /(^DS[_-])|(_DS[_-])|(-DS[_-])/i;
+const isDeepScanQid = (qid: string): boolean => DEEP_SCAN_QID_RE.test(String(qid || ''));
+
 const normalizeLegacyPillar = (value: string): DeepScanItem['pillar'] => {
     const direct = (PILLAR_ALIASES[value] || value) as DeepScanItem['pillar'];
     if (['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'].includes(direct)) {
@@ -109,6 +113,8 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
 
     // Generate targeted questions (NOW: All 7 Pillars for full depth)
     const questions = useMemo(() => {
+        const profile = report.profileContext;
+
         const adaptivePillars = report.profileContext?.adaptiveQuestionBank?.pillars;
         if (
             report.profileContext?.assessmentQuestionSource === 'adaptive' &&
@@ -133,6 +139,31 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
 
             if (adaptiveDeepQuestions.length > 0) {
                 return adaptiveDeepQuestions;
+            }
+        }
+
+        if (profile?.industry && profile?.subIndustry) {
+            try {
+                const flags = resolveIndustryFlags(profile);
+                const pack = resolveIndustryPack(profile, flags);
+                const selectedLineType = (profile.agroSubSector as string | undefined) || profile.subIndustry;
+                const matchesLineType = (lineType: string[]) =>
+                    lineType.includes('all') || !selectedLineType || lineType.includes(selectedLineType);
+
+                const packDeepQuestions: DeepScanItem[] = pack.questions
+                    .filter((q) => matchesLineType(q.line_type) && isDeepScanQid(q.qid))
+                    .map((q) => ({
+                        id: q.qid,
+                        pillar: normalizeLegacyPillar(q.pillar),
+                        a: q.textA,
+                        b: q.textB
+                    }));
+
+                if (packDeepQuestions.length > 0) {
+                    return packDeepQuestions;
+                }
+            } catch (error) {
+                console.error('Failed to resolve pack deep-scan questions:', error);
             }
         }
 

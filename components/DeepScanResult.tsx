@@ -50,10 +50,49 @@ const PILLAR_ALIASES: Record<string, string> = {
     'Tribe': 'People',
 };
 
+const getChapterByPillarName = (
+    chapters: Record<string, DeepScanChapter>,
+    pillarName: string
+): DeepScanChapter | undefined => {
+    if (!chapters || !pillarName) return undefined;
+    if (chapters[pillarName]) return chapters[pillarName];
+
+    const aliased = PILLAR_ALIASES[pillarName] || '';
+    if (aliased && chapters[aliased]) return chapters[aliased];
+
+    const reverseAlias = Object.entries(PILLAR_ALIASES).find(([, canonical]) => canonical === pillarName)?.[0];
+    if (reverseAlias && chapters[reverseAlias]) return chapters[reverseAlias];
+
+    return undefined;
+};
+
+const withChapterFallback = (
+    chapter: DeepScanChapter | undefined,
+    pillarName: string,
+    fallbackInsight: string,
+    fallbackCost: string,
+    fallbackImpact: string
+): DeepScanChapter => {
+    return {
+        theory: chapter?.theory?.trim() || fallbackInsight || `${pillarName} is a critical control pillar in your current operating model.`,
+        diagnosis: chapter?.diagnosis?.trim() || fallbackCost || `Root-cause detail was limited in the deep response for ${pillarName}; use the quick-scan leak signal as the current diagnosis anchor.`,
+        psychology: chapter?.psychology?.trim() || `Execution behavior and ownership discipline in ${pillarName} are currently shaping results more than isolated tactical fixes.`,
+        financials: chapter?.financials?.trim() || fallbackImpact || `Financial impact is likely material where ${pillarName} score is weak. Track weekly trend and recovery delta.`,
+        prescription: chapter?.prescription?.trim() || `Run a 30-day control sprint for ${pillarName} with clear owner, cadence, KPI, and closure evidence.`
+    };
+};
+
 const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapters, deepScanExecSummary, isUnlocked, onUnlock, onBack }) => {
 
     const reportRef = React.useRef<HTMLDivElement>(null);
     const sortedPillars = [...report.pillars].sort((a, b) => a.score - b.score);
+    const emptyChapter: DeepScanChapter = {
+        theory: '',
+        diagnosis: '',
+        psychology: '',
+        financials: '',
+        prescription: ''
+    };
 
     const handleUnlock = () => {
         onUnlock({
@@ -124,6 +163,13 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
         const Icon = getPillarIcon(mappedName);
         const colors = PILLAR_COLORS[mappedName] || 'from-slate-500 to-slate-400';
         const pillarData = report.pillars.find(p => p.name === pillarName);
+        const safeChapter = withChapterFallback(
+            chapter,
+            pillarName,
+            pillarData?.quickScanAnalysis?.insight || '',
+            pillarData?.hiddenCost || '',
+            pillarData?.profitConsequence?.[0] || ''
+        );
 
         // Define color styles based on score for badges
         const scoreColor = (pillarData?.score || 0) < 50 ? 'bg-red-500 text-red-100'
@@ -175,7 +221,7 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                             </div>
                             <h4 className="text-lg font-bold text-blue-100">Consultant Lens</h4>
                         </div>
-                        <p className="text-lg text-slate-300 leading-relaxed font-light">{chapter.theory}</p>
+                        <p className="text-lg text-slate-300 leading-relaxed font-light">{safeChapter.theory}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -187,7 +233,7 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                                 </div>
                                 <h4 className="text-base font-bold text-amber-100">Diagnosis</h4>
                             </div>
-                            <p className="text-slate-400 leading-relaxed text-sm">{chapter.diagnosis}</p>
+                            <p className="text-slate-400 leading-relaxed text-sm">{safeChapter.diagnosis}</p>
                         </div>
 
                         {/* Psychology */}
@@ -198,7 +244,7 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                                 </div>
                                 <h4 className="text-base font-bold text-purple-100">Leadership Pattern</h4>
                             </div>
-                            <p className="text-slate-400 leading-relaxed text-sm">{chapter.psychology}</p>
+                            <p className="text-slate-400 leading-relaxed text-sm">{safeChapter.psychology}</p>
                         </div>
                     </div>
 
@@ -210,11 +256,11 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                             </div>
                             <h4 className="text-base font-bold text-emerald-100">Financial Impact</h4>
                         </div>
-                        <p className="text-emerald-100/80 leading-relaxed font-medium">{chapter.financials}</p>
+                        <p className="text-emerald-100/80 leading-relaxed font-medium">{safeChapter.financials}</p>
                     </div>
 
                     {/* Prescription */}
-                    {chapter.prescription && (
+                    {safeChapter.prescription && (
                         <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-brand-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
                             <div className="relative bg-slate-900 border border-brand-500/30 rounded-2xl p-8">
@@ -225,7 +271,7 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                                     <h4 className="text-xl font-bold text-brand-100">30-Day Remediation Plan</h4>
                                 </div>
                                 <div className="text-slate-300 leading-relaxed whitespace-pre-line space-y-4 font-mono text-sm">
-                                    {chapter.prescription}
+                                    {safeChapter.prescription}
                                 </div>
                             </div>
                         </div>
@@ -295,8 +341,8 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                         <Eye className="w-4 h-4 text-brand-400" />
                         <h3 className="text-sm font-bold text-brand-400 uppercase tracking-widest">Free Preview Chapter</h3>
                     </div>
-                    {previewPillar && deepScanChapters[previewPillar.name] && (
-                        renderChapter(previewPillar.name, deepScanChapters[previewPillar.name], 0)
+                    {previewPillar && (
+                        renderChapter(previewPillar.name, getChapterByPillarName(deepScanChapters, previewPillar.name) || emptyChapter, 0)
                     )}
                 </div>
 
@@ -362,9 +408,8 @@ const DeepScanResult: React.FC<DeepScanResultProps> = ({ report, deepScanChapter
                             <h3 className="text-sm font-bold text-purple-400 uppercase tracking-widest">Full Deep Dive Chapters</h3>
                         </div>
                         {lockedPillars.map((p, i) => {
-                            const chapter = deepScanChapters[p.name];
-                            if (!chapter) return null;
-                            return renderChapter(p.name, chapter, i + 1);
+                            const chapter = getChapterByPillarName(deepScanChapters, p.name);
+                            return renderChapter(p.name, chapter || emptyChapter, i + 1);
                         })}
                     </div>
                 )}
