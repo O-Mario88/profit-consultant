@@ -29,7 +29,7 @@ export interface DepartmentStack {
     core: DepartmentId[];
     specialized: DepartmentId[];
     pillarOwnership: Record<PillarId, DepartmentId[]>; // Primary owners
-    subUnits: Record<DepartmentId, string[]>; // Specific sub-units enabled per department
+    subUnits: Partial<Record<DepartmentId, string[]>>; // Specific sub-units enabled per department
     kpis: Record<PillarId, string[]>; // KPIs to track per pillar
     questionToggles: Record<PillarId, string[]>; // Question banks/tags to enable per pillar
 }

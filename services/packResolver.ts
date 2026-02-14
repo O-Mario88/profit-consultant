@@ -34,6 +34,7 @@ import { SNACKS_PACK } from "../data/snacks";
 import { BUTCHERY_PACK } from "../data/butchery";
 import { CHEMICAL_PACK } from "../data/chemical";
 import { PHARMACY_PACK } from "../data/pharmacy";
+import { DRUG_SHOP_PACK } from "../data/drug_shop";
 import {
     FNB_SUB_INDUSTRIES,
     TEXTILE_SUB_INDUSTRIES,
@@ -53,6 +54,7 @@ import {
     FMCG_SUB_INDUSTRIES,
     HARDWARE_SUB_INDUSTRIES,
     PHARMACY_SUB_INDUSTRIES,
+    DRUG_SHOP_SUB_INDUSTRIES,
     SPARE_PARTS_SUB_INDUSTRIES,
     STATIONERY_SUB_INDUSTRIES
 } from '../data/retailSubIndustries';
@@ -74,6 +76,7 @@ export interface IndustryFlags {
     isFmcgRetail: boolean;
     isStationeryRetail: boolean;
     isPharmacy: boolean;
+    isDrugShop: boolean;
     isSparePartsRetail: boolean;
     isAssemblyManufacturing: boolean;
     isPiggery: boolean;
@@ -107,6 +110,7 @@ export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags =>
     isFmcgRetail: profile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(profile.subIndustry),
     isStationeryRetail: profile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(profile.subIndustry),
     isPharmacy: profile.industry === 'retail' && PHARMACY_SUB_INDUSTRIES.includes(profile.subIndustry),
+    isDrugShop: profile.industry === 'retail' && DRUG_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry),
     isSparePartsRetail: profile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(profile.subIndustry),
     isAssemblyManufacturing: profile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(profile.subIndustry),
     isAgriInput: profile.industry === 'agriculture' && profile.subIndustry.startsWith('Input supplier'),
@@ -205,6 +209,7 @@ export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFla
     if (flags.isFmcgRetail) return FMCG_PACK;
     if (flags.isStationeryRetail) return STATIONERY_PACK;
     if (flags.isPharmacy) return PHARMACY_PACK;
+    if (flags.isDrugShop) return DRUG_SHOP_PACK;
     if (flags.isSparePartsRetail) return SPARE_PARTS_PACK;
     if (flags.isAssemblyManufacturing) return ASSEMBLY_PACK;
     if (flags.isPiggery) return PIGGERY_PACK;
@@ -277,6 +282,7 @@ export const getWhyItMatters = (profile: BusinessProfile, flags: IndustryFlags):
         return 'Chemical margin is protected by formula discipline, regulatory compliance speed, and yield-safe filling control.';
     if (flags.isRetail) {
         if (flags.isPharmacy) return "Pharmacy profit is protected by clinical trust, inventory discipline, and claim accuracy.";
+        if (flags.isDrugShop) return "Drug shop profitability relies on safe advice, trusted sourcing, and strict expiry control.";
         return 'Retail profitability is decided by availability, shelf-price integrity, and disciplined cash and stock control.';
     }
     return 'Agro-processing requires tight control of yield and flow.';

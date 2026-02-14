@@ -80,6 +80,9 @@ export interface ImpactBand {
 
 export type PillarId = 'Operations' | 'Money' | 'Market' | 'Leadership' | 'Innovation' | 'Risk' | 'People';
 
+
+export type AssemblySeverityStatus = 'Stable' | 'Watch' | 'Critical';
+
 export type SignalTag =
     // OPERATIONS (formerly Engine)
     | 'downtime_drain' | 'reactive_maintenance' | 'preventive_maintenance_gap' | 'changeover_black_hole' | 'bottleneck_bounce'
@@ -648,4 +651,5 @@ export type SignalTag =
     | 'counterfeit_risk_gap' | 'essential_stockout' | 'cash_trap_slow_movers' | 'pricing_confusion'
     | 'discount_drift_smile' | 'ethical_basket_void' | 'temp_log_gap' | 'fefo_ignore'
     | '3_point_check_fail' | 'lasa_mixup' | 'handover_gap' | 'cash_variance_daily'
-    | 'license_scope_risk' | 'returns_fraud_gap' | 'training_shadow_only';
+    | 'license_scope_risk' | 'returns_fraud_gap' | 'training_shadow_only'
+    | 'invoice_mismatch_gap' | 'complaint_loop_gap' | 'cross_training_gap' | 'onboarding_gap' | 'turnover_risk';

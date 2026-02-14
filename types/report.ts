@@ -230,7 +230,7 @@ export interface ActionDefinition {
     pillar: PillarId;
     signal_tags: SignalTag[];
     title: string;
-    days: 7 | 30;
+    days: 7 | 14 | 30;
     effort: 'S' | 'M' | 'L';
     type?: string;
     text?: string;

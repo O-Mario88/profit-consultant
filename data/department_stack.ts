@@ -283,7 +283,7 @@ export const INDUSTRY_DEPARTMENT_STACKS: Record<string, DepartmentStack> = {
         pillarOwnership: { ...DEFAULT_PILLAR_OWNERSHIP, 'Operations': ['operations'] },
         subUnits: { 'operations': ['Service Delivery', 'Scheduling'] },
         kpis: { ...EMPTY_MAPS.kpis, 'Market': ['Client Retention'], 'Operations': ['Job Completion'] },
-        questionToggles: { ...EMPTY_MAPS.questionToggles, 'people': ['household'] }
+        questionToggles: { ...EMPTY_MAPS.questionToggles, 'People': ['household'] }
     }
 };
 

@@ -5,8 +5,7 @@ import { ACTIONS } from './actions';
 
 export const FISHERIES_PACK: IndustryPack = {
     id: 'fisheries',
-    industry: 'agriculture',
-    line_type: 'fisheries',
+    name: 'Fisheries',
     library: LIBRARY,
     questions: QUESTIONS,
     actions: ACTIONS

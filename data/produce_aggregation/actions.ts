@@ -1,5 +1,12 @@
 
-import { ActionSnippet, FixPlan } from "../../types";
+
+// Local definition for this pack's specific format
+interface ActionSnippet {
+    id: string;
+    text: string;
+    pillarId: string;
+    type: string;
+}
 
 export const PRODUCE_AGGREGATION_ACTIONS: ActionSnippet[] = [
     // --- P1: Sourcing & Supplier Control (Mapped to Operations) ---
@@ -303,7 +310,7 @@ export const PRODUCE_AGGREGATION_ACTIONS: ActionSnippet[] = [
     }
 ];
 
-export const PRODUCE_AGGREGATION_FIX_PLANS: FixPlan[] = [
+export const PRODUCE_AGGREGATION_FIX_PLANS = [
     {
         id: 'pa_7_day_stabilize',
         title: '7-Day "Stabilize Profit" Plan',

@@ -129,7 +129,7 @@ export const ROLE_FAMILIES: Record<string, RoleFamily> = {
 
     // Revenue / Supply
     'pharmacy buyer': 'Procurement/Supply Chain/Logistics', 'procurement officer': 'Procurement/Supply Chain/Logistics',
-    'inventory controller': 'Procurement/Supply Chain/Logistics', 'claims specialist': 'Finance/Accounting',
+    'claims specialist': 'Finance/Accounting',
     'billing officer': 'Finance/Accounting', 'compliance officer': 'Quality/Compliance/EHS',
 
     // DRUG SHOP (MODE B) ROLES
@@ -142,7 +142,7 @@ export const ROLE_FAMILIES: Record<string, RoleFamily> = {
     'sales associate': 'Sales/Commercial/Customer', 'senior attendant': 'Sales/Commercial/Customer',
 
     // Supply / Support
-    'stock controller': 'Procurement/Supply Chain/Logistics', 'storekeeper': 'Procurement/Supply Chain/Logistics',
+    'storekeeper': 'Procurement/Supply Chain/Logistics',
     'purchasing clerk': 'Procurement/Supply Chain/Logistics', 'delivery rider': 'Procurement/Supply Chain/Logistics',
     'compliance focal person': 'Quality/Compliance/EHS'
 };

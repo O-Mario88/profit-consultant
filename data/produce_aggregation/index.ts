@@ -5,6 +5,8 @@ import { PRODUCE_AGGREGATION_ACTIONS, PRODUCE_AGGREGATION_FIX_PLANS } from './ac
 import { IndustryPack } from '../../types';
 
 export const PRODUCE_AGGREGATION_PACK: IndustryPack = {
+    id: 'produce_aggregation',
+    name: 'Produce Aggregation',
     questions: PRODUCE_AGGREGATION_QUESTIONS,
     library: PRODUCE_AGGREGATION_LIBRARY,
     actions: {

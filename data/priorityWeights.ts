@@ -283,7 +283,7 @@ export const PRIORITY_WEIGHTS: Record<string, Record<PillarId, number>> = {
     }
 };
 
-export const PRIORITY_BOOSTS: Record<string, Record<PillarId, number>> = {
+export const PRIORITY_BOOSTS: Record<string, Record<string, number>> = {
     // Core priorities
     'Increase capital / cashflow': { Money: 3, Risk: 2, Market: 2, Operations: 1, Leadership: 0, Innovation: 0, People: 0 },
     'Increase sales / revenue': { Market: 3, Money: 2, Operations: 1, Leadership: 0, Innovation: 0, Risk: 0, People: 0 }, // Reduced Operations from +1 to 0 if P1 in original list was Quality? Or just follow custom boosts. 

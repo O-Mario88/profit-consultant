@@ -4,9 +4,9 @@ import { QuestionDefinition } from '../types';
 
 // Mock Questions
 const mockQuestions: QuestionDefinition[] = [
-    { qid: 'q1', textA: 'A', textB: 'B', pillar: 'Operations', weight: 1, signal_tags: [], line_type: ['all'] },
-    { qid: 'q2', textA: 'A', textB: 'B', pillar: 'Money', weight: 1, signal_tags: [], line_type: ['all'] },
-    { qid: 'q3', textA: 'A', textB: 'B', pillar: 'Market', weight: 1, signal_tags: [], line_type: ['all'] },
+    { qid: 'q1', textA: 'A', textB: 'B', pillar: 'Operations', weight: 1, signal_tags: [], line_type: ['all'], industry: 'general' },
+    { qid: 'q2', textA: 'A', textB: 'B', pillar: 'Money', weight: 1, signal_tags: [], line_type: ['all'], industry: 'general' },
+    { qid: 'q3', textA: 'A', textB: 'B', pillar: 'Market', weight: 1, signal_tags: [], line_type: ['all'], industry: 'general' },
 ];
 
 // Mock Answers (All "Strong Leak" = -2 raw value)
@@ -28,9 +28,11 @@ console.log("Operations Score:", result1.signalScores.length); // Checking signa
 // leakMap[tag].score += (Math.abs(weightedValue) * signalMultiplier);
 // So if we have tags, we can see the score difference.
 
+
+
 const mockQuestionsWithTags: QuestionDefinition[] = [
-    { qid: 'q1', textA: 'A', textB: 'B', pillar: 'Operations', weight: 10, signal_tags: ['tag_ops'], line_type: ['all'] },
-    { qid: 'q2', textA: 'A', textB: 'B', pillar: 'Money', weight: 10, signal_tags: ['tag_money'], line_type: ['all'] },
+    { qid: 'q1', textA: 'A', textB: 'B', pillar: 'Operations', weight: 10, signal_tags: ['stock_accuracy_gap'], line_type: ['all'], industry: 'general' },
+    { qid: 'q2', textA: 'A', textB: 'B', pillar: 'Money', weight: 10, signal_tags: ['pricing_confusion'], line_type: ['all'], industry: 'general' },
 ];
 
 const answersWithTags = {
@@ -39,19 +41,19 @@ const answersWithTags = {
 };
 
 const resNoPriority = calculateSignalScores(answersWithTags, mockQuestionsWithTags);
-console.log("No Priority - Tag Ops Score:", resNoPriority.signalScores.find(s => s.tag === 'tag_ops')?.score);
-console.log("No Priority - Tag Money Score:", resNoPriority.signalScores.find(s => s.tag === 'tag_money')?.score);
+console.log("No Priority - Tag Ops Score:", resNoPriority.signalScores.find(s => s.tag === 'stock_accuracy_gap')?.score);
+console.log("No Priority - Tag Money Score:", resNoPriority.signalScores.find(s => s.tag === 'pricing_confusion')?.score);
 
 // Test Case 2: "Reduce costs" (Ops 1.2, Money 1.2)
 // 'Reduce costs / cut operating expenses': { Operations: 1.2, Money: 1.2, ... }
 console.log("\n--- TEST 2: Reduce Costs ---");
 const resCosts = calculateSignalScores(answersWithTags, mockQuestionsWithTags, undefined, 'Reduce costs / cut operating expenses');
-console.log("Reduce Costs - Tag Ops Score:", resCosts.signalScores.find(s => s.tag === 'tag_ops')?.score);
-console.log("Reduce Costs - Tag Money Score:", resCosts.signalScores.find(s => s.tag === 'tag_money')?.score);
+console.log("Reduce Costs - Tag Ops Score:", resCosts.signalScores.find(s => s.tag === 'stock_accuracy_gap')?.score);
+console.log("Reduce Costs - Tag Money Score:", resCosts.signalScores.find(s => s.tag === 'pricing_confusion')?.score);
 
 // Test Case 3: "Improve market share" (Market 1.2, Money 1.2, Operations 1.2(conditional but listed))
 // Let's try one with different weights.
 // 'Reduce waste / scrap / rework': { Operations: 1.2, Money: 1.2, Market: 1.0 ... }
 console.log("\n--- TEST 3: Reduce Waste ---");
 const resWaste = calculateSignalScores(answersWithTags, mockQuestionsWithTags, undefined, 'Reduce waste / scrap / rework');
-console.log("Reduce Waste - Tag Ops Score:", resWaste.signalScores.find(s => s.tag === 'tag_ops')?.score);
+console.log("Reduce Waste - Tag Ops Score:", resWaste.signalScores.find(s => s.tag === 'stock_accuracy_gap')?.score);

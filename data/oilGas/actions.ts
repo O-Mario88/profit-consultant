@@ -1,5 +1,16 @@
 
-import { ActionSnippet } from '../../types';
+
+// Local definition
+interface ActionSnippet {
+  id: string;
+  title: string;
+  industry: string;
+  pillar: string;
+  text: string;
+  type: string;
+  impact: string;
+}
+
 
 export const actions: ActionSnippet[] = [
   // RISK (Client Trust)

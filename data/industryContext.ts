@@ -244,49 +244,140 @@ export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   assembly: ["inspection lottery", "revision roulette", "expedite burn", "nre giveaway", "wip swamp", "shortage spiral"],
   supermarket: ["stockout ghost", "shelf price mismatch", "shrink normalization", "expiry waste", "queue churn"],
   fmcg_wholesale: ["otif drift", "rebate fog", "perfect order gap", "aged stock", "route leakage"],
-  pharmacy: ["cold chain drift", "expiry profit leak", "claim rejection", "dispensing error", "counseling gap"]
+  pharmacy: ["cold chain drift", "expiry profit leak", "claim rejection", "dispensing error", "counseling gap"],
+  drug_shop: ["referral gap", "counterfeit risk", "discount drift", "expiry waste", "cash trap"]
 };
 
 export const INPUT_SUPPLY_HOOKS = {
-  market_offer_strategy: {
-    question: "Do you plan your assortment based on supplier deals or customer demand?",
-    why_ask: "Buying what suppliers push instead of what customers need leads to dead stock and lost sales.",
-    risk_if_ignored: "You tie up cash in slow-moving items and miss the peak season demand."
+  'Market': [
+    "Your advice is either a product feature or a profit engine.",
+    "If you don't screen for red flags, you risk the license.",
+    "Trust is built on what you refuse to sell."
+  ],
+  'Money': [
+    "Discount drift is margin theft with a smile.",
+    "Expiry is profit you paid for, then threw away.",
+    "Stockouts don't lose a sale—they lose a customer's habit."
+  ],
+  'Operations': [
+    "No FEFO = money dying quietly on the shelf.",
+    "When the queue is chaos, errors multiply.",
+    "Counterfeit risk starts when buying becomes desperate."
+  ],
+  'Risk': [
+    "One wrong sale can kill trust faster than any competitor.",
+    "Refunds without rules are an invitation to fraud.",
+    "If you can't explain it simply, you shouldn't sell it."
+  ]
+};
+
+export const DRUG_SHOP_HOOKS = INPUT_SUPPLY_HOOKS; // Reusing structure for now, but usually we define separate.
+// Wait, realized I can just define it properly below.
+
+export const DRUG_SHOP_SPECIFIC_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "One wrong sale can kill trust faster than any competitor.",
+    "If you can't explain it simply, you shouldn't sell it.",
+    "A drug shop without referral rules becomes a liability machine."
+  ],
+  'Money': [
+    "Discount drift is margin theft with a smile.",
+    "Expiry is profit you paid for... then threw away.",
+    "Stockouts don't lose a sale — they lose a customer's habit."
+  ],
+  'Operations': [
+    "No FEFO = money dying quietly on the shelf.",
+    "When the queue is chaos, errors multiply.",
+    "Counterfeit risk starts the moment buying becomes desperate."
+  ],
+  'Risk': [
+    "Refunds without rules are an invitation to fraud.",
+    "Scope creep is a license killer.",
+    "If it's not documented, it didn't happen (in an audit)."
+  ]
+};
+
+export const INPUT_SUPPLY_QUIZ_COPY = {
+  intro: {
+    title: "Input Supplier Profit Scan",
+    description: "For suppliers of seeds, fertilizers, chemicals, & vet supplies. Pinpoint profit leaks in your inventory, compliance, and sales channels.",
+    image_url: "/images/input_supply_intro.jpg" // Placeholder
   },
-  product_integrity_compliance: {
-    question: "Can you trace every batch of product to the specific customer who bought it?",
-    why_ask: "Without batch traceability, a single quality complaint or recall can destroy your reputation and create liability.",
-    risk_if_ignored: "You cannot defend against false claims or execute a recall, leading to fines and brand damage."
+  pillars: {
+    market_offer_strategy: {
+      title: "Market & Offer Strategy",
+      description: "Assortment planning and customer segmentation."
+    },
+    product_integrity_compliance: {
+      title: "Product Integrity & Compliance",
+      description: "Traceability, quality, and anti-counterfeit controls."
+    },
+    sourcing_supplier_control: {
+      title: "Sourcing & Supplier Control",
+      description: "Vendor management and procurement discipline."
+    },
+    inventory_storage_fulfillment: {
+      title: "Inventory & Fulfillment",
+      description: "Storage conditions, FEFO, and stock accuracy."
+    },
+    sales_channels_partner_network: {
+      title: "Sales Channels & Network",
+      description: "Dealer management and channel strategy."
+    },
+    customer_success_stewardship: {
+      title: "Customer Success & Stewardship",
+      description: "Advisory services and safe-use training."
+    },
+    pricing_finance_credit: {
+      title: "Pricing, Finance & Credit",
+      description: "Margin management, credit control, and cashflow."
+    },
+    data_traceability_ci: {
+      title: "Data & Traceability",
+      description: "Forecasting, batch tracking, and continuous improvement."
+    }
   },
-  sourcing_supplier_control: {
-    question: "Do you vet suppliers and negotiate clear terms, or just buy from whoever has stock?",
-    why_ask: "Reliance on unvetted suppliers increases the risk of poor quality, late delivery, and price shocks.",
-    risk_if_ignored: "You face stockouts or quality issues during critical seasons, losing customer trust."
-  },
-  inventory_storage_fulfillment: {
-    question: "Do you strictly enforce First-Expire-First-Out (FEFO) to manage shelf life?",
-    why_ask: "Chemicals and seeds have limited shelf life; poor rotation guarantees write-offs.",
-    risk_if_ignored: "You lose margin to expired stock and disposal costs."
-  },
-  sales_channels_partner_network: {
-    question: "Do you control dealer pricing and training, or just sell to any reseller?",
-    why_ask: "Uncontrolled dealers undercut your price and fail to support the product, damaging your brand.",
-    risk_if_ignored: "You lose market value and end users get poor results, blaming your product."
-  },
-  customer_success_stewardship: {
-    question: "Do you provide safe-use training and advisory, or just hand over the product?",
-    why_ask: "Farmers often misuse inputs; without guidance, they blame the product for poor results.",
-    risk_if_ignored: "You face high complaint rates and lose repeat customers to competitors who offer advice."
-  },
-  pricing_finance_credit: {
-    question: "Is your pricing based on true landed cost, or just following competitors?",
-    why_ask: "Ignoring freight, shrink, and finance costs in pricing means you might be selling at a loss.",
-    risk_if_ignored: "You bleed profit on every sale while thinking you are competitive."
-  },
-  data_traceability_ci: {
-    question: "Do you use data to forecast demand, or rely on gut feel?",
-    why_ask: "Guessing demand leads to stockouts of winners and overstock of losers.",
-    risk_if_ignored: "You miss the season's revenue peak because you ran out of the right product."
+  questions: {
+    market_offer_strategy: {
+      question: "Do you plan your assortment based on supplier deals or customer demand?",
+      why_ask: "Buying what suppliers push instead of what customers need leads to dead stock and lost sales.",
+      risk_if_ignored: "You tie up cash in slow-moving items and miss the peak season demand."
+    },
+    product_integrity_compliance: {
+      question: "Can you trace every batch of product to the specific customer who bought it?",
+      why_ask: "Without batch traceability, a single quality complaint or recall can destroy your reputation and create liability.",
+      risk_if_ignored: "You cannot defend against false claims or execute a recall, leading to fines and brand damage."
+    },
+    sourcing_supplier_control: {
+      question: "Do you vet suppliers and negotiate clear terms, or just buy from whoever has stock?",
+      why_ask: "Reliance on unvetted suppliers increases the risk of poor quality, late delivery, and price shocks.",
+      risk_if_ignored: "You face stockouts or quality issues during critical seasons, losing customer trust."
+    },
+    inventory_storage_fulfillment: {
+      question: "Do you strictly enforce First-Expire-First-Out (FEFO) to manage shelf life?",
+      why_ask: "Chemicals and seeds have limited shelf life; poor rotation guarantees write-offs.",
+      risk_if_ignored: "You lose margin to expired stock and disposal costs."
+    },
+    sales_channels_partner_network: {
+      question: "Do you control dealer pricing and training, or just sell to any reseller?",
+      why_ask: "Uncontrolled dealers undercut your price and fail to support the product, damaging your brand.",
+      risk_if_ignored: "You lose market value and end users get poor results, blaming your product."
+    },
+    customer_success_stewardship: {
+      question: "Do you provide safe-use training and advisory, or just hand over the product?",
+      why_ask: "Farmers often misuse inputs; without guidance, they blame the product for poor results.",
+      risk_if_ignored: "You face high complaint rates and lose repeat customers to competitors who offer advice."
+    },
+    pricing_finance_credit: {
+      question: "Is your pricing based on true landed cost, or just following competitors?",
+      why_ask: "Ignoring freight, shrink, and finance costs in pricing means you might be selling at a loss.",
+      risk_if_ignored: "You bleed profit on every sale while thinking you are competitive."
+    },
+    data_traceability_ci: {
+      question: "Do you use data to forecast demand, or rely on gut feel?",
+      why_ask: "Guessing demand leads to stockouts of winners and overstock of losers.",
+      risk_if_ignored: "You miss the season's revenue peak because you ran out of the right product."
+    }
   }
 };
 
@@ -390,47 +481,7 @@ export const SMALL_RUMINANTS_HOOKS: Record<string, string[]> = {
   ]
 };
 
-export const INPUT_SUPPLY_QUIZ_COPY = {
-  intro: {
-    title: "Input Supplier Profit Scan",
-    description: "For suppliers of seeds, fertilizers, chemicals, & vet supplies. Pinpoint profit leaks in your inventory, compliance, and sales channels.",
-    image_url: "/images/input_supply_intro.jpg" // Placeholder
-  },
-  pillars: {
-    market_offer_strategy: {
-      title: "Market & Offer Strategy",
-      description: "Assortment planning and customer segmentation."
-    },
-    product_integrity_compliance: {
-      title: "Product Integrity & Compliance",
-      description: "Traceability, quality, and anti-counterfeit controls."
-    },
-    sourcing_supplier_control: {
-      title: "Sourcing & Supplier Control",
-      description: "Vendor management and procurement discipline."
-    },
-    inventory_storage_fulfillment: {
-      title: "Inventory & Fulfillment",
-      description: "Storage conditions, FEFO, and stock accuracy."
-    },
-    sales_channels_partner_network: {
-      title: "Sales Channels & Network",
-      description: "Dealer management and channel strategy."
-    },
-    customer_success_stewardship: {
-      title: "Customer Success & Stewardship",
-      description: "Advisory services and safe-use training."
-    },
-    pricing_finance_credit: {
-      title: "Pricing, Finance & Credit",
-      description: "Margin management, credit control, and cashflow."
-    },
-    data_traceability_ci: {
-      title: "Data & Traceability",
-      description: "Forecasting, batch tracking, and continuous improvement."
-    }
-  }
-};
+
 
 export const INDUSTRY_LEXICON_TOKENS: Record<string, Record<string, string>> = {
   'input_supply': {

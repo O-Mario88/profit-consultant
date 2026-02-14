@@ -16,7 +16,7 @@ export const RETAIL_QUESTIONS: QuestionDefinition[] = [
         industry: "retail",
         pillar: "Market",
         line_type: ["Store"],
-        signal_tags: ["stockout_ghost", "inventory_blindness"],
+        signal_tags: ["stockout_ghost", "inventory_blindspot"],
         weight: 1.0,
         textA: "We react to stockouts when the shelf is empty.",
         textB: "We rarely stock out because we use auto-reorder or safety stock."
@@ -86,7 +86,7 @@ export const RETAIL_QUESTIONS: QuestionDefinition[] = [
         industry: "retail",
         pillar: "Operations",
         line_type: ["Store"],
-        signal_tags: ["stockout_ghost", "inventory_blindness"],
+        signal_tags: ["stockout_ghost", "inventory_blindspot"],
         weight: 1.0,
         textA: "Backroom is messy; we rely on staff memory to find things.",
         textB: "Backroom is mapped, labeled, and matches planogram logic."
@@ -116,7 +116,7 @@ export const RETAIL_QUESTIONS: QuestionDefinition[] = [
         industry: "retail",
         pillar: "Money",
         line_type: ["Store"],
-        signal_tags: ["expiry_waste", "margin_blindness"],
+        signal_tags: ["expiry_rot", "margin_blindness"],
         weight: 1.0,
         textA: "We throw away expired goods strictly when we find them.",
         textB: "We do daily short-date checks and have an automated markdown cadence."
@@ -196,7 +196,7 @@ export const RETAIL_QUESTIONS: QuestionDefinition[] = [
         industry: "retail",
         pillar: "Risk",
         line_type: ["Store"],
-        signal_tags: ["supplier_dependence"],
+        signal_tags: ["supplier_risk_blind_spot"],
         weight: 1.0,
         textA: "We rely on single sources for critical items (e.g. Milk/Bread).",
         textB: "We have multiple suppliers for key categories to avoid outages."
@@ -206,7 +206,7 @@ export const RETAIL_QUESTIONS: QuestionDefinition[] = [
         industry: "retail",
         pillar: "People",
         line_type: ["Store"],
-        signal_tags: ["brand_erosion"],
+        signal_tags: ["reputation_erosion"],
         weight: 1.0,
         textA: "Uniforms are messy, incomplete, or not worn.",
         textB: "Staff wear clean, branded uniforms with name tags."
@@ -216,7 +216,7 @@ export const RETAIL_QUESTIONS: QuestionDefinition[] = [
         industry: "retail",
         pillar: "People",
         line_type: ["Store"],
-        signal_tags: ["queue_churn", "labor_waste"],
+        signal_tags: ["queue_churn", "labor_idle_waste"],
         weight: 1.0,
         textA: "We run standard shifts regardless of traffic.",
         textB: "We schedule staff to match measured footfall (e.g. lunch/evening peaks)."
