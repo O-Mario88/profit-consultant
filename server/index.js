@@ -1,6 +1,9 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import express from 'express';
 import OpenAI from 'openai';
+import { fileURLToPath } from 'url';
 import {
   formatKnowledgeContext,
   getKnowledgeBase,
@@ -22,8 +25,15 @@ const app = express();
 const API_PORT = Number(process.env.API_PORT || 8787);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const JSON_BODY_LIMIT = process.env.API_JSON_LIMIT || '2mb';
+const SERVE_STATIC = process.env.SERVE_STATIC === 'true' || NODE_ENV === 'production';
+const CORS_ORIGIN = process.env.CORS_ORIGIN || (NODE_ENV === 'development' ? '*' : '');
 const RATE_WINDOW_MS = Math.max(1000, Number(process.env.API_RATE_WINDOW_MS || 60_000));
 const RATE_MAX_REQUESTS = Math.max(5, Number(process.env.API_RATE_MAX || 120));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+const DIST_DIR = path.resolve(PROJECT_ROOT, 'dist');
+const INDEX_HTML_PATH = path.resolve(DIST_DIR, 'index.html');
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const openai = openaiApiKey ? new OpenAI({ apiKey: openaiApiKey }) : null;
@@ -39,6 +49,38 @@ const SCORE_KEY_TO_PILLAR = {
   risk: 'Risk',
   people: 'People'
 };
+
+const allowedCorsOrigins = CORS_ORIGIN
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const isOriginAllowed = (origin) => {
+  if (allowedCorsOrigins.length === 0) return false;
+  if (allowedCorsOrigins.includes('*')) return true;
+  if (!origin) return false;
+  return allowedCorsOrigins.includes(origin);
+};
+
+if (allowedCorsOrigins.length > 0) {
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (typeof origin === 'string' && isOriginAllowed(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', allowedCorsOrigins.includes('*') ? '*' : origin);
+      res.setHeader('Vary', 'Origin');
+    } else if (allowedCorsOrigins.includes('*')) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-Id');
+    if (req.method === 'OPTIONS') {
+      res.status(204).end();
+      return;
+    }
+    next();
+  });
+}
 
 app.use(express.json({ limit: JSON_BODY_LIMIT }));
 
@@ -479,6 +521,8 @@ app.get('/api/health', (_req, res) => {
     ok: true,
     env: NODE_ENV,
     aiConfigured: Boolean(openai),
+    servingStaticFrontend: Boolean(SERVE_STATIC && fs.existsSync(INDEX_HTML_PATH)),
+    corsOrigins: allowedCorsOrigins,
     knowledgeBase,
     reportConfig: getReportGenerationConfig(),
     rateLimit: {
@@ -783,9 +827,22 @@ app.use('/api', (_req, res) => {
   });
 });
 
+if (SERVE_STATIC) {
+  if (fs.existsSync(INDEX_HTML_PATH)) {
+    app.use(express.static(DIST_DIR, { index: false }));
+    app.get(/.*/, (_req, res) => {
+      res.sendFile(INDEX_HTML_PATH);
+    });
+  } else {
+    console.warn(`Static frontend requested but dist build missing at: ${DIST_DIR}`);
+  }
+}
+
 app.listen(API_PORT, () => {
   console.log(`API server listening on http://localhost:${API_PORT}`);
   console.log(`AI configured: ${Boolean(openai)}`);
+  console.log(`CORS origins: ${allowedCorsOrigins.length > 0 ? allowedCorsOrigins.join(', ') : 'disabled'}`);
+  console.log(`Static frontend serving: ${Boolean(SERVE_STATIC && fs.existsSync(INDEX_HTML_PATH))}`);
   console.log(`Rate limit: ${RATE_MAX_REQUESTS} requests / ${Math.round(RATE_WINDOW_MS / 1000)}s`);
   console.log(`Adaptive assessment model: ${getAdaptiveAssessmentConfig().model}`);
 

@@ -3,22 +3,16 @@ import { GeneratedReport, DeepScanChapter } from '../types';
 import { generateDeepScanReport, DeepScanAssessmentAnswer } from '../services/gemini';
 import { DEEP_SCAN_DATA, DeepScanItem } from '../data/deepScanData';
 import { resolveIndustryFlags, resolveIndustryPack } from '../services/packResolver';
+import { sequenceAssessmentQuestions } from '../services/assessmentRouting';
 import {
     Brain, Shield, Activity, Zap, Megaphone, HeartPulse, Users,
-    ArrowRight, ArrowLeft, Loader2, CheckCircle2, AlertTriangle
+    ArrowRight, ArrowLeft, Loader2, CheckCircle2
 } from 'lucide-react';
 
 interface DeepScanAssessmentProps {
     report: GeneratedReport;
     onComplete: (deepScanChapters: Record<string, DeepScanChapter>, executiveSummary: string) => void;
     onBack: () => void;
-}
-
-interface DeepQuestion {
-    id: string;
-    pillar: string;
-    question: string;
-    placeholder: string;
 }
 
 const getPillarIcon = (name: string) => {
@@ -32,44 +26,6 @@ const getPillarIcon = (name: string) => {
         case 'people': case 'tribe': return Users;
         default: return Activity;
     }
-};
-
-const DEEP_QUESTIONS_BANK: Record<string, DeepQuestion[]> = {
-    Operations: [
-        { id: 'ops_1', pillar: 'Operations', question: 'How do you currently track and measure the efficiency of your core operations?', placeholder: 'e.g. We use a spreadsheet to track daily output, but there\'s no real-time dashboard...' },
-        { id: 'ops_2', pillar: 'Operations', question: 'When something goes wrong in production or delivery, what is your typical response process?', placeholder: 'e.g. Usually the manager handles it directly, there\'s no formal escalation path...' },
-        { id: 'ops_3', pillar: 'Operations', question: 'What is the biggest bottleneck that slows down your daily operations?', placeholder: 'e.g. Waiting for approvals, equipment downtime, manual data entry...' },
-    ],
-    Money: [
-        { id: 'money_1', pillar: 'Money', question: 'How quickly can you tell if a specific product, service, or client is profitable?', placeholder: 'e.g. We know overall margins, but can\'t easily see profit per product line...' },
-        { id: 'money_2', pillar: 'Money', question: 'What is your current cash collection cycle, and do clients regularly pay late?', placeholder: 'e.g. Net 30 terms, but most pay in 45-60 days...' },
-        { id: 'money_3', pillar: 'Money', question: 'What costs have surprised you in the last 6 months that you didn\'t see coming?', placeholder: 'e.g. Maintenance costs doubled, supplier price increases, hidden logistics fees...' },
-    ],
-    Market: [
-        { id: 'mkt_1', pillar: 'Market', question: 'What percentage of your revenue comes from repeat customers vs. new ones?', placeholder: 'e.g. Roughly 40% repeat, 60% new, but we don\'t track it precisely...' },
-        { id: 'mkt_2', pillar: 'Market', question: 'How do you currently differentiate yourself from competitors?', placeholder: 'e.g. We compete mainly on price, our quality is better but customers don\'t always see it...' },
-        { id: 'mkt_3', pillar: 'Market', question: 'When you lose a customer or deal, how do you find out why?', placeholder: 'e.g. We rarely follow up, sometimes the sales team tells us informally...' },
-    ],
-    Leadership: [
-        { id: 'lead_1', pillar: 'Leadership', question: 'How are decisions made in your organization — who decides, and how fast?', placeholder: 'e.g. Most things go through me, it can take days for anything to move...' },
-        { id: 'lead_2', pillar: 'Leadership', question: 'Do you have regular team meetings? If so, do they result in clear actions?', placeholder: 'e.g. Weekly meetings, but often the same issues come up and nothing changes...' },
-        { id: 'lead_3', pillar: 'Leadership', question: 'What do you spend most of YOUR time on each week as a leader?', placeholder: 'e.g. Firefighting operational issues, answering questions, managing cash flow...' },
-    ],
-    Innovation: [
-        { id: 'inno_1', pillar: 'Innovation', question: 'When was the last time you launched a new product, service, or process improvement?', placeholder: 'e.g. About 8 months ago, we added a new product line but haven\'t measured results...' },
-        { id: 'inno_2', pillar: 'Innovation', question: 'How do you test new ideas before committing resources?', placeholder: 'e.g. We usually just go with our gut and see what happens...' },
-        { id: 'inno_3', pillar: 'Innovation', question: 'What is stopping you from improving faster?', placeholder: 'e.g. Too busy with daily operations, no budget for testing, fear of failure...' },
-    ],
-    Risk: [
-        { id: 'risk_1', pillar: 'Risk', question: 'What is the single biggest risk to your business that keeps you up at night?', placeholder: 'e.g. Losing our biggest client, regulatory changes, key person leaving...' },
-        { id: 'risk_2', pillar: 'Risk', question: 'How do you currently handle compliance, contracts, and documentation?', placeholder: 'e.g. Mostly informal, contracts are basic, we catch issues after they happen...' },
-        { id: 'risk_3', pillar: 'Risk', question: 'If a critical team member left tomorrow, how prepared is the business?', placeholder: 'e.g. We\'d be in serious trouble, critical knowledge is in one person\'s head...' },
-    ],
-    People: [
-        { id: 'ppl_1', pillar: 'People', question: 'How confident are you that each team member knows exactly what success looks like in their role?', placeholder: 'e.g. Some do, but most just follow instructions without understanding the bigger picture...' },
-        { id: 'ppl_2', pillar: 'People', question: 'What happens when someone makes a mistake — is the response punitive or learning-oriented?', placeholder: 'e.g. It depends on who made the mistake, sometimes we shout, sometimes we fix it together...' },
-        { id: 'ppl_3', pillar: 'People', question: 'How do you currently develop and retain your best people?', placeholder: 'e.g. No formal program, we give raises sometimes, training is occasional...' },
-    ],
 };
 
 // Fallback for pillar names that don't exactly match
@@ -114,6 +70,17 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
     // Generate targeted questions (NOW: All 7 Pillars for full depth)
     const questions = useMemo(() => {
         const profile = report.profileContext;
+        const sequencingContext = {
+            userTitle: profile?.userTitle || '',
+            department: profile?.department || '',
+            industry: profile?.industry || '',
+            subIndustry: profile?.subIndustry || '',
+            goals: profile?.goals || [],
+            primaryPriority: profile?.goals?.[0] || profile?.priority || '',
+            secondaryPriorities: (profile?.goals || []).slice(1)
+        };
+        const sequenceDeepQuestions = (items: DeepScanItem[]) =>
+            sequenceAssessmentQuestions(items, sequencingContext);
 
         const adaptivePillars = report.profileContext?.adaptiveQuestionBank?.pillars;
         if (
@@ -138,7 +105,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
             });
 
             if (adaptiveDeepQuestions.length > 0) {
-                return adaptiveDeepQuestions;
+                return sequenceDeepQuestions(adaptiveDeepQuestions);
             }
         }
 
@@ -160,7 +127,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                     }));
 
                 if (packDeepQuestions.length > 0) {
-                    return packDeepQuestions;
+                    return sequenceDeepQuestions(packDeepQuestions);
                 }
             } catch (error) {
                 console.error('Failed to resolve pack deep-scan questions:', error);
@@ -189,7 +156,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
             allQuestions.push(...qs);
         });
 
-        return allQuestions;
+        return sequenceDeepQuestions(allQuestions);
     }, [report.profileContext]);
 
     const currentQuestion = questions[currentStep];
@@ -252,13 +219,13 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
 
     if (isGenerating) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center font-sans">
+            <div className="min-h-screen bg-gradient-to-br from-brand-950 via-brand-900 to-brand-950 flex items-center justify-center font-sans">
                 <div className="text-center space-y-8 max-w-md px-6">
                     <div className="relative">
-                        <div className="w-24 h-24 bg-gradient-to-br from-brand-500 to-purple-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-brand-500/30 animate-pulse">
+                        <div className="w-24 h-24 bg-gradient-to-br from-brand-500 to-accent-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-brand-500/30 animate-pulse">
                             <Brain className="w-12 h-12 text-white" />
                         </div>
-                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
+                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center animate-bounce">
                             <Loader2 className="w-4 h-4 text-white animate-spin" />
                         </div>
                     </div>
@@ -267,7 +234,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                         <p className="text-slate-400 text-sm leading-relaxed">{generationProgress}</p>
                     </div>
                     <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                        <div className="bg-gradient-to-r from-brand-500 to-purple-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                        <div className="bg-gradient-to-r from-brand-500 to-accent-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
                     </div>
                     <p className="text-[10px] text-slate-500">Using full backend orchestration</p>
                     <p className="text-[11px] text-slate-500">Powered by OpenAI • Personalized to your business</p>
@@ -279,10 +246,10 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
     const Icon = currentQuestion ? getPillarIcon(currentQuestion.pillar) : Activity;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-sans text-white">
+        <div className="min-h-screen bg-gradient-to-br from-brand-950 via-brand-900 to-brand-950 font-sans text-white">
 
             {/* Header */}
-            <div className="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-xl border-b border-white/10 px-6 py-4">
+            <div className="sticky top-0 z-30 bg-brand-900/85 backdrop-blur-xl border-b border-white/10 px-6 py-4">
                 <div className="max-w-3xl mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <button onClick={onBack} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400">
@@ -299,7 +266,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                 <div className="max-w-3xl mx-auto mt-3">
                     <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                         <div
-                            className="bg-gradient-to-r from-brand-500 to-purple-500 h-1.5 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-brand-500 to-accent-500 h-1.5 rounded-full transition-all duration-500"
                             style={{ width: `${progress}%` }}
                         ></div>
                     </div>
@@ -326,7 +293,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                                             return (
                                                 <>
                                                     <span className="text-[10px] font-bold text-slate-500">Score: {p.score}/100</span>
-                                                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${p.score < 50 ? 'bg-red-500/20 text-red-300' : p.score < 70 ? 'bg-amber-500/20 text-amber-300' : 'bg-green-500/20 text-green-300'}`}>
+                                                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${p.score < 50 ? 'bg-accent-500/20 text-accent-300' : p.score < 70 ? 'bg-accent-400/20 text-accent-200' : 'bg-brand-500/20 text-brand-200'}`}>
                                                         {p.band}
                                                     </span>
                                                 </>
@@ -347,24 +314,24 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                                 {/* Option A */}
                                 <div
                                     className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${(answers[currentQuestion.id] || 3) < 3
-                                        ? 'bg-indigo-500/20 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]'
+                                        ? 'bg-brand-500/20 border-brand-500 shadow-[0_0_20px_rgba(13,74,107,0.35)]'
                                         : 'bg-white/5 border-white/10 hover:border-white/20'
                                         }`}
                                     onClick={() => setAnswers(prev => ({ ...prev, [currentQuestion.id]: 1 }))}
                                 >
-                                    <div className="font-bold text-lg mb-2 text-indigo-300">Option A</div>
+                                    <div className="font-bold text-lg mb-2 text-brand-300">Option A</div>
                                     <p className="text-white text-lg leading-relaxed">{currentQuestion.a}</p>
                                 </div>
 
                                 {/* Option B */}
                                 <div
                                     className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${(answers[currentQuestion.id] || 3) > 3
-                                        ? 'bg-teal-500/20 border-teal-500 shadow-[0_0_20px_rgba(20,184,166,0.3)]'
+                                        ? 'bg-accent-500/20 border-accent-500 shadow-[0_0_20px_rgba(250,125,22,0.35)]'
                                         : 'bg-white/5 border-white/10 hover:border-white/20'
                                         }`}
                                     onClick={() => setAnswers(prev => ({ ...prev, [currentQuestion.id]: 5 }))}
                                 >
-                                    <div className="font-bold text-lg mb-2 text-teal-300">Option B</div>
+                                    <div className="font-bold text-lg mb-2 text-accent-300">Option B</div>
                                     <p className="text-white text-lg leading-relaxed">{currentQuestion.b}</p>
                                 </div>
                             </div>
@@ -413,7 +380,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                             </button>
                             <button
                                 onClick={handleNext}
-                                className={`flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all group bg-gradient-to-r from-brand-500 to-purple-500 text-white hover:from-brand-400 hover:to-purple-400 shadow-lg shadow-brand-500/20`}
+                                className={`flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all group bg-gradient-to-r from-brand-500 to-accent-500 text-white hover:from-brand-400 hover:to-accent-400 shadow-lg shadow-brand-500/20`}
                             >
                                 {isLastQuestion ? (
                                     <>
@@ -437,7 +404,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                                 className={`w-8 h-8 rounded-full text-xs font-bold flex items-center justify-center transition-all ${i === currentStep
                                     ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30'
                                     : (answers[q.id]) !== undefined
-                                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                        ? 'bg-brand-500/20 text-brand-300 border border-brand-500/30'
                                         : 'bg-white/5 text-slate-500 border border-white/10'
                                     }`}
                             >

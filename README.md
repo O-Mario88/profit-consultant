@@ -36,6 +36,19 @@ All marketplace/course/consultant/blog/ad-management surfaces were removed.
    `npm run dev:all`
 5. Run only the frontend (if backend is already running):
    `npm run dev`
+6. Run as a single production-like app (build + API serves `/dist`):
+   `npm run start:full`
+
+## Frontend/Backend Connectivity
+
+- Frontend requests are routed through:
+  - `VITE_AI_PROXY_BASE_URL` (default: `/api/ai`)
+  - `VITE_ASSESSMENT_PROXY_BASE_URL` (default: `/api/assessment`)
+  - `VITE_API_ROOT_BASE_URL` (default: `/api`) for health checks
+- Backend health endpoint:
+  - `GET /api/health`
+- Optional CORS when frontend is hosted on a different origin:
+  - `CORS_ORIGIN=http://localhost:3000` (or comma-separated list)
 
 ## AI Integration
 

@@ -13,43 +13,23 @@ import { Archetype, GeneratedReport, LeakIndices, BusinessProfile } from '../typ
 import { useLocalization } from '../contexts/LocalizationContext';
 import { generateStrategicReport, calculateLeakIndices, generateSignalBasedReport } from '../services/reportEngine';
 import { generateAdaptiveQuestionBank, AdaptiveQuestionBankResponse } from '../services/gemini';
-import { AGRO_PACK } from '../data/agro/index';
-import { AGRI_PACK } from '../data/agri';
-import { MINING_PACK } from '../data/mining';
-import { OIL_GAS_PACK } from '../data/oilGas';
-import { FNB_PACK } from '../data/fnb';
-import { TEXTILE_PACK } from '../data/textile';
-import { FURNITURE_PACK } from '../data/furniture';
-import { METAL_PACK } from '../data/metal';
-import { PLASTICS_PACK } from '../data/plastics';
-import { SOAP_PACK } from '../data/soap';
-import { BRICKS_PACK } from '../data/bricks';
-import { WATER_PACK } from '../data/water';
-import { FASHION_PACK } from '../data/fashion';
-import { HARDWARE_PACK } from '../data/hardware';
-import { ELECTRONICS_PACK } from '../data/electronics';
-import { FMCG_PACK } from '../data/fmcg';
-import { resolveIndustryPack, resolveIndustryFlags } from '../services/packResolver';
-import { STATIONERY_PACK } from '../data/stationery';
-import { SPARE_PARTS_PACK } from '../data/spareParts';
-import { ASSEMBLY_PACK } from '../data/assembly';
-import { PRODUCE_PACK } from '../data/produce';
-
-import { CROP_FARMING_PACK } from '../data/cropFarming';
-import { CATTLE_PACK } from '../data/cattle';
-
-import { GOAT_PACK } from '../data/goat';
-import { SHEEP_PACK } from '../data/sheep';
-import { PIGGERY_PACK } from '../data/piggery';
-import { POULTRY_PACK } from '../data/poultry';
-import { DAIRY_PACK } from '../data/dairy';
-import { FARM_MACHINERY_PACK } from '../data/farm_machinery';
-import { INPUT_SUPPLY_PACK } from '../data/input_supply';
 import { DIAGNOSTIC_DATA, DiagnosticItem } from '../data/diagnosticData';
-import { INDUSTRY_LEXICONS, QUICK_SCAN_QUESTIONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY, GOAT_QUIZ_COPY, SHEEP_QUIZ_COPY, PIGGERY_QUIZ_COPY } from '../data/industryContext';
+import { INDUSTRY_LEXICONS, INDUSTRY_TAXONOMY, IndustryCategory, AQUACULTURE_HOOKS, AQUACULTURE_QUIZ_COPY, AGRO_PROCESSING_QUIZ_COPY, MINING_QUIZ_COPY, OIL_GAS_QUIZ_COPY, FNB_QUIZ_COPY, TEXTILE_QUIZ_COPY, FURNITURE_QUIZ_COPY, METAL_QUIZ_COPY, PLASTICS_QUIZ_COPY, SOAP_QUIZ_COPY, BRICKS_QUIZ_COPY, WATER_QUIZ_COPY, ASSEMBLY_QUIZ_COPY, FMCG_QUIZ_COPY, ELECTRONICS_QUIZ_COPY, HARDWARE_QUIZ_COPY, FASHION_QUIZ_COPY, STATIONERY_QUIZ_COPY, SPARE_PARTS_QUIZ_COPY, GOAT_QUIZ_COPY, SHEEP_QUIZ_COPY, PIGGERY_QUIZ_COPY } from '../data/industryContext';
 
-import { UNIVERSAL_GOALS, INDUSTRY_GOALS, getGoalPillars } from '../data/goalLibrary';
+import { UNIVERSAL_GOALS, INDUSTRY_GOALS } from '../data/goalLibrary';
 import { STRENGTHS_PROXY_QUESTIONS } from '../data/strengths';
+import {
+   DEPARTMENT_OPTIONS,
+   isPillarGoalRelevant,
+   resolveResponderDepartmentId,
+   resolveResponderDepartmentLabel,
+   sequenceAssessmentQuestions,
+   toLegacyPillar
+} from '../services/assessmentRouting';
+import {
+   buildStaticQuickScanQuestions,
+   QuickScanQuestionMode
+} from '../services/quickScanQuestions';
 
 interface DiagnosticProps {
    onComplete: (archetype: Archetype, scores: any, planType: 'basic' | 'premium', report?: GeneratedReport) => void;
@@ -67,21 +47,7 @@ interface ActiveQuestion {
    isGoalRelevant: boolean;
 }
 
-const LEGACY_PILLARS = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'] as const;
-type LegacyPillar = typeof LEGACY_PILLARS[number];
-type RoleFamilyId =
-   | 'executive'
-   | 'finance'
-   | 'hr'
-   | 'operations'
-   | 'quality'
-   | 'supply_chain'
-   | 'sales'
-   | 'engineering'
-   | 'pmo'
-   | 'it_data';
-
-const ADAPTIVE_PILLAR_TO_LEGACY: Record<string, typeof LEGACY_PILLARS[number]> = {
+const ADAPTIVE_PILLAR_TO_LEGACY: Record<string, string> = {
    P1: 'Risk',
    P2: 'Innovation',
    P3: 'Market',
@@ -91,183 +57,13 @@ const ADAPTIVE_PILLAR_TO_LEGACY: Record<string, typeof LEGACY_PILLARS[number]> =
    P7: 'People'
 };
 
-const PILLAR_NAME_ALIASES: Record<string, typeof LEGACY_PILLARS[number]> = {
-   engine: 'Operations',
-   fuel: 'Money',
-   voice: 'Market',
-   brain: 'Leadership',
-   pulse: 'Innovation',
-   shield: 'Risk',
-   tribe: 'People',
-   operations: 'Operations',
-   money: 'Money',
-   market: 'Market',
-   leadership: 'Leadership',
-   innovation: 'Innovation',
-   risk: 'Risk',
-   people: 'People',
-   'quality customer trust': 'Risk',
-   'engineering process design change control': 'Innovation',
-   'sales delivery customer experience': 'Market',
-   'finance pricing margin cashflow': 'Money',
-   'operations productivity flow': 'Operations',
-   'supply chain inventory vendor control': 'Leadership',
-   'people culture safety compliance continuous improvement': 'People'
-};
-
-const ROLE_ROUTING_RULES: Array<{ id: RoleFamilyId; titleKeywords: string[] }> = [
-   {
-      id: 'executive',
-      titleKeywords: [
-         'founder', 'co founder', 'owner', 'proprietor', 'managing director', 'ceo', 'chief executive',
-         'president', 'general manager', 'gm', 'business unit head', 'managing partner', 'chief of staff'
-      ]
-   },
-   {
-      id: 'finance',
-      titleKeywords: [
-         'cfo', 'chief financial', 'finance director', 'vp finance', 'controller', 'accountant', 'treasurer',
-         'fp a', 'financial analyst', 'credit manager', 'internal auditor', 'tax manager'
-      ]
-   },
-   {
-      id: 'hr',
-      titleKeywords: [
-         'chro', 'human resources', 'hr director', 'hr manager', 'head of people', 'people ops', 'talent acquisition',
-         'recruiter', 'learning and development', 'l and d', 'training manager', 'organizational development', 'hris'
-      ]
-   },
-   {
-      id: 'operations',
-      titleKeywords: [
-         'coo', 'chief operating', 'operations director', 'head of operations', 'plant manager', 'factory manager',
-         'production manager', 'production supervisor', 'shift lead', 'line leader', 'site manager'
-      ]
-   },
-   {
-      id: 'quality',
-      titleKeywords: [
-         'quality director', 'head of quality', 'quality manager', 'qa qc', 'quality assurance', 'quality control',
-         'regulatory affairs', 'compliance manager', 'qms manager', 'gmp manager', 'ehs', 'hse', 'safety officer'
-      ]
-   },
-   {
-      id: 'supply_chain',
-      titleKeywords: [
-         'cpo', 'chief procurement', 'supply chain director', 'head of supply chain', 'procurement manager',
-         'purchasing manager', 'buyer', 'sourcing specialist', 'supply planner', 'demand planner', 'logistics manager',
-         'warehouse manager', 'distribution manager', 'inventory controller'
-      ]
-   },
-   {
-      id: 'sales',
-      titleKeywords: [
-         'cro', 'chief revenue', 'sales director', 'vp sales', 'commercial director', 'head of sales', 'head of growth',
-         'business development', 'account manager', 'key account', 'channel manager', 'customer success', 'marketing manager'
-      ]
-   },
-   {
-      id: 'engineering',
-      titleKeywords: [
-         'cto', 'chief technology', 'engineering director', 'head of engineering', 'r and d', 'head of r and d',
-         'product director', 'engineering manager', 'process engineer', 'design engineer', 'test engineer', 'automation engineer'
-      ]
-   },
-   {
-      id: 'pmo',
-      titleKeywords: [
-         'program manager', 'project manager', 'pmo manager', 'delivery manager', 'implementation manager'
-      ]
-   },
-   {
-      id: 'it_data',
-      titleKeywords: [
-         'cio', 'it director', 'head of it', 'it manager', 'systems administrator', 'network engineer',
-         'cybersecurity', 'security analyst', 'data analyst', 'bi analyst', 'data engineer', 'erp administrator'
-      ]
-   }
-];
-
-const ROLE_PILLAR_WEIGHTS: Record<RoleFamilyId, Record<LegacyPillar, number>> = {
-   executive: { Operations: 3, Money: 3, Market: 3, Leadership: 3, Innovation: 3, Risk: 3, People: 3 },
-   finance: { Operations: 3, Money: 5, Market: 3, Leadership: 4, Innovation: 2, Risk: 2, People: 2 },
-   hr: { Operations: 4, Money: 2, Market: 2, Leadership: 2, Innovation: 3, Risk: 3, People: 5 },
-   operations: { Operations: 5, Money: 2, Market: 2, Leadership: 4, Innovation: 3, Risk: 4, People: 3 },
-   quality: { Operations: 4, Money: 2, Market: 2, Leadership: 3, Innovation: 4, Risk: 5, People: 3 },
-   supply_chain: { Operations: 3, Money: 4, Market: 2, Leadership: 5, Innovation: 2, Risk: 3, People: 2 },
-   sales: { Operations: 2, Money: 4, Market: 5, Leadership: 2, Innovation: 2, Risk: 3, People: 2 },
-   engineering: { Operations: 3, Money: 2, Market: 2, Leadership: 3, Innovation: 5, Risk: 4, People: 2 },
-   pmo: { Operations: 4, Money: 3, Market: 4, Leadership: 3, Innovation: 3, Risk: 3, People: 3 },
-   it_data: { Operations: 4, Money: 3, Market: 2, Leadership: 3, Innovation: 2, Risk: 2, People: 3 }
-};
-
-const normalizePillarKey = (value: string) =>
-   value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-
-const QUICK_SCAN_QID_RE = /(^QS[_-])|(_QS[_-])|(-QS[_-])/i;
-const DEEP_SCAN_QID_RE = /(^DS[_-])|(_DS[_-])|(-DS[_-])/i;
-
-const isQuickScanQid = (qid: string): boolean => QUICK_SCAN_QID_RE.test(String(qid || ''));
-const isDeepScanQid = (qid: string): boolean => DEEP_SCAN_QID_RE.test(String(qid || ''));
-
-const normalizeRoleText = (value: string) =>
-   value
-      .toLowerCase()
-      .replace(/&/g, ' and ')
-      .replace(/[^a-z0-9]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-const toLegacyPillar = (value: string): typeof LEGACY_PILLARS[number] => {
-   if (LEGACY_PILLARS.includes(value as any)) return value as typeof LEGACY_PILLARS[number];
-   const normalized = normalizePillarKey(value);
-   return PILLAR_NAME_ALIASES[normalized] || 'Operations';
-};
-
-const inferRoleFamilyFromTitle = (title: string): RoleFamilyId => {
-   const normalizedTitle = ` ${normalizeRoleText(title || '')} `;
-   if (!normalizedTitle.trim()) return 'executive';
-
-   let bestMatch: { id: RoleFamilyId; score: number } = { id: 'executive', score: 0 };
-   for (const family of ROLE_ROUTING_RULES) {
-      let score = 0;
-      for (const keyword of family.titleKeywords) {
-         const token = normalizeRoleText(keyword);
-         if (!token) continue;
-         if (normalizedTitle.includes(` ${token} `)) score += token.length > 5 ? 3 : 2;
-      }
-      if (score > bestMatch.score) {
-         bestMatch = { id: family.id, score };
-      }
-   }
-
-   return bestMatch.score > 0 ? bestMatch.id : 'executive';
-};
-
-const sequenceQuestionsByRole = (questions: ActiveQuestion[], userTitle: string): ActiveQuestion[] => {
-   const roleFamily = inferRoleFamilyFromTitle(userTitle);
-   const weights = ROLE_PILLAR_WEIGHTS[roleFamily] || ROLE_PILLAR_WEIGHTS.executive;
-
-   return questions
-      .map((question, index) => {
-         const mappedPillar = toLegacyPillar(question.pillar);
-         const roleWeight = weights[mappedPillar] || 1;
-         const goalWeight = question.isGoalRelevant ? 1 : 0;
-         return { question, index, roleWeight, goalWeight };
-      })
-      .sort((left, right) => {
-         if (right.roleWeight !== left.roleWeight) return right.roleWeight - left.roleWeight;
-         if (right.goalWeight !== left.goalWeight) return right.goalWeight - left.goalWeight;
-         return left.index - right.index;
-      })
-      .map((item) => item.question);
-};
-
 const buildAdaptiveVocabulary = (profile: BusinessProfile): string[] => {
    const tokens: string[] = [];
    const lexicon = INDUSTRY_LEXICONS[profile.industry] || INDUSTRY_LEXICONS.other;
    if (lexicon) tokens.push(...Object.values(lexicon));
    tokens.push(...(profile.subIndustry || '').split(/[^A-Za-z0-9]+/g));
+   tokens.push(profile.userTitle || '');
+   tokens.push(resolveResponderDepartmentLabel(profile.department || '', profile.userTitle || ''));
    tokens.push(...(profile.products || []));
    tokens.push(...(profile.goals || []));
 
@@ -349,13 +145,23 @@ const parseAdaptiveQuickScan = (
    };
 };
 
+const buildSequencingContext = (profile: BusinessProfile) => ({
+   userTitle: profile.userTitle || '',
+   department: resolveResponderDepartmentId(profile.department || '', profile.userTitle || ''),
+   industry: profile.industry || '',
+   subIndustry: profile.subIndustry || '',
+   goals: profile.goals || [],
+   primaryPriority: profile.goals?.[0] || '',
+   secondaryPriorities: (profile.goals || []).slice(1)
+});
+
 // -- 5-Point Scale Definition --
 const LEANING_SCALE = [
-   { value: 1, label: "Strongly A", color: "bg-indigo-600" },
-   { value: 2, label: "Lean A", color: "bg-indigo-400" },
+   { value: 1, label: "Strongly A", color: "bg-brand-600" },
+   { value: 2, label: "Lean A", color: "bg-brand-400" },
    { value: 3, label: "Neutral", color: "bg-gray-300" },
-   { value: 4, label: "Lean B", color: "bg-teal-400" },
-   { value: 5, label: "Strongly B", color: "bg-teal-600" },
+   { value: 4, label: "Lean B", color: "bg-accent-400" },
+   { value: 5, label: "Strongly B", color: "bg-accent-600" },
 ];
 
 const TEAM_SIZES = [
@@ -415,6 +221,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       businessName: '',
       userName: '',
       userTitle: '',
+      department: '',
       industry: '',
       subIndustry: '',
       country: locale.country,
@@ -434,10 +241,12 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
    const [industrySearch, setIndustrySearch] = useState('');
    const [selectedCategory, setSelectedCategory] = useState<IndustryCategory | null>(null);
+   const [departmentExplicitlySelected, setDepartmentExplicitlySelected] = useState(false);
 
    // Logic Engine
    const [sessionQuestions, setSessionQuestions] = useState<ActiveQuestion[]>([]);
    const [assessmentQuestionSource, setAssessmentQuestionSource] = useState<'static' | 'adaptive'>('static');
+   const [staticQuestionMode, setStaticQuestionMode] = useState<QuickScanQuestionMode>('generic');
    const [adaptiveQuestionBank, setAdaptiveQuestionBank] = useState<BusinessProfile['adaptiveQuestionBank'] | undefined>(undefined);
    const [results, setResults] = useState<{
       scores: Record<string, number>;
@@ -485,394 +294,21 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       if (!businessProfile.industry) return;
       let cancelled = false;
 
-      // 1. Build Quick Scan Questions
-      let quickScanQs: ActiveQuestion[] = [];
-      const industryId = businessProfile.industry;
-      const sub = businessProfile.subIndustry;
+      const staticQuestionSelection = buildStaticQuickScanQuestions(businessProfile);
+      const quickScanQs: ActiveQuestion[] = staticQuestionSelection.questions;
 
-      // --- Helper Logic for Pack Detection ---
-      const isAgroProcessing = industryId === 'agriculture' && sub.startsWith('Agro-processing');
-
-      const isAgriInput = industryId === 'agriculture' && sub.startsWith('Input supplier');
-      const isProduceAggregation = industryId === 'agriculture' && (sub.startsWith('Produce aggregation') || sub.startsWith('Export / cross-border'));
-      const isCropFarming = industryId === 'agriculture' && sub.startsWith('Crop farming');
-
-      const isCattle = industryId === 'agriculture' && sub.startsWith('Cattle');
-      const isGoat = industryId === 'agriculture' && sub.startsWith('Goat');
-      const isSheep = industryId === 'agriculture' && sub.startsWith('Sheep');
-      const isPiggery = industryId === 'agriculture' && sub.toLowerCase().includes('pig');
-      const isPoultry = industryId === 'agriculture' && sub.toLowerCase().includes('poultry');
-      // Note: Aquaculture currently has no specific Pack loaded in original code, it just has specific specific "Archetype" logic later.
-      // But if there IS a pack, we'd add it here. For now, we assume no generic pack unless defined.
-      // Wait, there IS an archetype logic for aquaculture. I will leave it as standard unless I see an AQ pack import.
-      // I see logic below for determining archetype for aquaculture.
-
-      const isMining = industryId === 'mining' && !sub.toLowerCase().includes('oil');
-      const isOilGas = industryId === 'mining' && sub.toLowerCase().includes('oil'); // Oil & Gas is inside Mining category now
-
-      const isFnbManufacturing = industryId === 'manufacturing' && sub.startsWith('Food & beverage');
-      const isTextileManufacturing = industryId === 'manufacturing' && sub.startsWith('Textile');
-      const isFurnitureManufacturing = industryId === 'manufacturing' && sub.startsWith('Furniture');
-      const isMetalManufacturing = industryId === 'manufacturing' && sub.startsWith('Metal works');
-      const isPlasticsManufacturing = industryId === 'manufacturing' && sub.startsWith('Plastics');
-      const isSoapManufacturing = industryId === 'manufacturing' && sub.startsWith('Soap');
-      const isBricksManufacturing = industryId === 'manufacturing' && sub.startsWith('Bricks');
-      const isWaterManufacturing = industryId === 'manufacturing' && sub.startsWith('Bottled water');
-      const isAssemblyManufacturing = industryId === 'manufacturing' && sub.startsWith('Assembly');
-
-      const isFashionRetail = industryId === 'retail' && sub.startsWith('Fashion');
-      const isHardwareRetail = industryId === 'retail' && sub.startsWith('Hardware');
-      const isElectronicsRetail = industryId === 'retail' && sub.startsWith('Electronics');
-      const isFmcgRetail = industryId === 'retail' && (sub.startsWith('Supermarket') || sub.startsWith('FMCG'));
-      const isStationeryRetail = industryId === 'retail' && sub.startsWith('Stationery');
-      const isSparePartsRetail = industryId === 'retail' && sub.startsWith('Spare parts');
-
-
-
-      // Helper to filter QS only
-      const toQuickScanSet = <T extends { qid: string }>(questions: T[]): T[] => {
-         const quickScan = questions.filter(q => isQuickScanQid(q.qid));
-         if (quickScan.length > 0) return quickScan;
-         const nonDeepScan = questions.filter(q => !isDeepScanQid(q.qid));
-         if (nonDeepScan.length > 0 && nonDeepScan.length < questions.length) return nonDeepScan;
-         return questions;
-      };
-
-      if (isAgroProcessing) {
-         quickScanQs = toQuickScanSet(AGRO_PACK.questions).map((q, idx) => ({
-            id: q.qid,
-            pillar: q.pillar,
-            a: q.textA,
-            b: q.textB,
-            isSwapped: false, // A is Leak, B is Control
-            isGoalRelevant: true
-         }));
-      } else if (isAgriInput) {
-         quickScanQs = toQuickScanSet(INPUT_SUPPLY_PACK.questions).map((q, idx) => ({
-            id: q.qid,
-            pillar: q.pillar,
-            a: q.textA,
-            b: q.textB,
-            isSwapped: false,
-            isGoalRelevant: true
-         }));
-      } else if (isProduceAggregation) {
-         // Filter questions based on line_type (sub-industry)
-         // Default to 'all' + matched sub-industry
-         quickScanQs = toQuickScanSet(PRODUCE_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q, idx) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-
-      } else if (isCropFarming) {
-         quickScanQs = toQuickScanSet(CROP_FARMING_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isCattle) {
-         quickScanQs = toQuickScanSet(CATTLE_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isSheep) {
-         quickScanQs = toQuickScanSet(SHEEP_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isPiggery) {
-         quickScanQs = toQuickScanSet(PIGGERY_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isPoultry) {
-         quickScanQs = toQuickScanSet(POULTRY_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isGoat) {
-         quickScanQs = toQuickScanSet(GOAT_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-
-      } else if (isGoat) {
-         quickScanQs = toQuickScanSet(GOAT_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isSheep) {
-         quickScanQs = toQuickScanSet(SHEEP_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isMining) {
-         quickScanQs = toQuickScanSet(MINING_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isOilGas) {
-         quickScanQs = toQuickScanSet(OIL_GAS_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      }
-      else if (isFnbManufacturing) {
-         quickScanQs = toQuickScanSet(FNB_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isTextileManufacturing) {
-         quickScanQs = toQuickScanSet(TEXTILE_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isFurnitureManufacturing) {
-         quickScanQs = toQuickScanSet(FURNITURE_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isMetalManufacturing) {
-         quickScanQs = toQuickScanSet(METAL_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isPlasticsManufacturing) {
-         quickScanQs = toQuickScanSet(PLASTICS_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isSoapManufacturing) {
-         quickScanQs = toQuickScanSet(SOAP_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isBricksManufacturing) {
-         quickScanQs = toQuickScanSet(BRICKS_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isWaterManufacturing) {
-         quickScanQs = toQuickScanSet(WATER_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isAssemblyManufacturing) {
-         quickScanQs = toQuickScanSet(ASSEMBLY_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isFashionRetail) {
-         quickScanQs = toQuickScanSet(FASHION_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isHardwareRetail) {
-         quickScanQs = toQuickScanSet(HARDWARE_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isElectronicsRetail) {
-         quickScanQs = toQuickScanSet(ELECTRONICS_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isFmcgRetail) {
-         quickScanQs = toQuickScanSet(FMCG_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isStationeryRetail) {
-         quickScanQs = toQuickScanSet(STATIONERY_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else if (isSparePartsRetail) {
-         quickScanQs = toQuickScanSet(SPARE_PARTS_PACK.questions)
-            .filter(q => q.line_type.includes('all') || (businessProfile.subIndustry && q.line_type.includes(businessProfile.subIndustry)))
-            .map((q) => ({
-               id: q.qid,
-               pillar: q.pillar,
-               a: q.textA,
-               b: q.textB,
-               isSwapped: false,
-               isGoalRelevant: true
-            }));
-      } else {
-         quickScanQs = QUICK_SCAN_QUESTIONS.map((q, idx) => {
-            const cat = INDUSTRY_TAXONOMY.find(c => c.id === businessProfile.industry);
-            const variantKey = cat ? cat.lexiconKey : 'default';
-
-            const variantText = q.variants[businessProfile.industry || ''] || q.variants[variantKey] || q.variants['default'];
-
-            if (!variantText) return null;
-
-            // Randomize A/B position to prevent bias
-            const swap = Math.random() > 0.5;
-
-            return {
-               id: `QS-${q.pillar}-${idx}`,
-               pillar: q.pillar as any,
-               a: swap ? variantText.b : variantText.a,
-               b: swap ? variantText.a : variantText.b,
-               isSwapped: swap,
-               isGoalRelevant: getGoalPillars(businessProfile.goals[0] || '').includes(q.pillar)
-            };
-         }).filter(Boolean) as ActiveQuestion[];
-      }
+      const sequencingContext = buildSequencingContext(businessProfile);
+      const goalAlignedQuickScan = quickScanQs.map((question) => ({
+         ...question,
+         isGoalRelevant: businessProfile.goals.length > 0
+            ? isPillarGoalRelevant(question.pillar, businessProfile.goals)
+            : question.isGoalRelevant
+      }));
 
       setAssessmentQuestionSource('static');
+      setStaticQuestionMode(staticQuestionSelection.mode);
       setAdaptiveQuestionBank(undefined);
-      setSessionQuestions(sequenceQuestionsByRole(quickScanQs, businessProfile.userTitle || ''));
+      setSessionQuestions(sequenceAssessmentQuestions(goalAlignedQuickScan, sequencingContext));
       setQuestionIndex(0);
       setAnswers([]);
 
@@ -883,7 +319,10 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
             industry: businessProfile.industry,
             subIndustry: businessProfile.subIndustry,
             responderTitle: businessProfile.userTitle || 'Owner',
-            department: '',
+            department: resolveResponderDepartmentLabel(
+               businessProfile.department || '',
+               businessProfile.userTitle || ''
+            ),
             primaryPriority: businessProfile.goals[0] || 'Increase profit margin',
             secondaryPriorities: businessProfile.goals.slice(1),
             variant: businessProfile.model || 'both',
@@ -900,8 +339,16 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
          if (!parsed) return;
          if (!['setup', 'intro'].includes(stepRef.current)) return;
 
-         setSessionQuestions(sequenceQuestionsByRole(parsed.questions, businessProfile.userTitle || ''));
+         const adaptiveSequenced = sequenceAssessmentQuestions(
+            parsed.questions.map((question) => ({
+               ...question,
+               isGoalRelevant: isPillarGoalRelevant(question.pillar, businessProfile.goals)
+            })),
+            sequencingContext
+         );
+         setSessionQuestions(adaptiveSequenced);
          setAssessmentQuestionSource('adaptive');
+         setStaticQuestionMode('generic');
          setAdaptiveQuestionBank(parsed.questionBank);
          setQuestionIndex(0);
          setAnswers([]);
@@ -917,6 +364,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       businessProfile.subIndustry,
       businessProfile.goals,
       businessProfile.userTitle,
+      businessProfile.department,
       businessProfile.model,
       businessProfile.complianceLevel,
       businessProfile.size,
@@ -930,6 +378,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
    const handleIndustrySelect = (catId: string, sub: string) => {
       setBusinessProfile({ ...businessProfile, industry: catId, subIndustry: sub });
+      setDepartmentExplicitlySelected(false);
       setSetupPhase(2); // Move to Identity
    };
 
@@ -940,6 +389,21 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       } else if (current.length < 2) {
          setBusinessProfile({ ...businessProfile, goals: [...current, goal] });
       }
+   };
+
+   const handleTitleChange = (title: string) => {
+      setBusinessProfile((prev) => {
+         const next = { ...prev, userTitle: title };
+         if (!departmentExplicitlySelected) {
+            next.department = resolveResponderDepartmentId('', title);
+         }
+         return next;
+      });
+   };
+
+   const handleDepartmentChange = (department: string) => {
+      setDepartmentExplicitlySelected(Boolean(department));
+      setBusinessProfile((prev) => ({ ...prev, department }));
    };
 
    const handleAnswer = (val: number) => {
@@ -1016,217 +480,77 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       // Use AI Generator
       let report: GeneratedReport | null = null;
 
-      const sub = businessProfile.subIndustry;
-      const ind = businessProfile.industry;
-
-      const isAgroProcessing = ind === 'agriculture' && sub.startsWith('Agro-processing');
-      const isProduceAggregation = businessProfile.industry === 'agriculture' && (businessProfile.subIndustry.startsWith('Produce aggregation') || businessProfile.subIndustry.startsWith('Export / cross-border'));
-
-
-      const isGoat = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Goat');
-      const isSheep = businessProfile.industry === 'agriculture' && businessProfile.subIndustry.startsWith('Sheep');
-      const { isPiggery, isPoultry, isDairy, isAgriInput, isFarmMachinery, isCropFarming, isCattle } = resolveIndustryFlags(businessProfile);
-
-      const isMining = businessProfile.industry === 'mining' && !businessProfile.subIndustry.toLowerCase().includes('oil');
-      const isOilGas = ind === 'mining' && sub.toLowerCase().includes('oil');
-
-      const isFnbManufacturing = ind === 'manufacturing' && sub.startsWith('Food & beverage');
-      const isTextileManufacturing = ind === 'manufacturing' && sub.startsWith('Textile');
-      const isFurnitureManufacturing = ind === 'manufacturing' && sub.startsWith('Furniture');
-      const isMetalManufacturing = ind === 'manufacturing' && sub.startsWith('Metal works');
-      const isPlasticsManufacturing = ind === 'manufacturing' && sub.startsWith('Plastics');
-      const isSoapManufacturing = ind === 'manufacturing' && sub.startsWith('Soap');
-      const isBricksManufacturing = ind === 'manufacturing' && sub.startsWith('Bricks');
-      const isWaterManufacturing = ind === 'manufacturing' && sub.startsWith('Bottled water');
-      const isAssemblyManufacturing = ind === 'manufacturing' && sub.startsWith('Assembly');
-
-      const isFashionRetail = ind === 'retail' && sub.startsWith('Fashion');
-      const isHardwareRetail = ind === 'retail' && sub.startsWith('Hardware');
-      const isElectronicsRetail = ind === 'retail' && sub.startsWith('Electronics');
-      const isFmcgRetail = ind === 'retail' && (sub.startsWith('Supermarket') || sub.startsWith('FMCG'));
-
       const isAdaptiveFlow = assessmentQuestionSource === 'adaptive';
+      const isPackDrivenFlow = assessmentQuestionSource === 'static' && staticQuestionMode === 'pack';
 
-      if (isAdaptiveFlow) {
+      const buildAnswerMap = () => {
          const answerMap: Record<string, string> = {};
          finalAnswers.forEach((ans, idx) => {
             const q = sessionQuestions[idx];
+            if (!q) return;
             const answerText = ans === 1 ? `Strongly A: ${q.a}`
                : ans === 2 ? `Leaning A: ${q.a}`
                   : ans === 3 ? `Neutral`
                      : ans === 4 ? `Leaning B: ${q.b}`
                         : `Strongly B: ${q.b}`;
-            answerMap[q.pillar + " Question " + (idx + 1)] = answerText;
+            answerMap[`${q.pillar} Question ${idx + 1}`] = answerText;
          });
+         return answerMap;
+      };
 
-         report = await generateStrategicReport(finalScores, archetype, businessProfile, answerMap, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isAgroProcessing) {
-         const agroAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            agroAnswers[q.id] = finalAnswers[idx] - 1; // Convert 1-5 to 0-4
+      const buildSignalAnswers = () => {
+         const answerMap: Record<string, number> = {};
+         sessionQuestions.forEach((question, idx) => {
+            answerMap[question.id] = (finalAnswers[idx] ?? 3) - 1;
          });
-         report = await generateSignalBasedReport(agroAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isAgriInput) {
-         const agriAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            agriAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(agriAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isProduceAggregation) {
-         const produceAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            produceAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(produceAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isCropFarming) {
-         const cropAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            cropAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(cropAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isCattle) {
-         const cattleAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            cattleAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(cattleAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isGoat) {
-         const goatAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            goatAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(goatAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isSheep) {
-         const sheepAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            sheepAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(sheepAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isPiggery) {
-         const piggeryAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            piggeryAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(piggeryAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isPoultry) {
-         const poultryAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            poultryAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(poultryAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isDairy) {
-         const dairyAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            dairyAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(dairyAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isMining) {
-         const miningAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            miningAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(miningAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isOilGas) {
-         const oilGasAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            oilGasAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(oilGasAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isFnbManufacturing) {
-         const fnbAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            fnbAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(fnbAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isTextileManufacturing) {
-         const textileAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            textileAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(textileAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isFurnitureManufacturing) {
-         const furnitureAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            furnitureAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(furnitureAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isMetalManufacturing) {
-         const metalAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            metalAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(metalAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isPlasticsManufacturing) {
-         const plasticsAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            plasticsAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(plasticsAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isSoapManufacturing) {
-         const soapAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            soapAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(soapAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isBricksManufacturing) {
-         const bricksAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            bricksAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(bricksAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isWaterManufacturing) {
-         const waterAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            waterAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(waterAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isAssemblyManufacturing) {
-         const assemblyAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            assemblyAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(assemblyAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isFashionRetail) {
-         const fashionAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            fashionAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(fashionAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isHardwareRetail) {
-         const hardwareAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            hardwareAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(hardwareAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isElectronicsRetail) {
-         const electronicsAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            electronicsAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(electronicsAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else if (isFmcgRetail) {
-         const fmcgAnswers: Record<string, number> = {};
-         sessionQuestions.forEach((q, idx) => {
-            fmcgAnswers[q.id] = finalAnswers[idx] - 1;
-         });
-         report = await generateSignalBasedReport(fmcgAnswers, businessProfile, strengthsSkipped ? undefined : strengthsAnswers);
-      } else {
-         // Create a readable map of Question -> Answer
-         const answerMap: Record<string, string> = {};
-         finalAnswers.forEach((ans, idx) => {
-            const q = sessionQuestions[idx];
-            const answerText = ans === 1 ? `Strongly A: ${q.a}`
-               : ans === 2 ? `Leaning A: ${q.a}`
-                  : ans === 3 ? `Neutral`
-                     : ans === 4 ? `Leaning B: ${q.b}`
-                        : `Strongly B: ${q.b}`;
-            answerMap[q.pillar + " Question " + (idx + 1)] = answerText;
-         });
+         return answerMap;
+      };
 
-         report = await generateStrategicReport(finalScores, archetype, businessProfile, answerMap, strengthsSkipped ? undefined : strengthsAnswers);
+      try {
+         if (isAdaptiveFlow) {
+            report = await generateStrategicReport(
+               finalScores,
+               archetype,
+               businessProfile,
+               buildAnswerMap(),
+               strengthsSkipped ? undefined : strengthsAnswers
+            );
+         } else if (isPackDrivenFlow) {
+            report = await generateSignalBasedReport(
+               buildSignalAnswers(),
+               businessProfile,
+               strengthsSkipped ? undefined : strengthsAnswers
+            );
+         } else {
+            report = await generateStrategicReport(
+               finalScores,
+               archetype,
+               businessProfile,
+               buildAnswerMap(),
+               strengthsSkipped ? undefined : strengthsAnswers
+            );
+         }
+      } catch (error) {
+         console.error('Primary report generation failed:', error);
+         report = null;
       }
 
-      if (!report) {
+      if (!report || !Array.isArray(report.pillars) || report.pillars.length === 0) {
+         try {
+            report = await generateStrategicReport(
+               finalScores,
+               archetype,
+               businessProfile,
+               buildAnswerMap(),
+               strengthsSkipped ? undefined : strengthsAnswers
+            );
+         } catch (fallbackError) {
+            console.error('Fallback strategic report generation failed:', fallbackError);
+            report = null;
+         }
+      }
+
+      if (!report || !Array.isArray(report.pillars) || report.pillars.length === 0) {
          console.error("Report generation failed: returned null");
          setIsError(true);
          return;
@@ -1279,7 +603,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                         <input
                            type="text"
                            placeholder="Search (e.g. Retail, Tech, Health)..."
-                           className="w-full pl-12 py-3.5 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent text-lg"
+                           className="w-full pl-12 py-3.5 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-accent-500 focus:border-transparent text-lg"
                            value={industrySearch}
                            onChange={(e) => setIndustrySearch(e.target.value)}
                         />
@@ -1360,9 +684,29 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                               className="w-full p-4 border border-gray-300 rounded-xl focus:ring-black focus:border-black text-lg"
                               placeholder="e.g. Founder, CEO, Ops Manager"
                               value={businessProfile.userTitle}
-                              onChange={e => setBusinessProfile({ ...businessProfile, userTitle: e.target.value })}
+                              onChange={e => handleTitleChange(e.target.value)}
                            />
                         </div>
+                        <div>
+                           <label className="block text-sm font-bold text-gray-700 mb-2">Department</label>
+                           <select
+                              className="w-full p-4 border border-gray-300 rounded-xl focus:ring-black focus:border-black text-lg bg-white"
+                              value={businessProfile.department || ''}
+                              onChange={e => handleDepartmentChange(e.target.value)}
+                           >
+                              <option value="">Auto-detect from title</option>
+                              {DEPARTMENT_OPTIONS.map((option) => (
+                                 <option key={option.id} value={option.id}>
+                                    {option.label}
+                                 </option>
+                              ))}
+                           </select>
+                        </div>
+                        {!businessProfile.department && businessProfile.userTitle && (
+                           <p className="text-xs text-slate-500">
+                              Suggested routing: {resolveResponderDepartmentLabel('', businessProfile.userTitle)}
+                           </p>
+                        )}
                      </div>
 
                      <div className="mt-10 flex justify-end">
@@ -1391,11 +735,11 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                            <button
                               key={goal}
                               onClick={() => handleGoalToggle(goal)}
-                              className={`p-6 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${businessProfile.goals.includes(goal) ? 'border-teal-500 bg-teal-50/50 text-teal-900 shadow-sm' : 'border-gray-100 bg-white text-slate-600 hover:border-gray-300'}`}
+                              className={`p-6 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${businessProfile.goals.includes(goal) ? 'border-accent-500 bg-accent-50/50 text-accent-900 shadow-sm' : 'border-gray-100 bg-white text-slate-600 hover:border-gray-300'}`}
                               disabled={businessProfile.goals.length >= 2 && !businessProfile.goals.includes(goal)}
                            >
                               <span className="font-bold text-lg">{goal}</span>
-                              {businessProfile.goals.includes(goal) && <CheckCircle2 className="w-6 h-6 text-teal-600" />}
+                              {businessProfile.goals.includes(goal) && <CheckCircle2 className="w-6 h-6 text-accent-600" />}
                            </button>
                         ))}
                      </div>
@@ -1442,11 +786,11 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                         </div>
                         <div className="flex gap-4">
                            <label className="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-100">
-                              <input type="checkbox" className="rounded border-gray-300 text-teal-600 focus:ring-teal-500" checked={businessProfile.includesContractors} onChange={() => setBusinessProfile({ ...businessProfile, includesContractors: !businessProfile.includesContractors })} />
+                              <input type="checkbox" className="rounded border-gray-300 text-accent-600 focus:ring-accent-500" checked={businessProfile.includesContractors} onChange={() => setBusinessProfile({ ...businessProfile, includesContractors: !businessProfile.includesContractors })} />
                               <span className="text-sm font-medium">Contractors</span>
                            </label>
                            <label className="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-100">
-                              <input type="checkbox" className="rounded border-gray-300 text-teal-600 focus:ring-teal-500" checked={businessProfile.includesVolunteers} onChange={() => setBusinessProfile({ ...businessProfile, includesVolunteers: !businessProfile.includesVolunteers })} />
+                              <input type="checkbox" className="rounded border-gray-300 text-accent-600 focus:ring-accent-500" checked={businessProfile.includesVolunteers} onChange={() => setBusinessProfile({ ...businessProfile, includesVolunteers: !businessProfile.includesVolunteers })} />
                               <span className="text-sm font-medium">Volunteers</span>
                            </label>
                         </div>
@@ -1461,7 +805,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                                  setStep('intro');
                               }
                            }}
-                           className="bg-teal-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all flex items-center gap-2 shadow-lg shadow-teal-900/20"
+                           className="bg-accent-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-accent-700 transition-all flex items-center gap-2 shadow-lg shadow-accent-900/20"
                         >
                            {['agro_processing', 'agri_input'].includes(businessProfile.industry || '') ? 'Next: Operations' : 'Complete Profile'} <CheckCircle2 className="w-5 h-5" />
                         </button>
@@ -1550,7 +894,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                                  <button
                                     key={opt.val}
                                     onClick={() => setBusinessProfile({ ...businessProfile, complianceLevel: opt.val as any })}
-                                    className={`px-3 py-3 rounded-lg text-sm font-bold border transition-all text-center ${businessProfile.complianceLevel === opt.val ? 'bg-teal-600 text-white border-teal-600' : 'bg-gray-50 text-slate-600 border-gray-200 hover:border-gray-300'}`}
+                                    className={`px-3 py-3 rounded-lg text-sm font-bold border transition-all text-center ${businessProfile.complianceLevel === opt.val ? 'bg-accent-600 text-white border-accent-600' : 'bg-gray-50 text-slate-600 border-gray-200 hover:border-gray-300'}`}
                                  >
                                     {opt.label}
                                  </button>
@@ -1566,7 +910,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                                  <button
                                     key={model}
                                     onClick={() => setBusinessProfile({ ...businessProfile, operatingModel: model as any })}
-                                    className={`px-3 py-3 rounded-lg text-sm font-bold border transition-all text-center ${businessProfile.operatingModel === model ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-slate-600 border-gray-200 hover:border-gray-300'}`}
+                                    className={`px-3 py-3 rounded-lg text-sm font-bold border transition-all text-center ${businessProfile.operatingModel === model ? 'bg-brand-600 text-white border-brand-600' : 'bg-gray-50 text-slate-600 border-gray-200 hover:border-gray-300'}`}
                                  >
                                     {model}
                                  </button>
@@ -1633,7 +977,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       return (
          <div className="min-h-screen bg-[#FAFAFB] flex items-center justify-center p-6 font-sans">
             <div className="max-w-xl w-full bg-white p-10 rounded-3xl shadow-xl text-center border border-gray-100 animate-fade-in-up">
-               <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+               <div className="w-16 h-16 bg-accent-50 text-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <Activity className="w-8 h-8" />
                </div>
                <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Forensic Quick Scan</h2>
@@ -1674,13 +1018,13 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const progressPct = ((strengthsIndex) / totalSQ) * 100;
 
       return (
-         <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #0c0a1a 100%)' }}>
+         <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #08344c 0%, #05283a 60%, #031a27 100%)' }}>
             <div className="max-w-2xl mx-auto px-4 py-8">
                {/* Header */}
                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                     <Brain className="w-6 h-6 text-purple-400" />
-                     <span className="text-purple-300 font-bold text-sm uppercase tracking-wider">Talent DNA Assessment</span>
+                     <Brain className="w-6 h-6 text-accent-400" />
+                     <span className="text-accent-300 font-bold text-sm uppercase tracking-wider">Talent DNA Assessment</span>
                   </div>
                   <span className="text-slate-400 text-sm">{strengthsIndex + 1} / {totalSQ}</span>
                </div>
@@ -1688,13 +1032,13 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                {/* Progress Bar */}
                <div className="mb-8">
                   <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                     <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                     <div className="h-full bg-gradient-to-r from-brand-500 to-accent-500 rounded-full transition-all duration-500"
                         style={{ width: `${progressPct}%` }} />
                   </div>
                </div>
 
                {/* Question Card */}
-               <div className="rounded-2xl p-8" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+               <div className="rounded-2xl p-8" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(13, 74, 107, 0.35)' }}>
                   <p className="text-slate-300 text-center text-sm mb-6">Which statement feels more true about how your business operates today?</p>
 
                   {/* Option A */}
@@ -1709,20 +1053,20 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                      }}
                      className="w-full text-left p-5 rounded-xl mb-4 transition-all hover:-translate-y-0.5"
                      style={{
-                        background: 'rgba(124, 58, 237, 0.06)',
-                        border: '1px solid rgba(124, 58, 237, 0.15)',
+                        background: 'rgba(13, 74, 107, 0.12)',
+                        border: '1px solid rgba(13, 74, 107, 0.3)',
                         color: '#e2e8f0'
                      }}
                      onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.15)';
-                        e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.4)';
+                        e.currentTarget.style.background = 'rgba(13, 74, 107, 0.24)';
+                        e.currentTarget.style.borderColor = 'rgba(13, 74, 107, 0.55)';
                      }}
                      onMouseLeave={e => {
-                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.06)';
-                        e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.15)';
+                        e.currentTarget.style.background = 'rgba(13, 74, 107, 0.12)';
+                        e.currentTarget.style.borderColor = 'rgba(13, 74, 107, 0.3)';
                      }}
                   >
-                     <span className="text-purple-400 font-bold text-xs mr-2">A</span>
+                     <span className="text-accent-400 font-bold text-xs mr-2">A</span>
                      {currentSQ.statementA}
                   </button>
 
@@ -1754,20 +1098,20 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                      }}
                      className="w-full text-left p-5 rounded-xl transition-all hover:-translate-y-0.5"
                      style={{
-                        background: 'rgba(59, 130, 246, 0.06)',
-                        border: '1px solid rgba(59, 130, 246, 0.15)',
+                        background: 'rgba(250, 125, 22, 0.12)',
+                        border: '1px solid rgba(250, 125, 22, 0.3)',
                         color: '#e2e8f0'
                      }}
                      onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.15)';
-                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+                        e.currentTarget.style.background = 'rgba(250, 125, 22, 0.24)';
+                        e.currentTarget.style.borderColor = 'rgba(250, 125, 22, 0.55)';
                      }}
                      onMouseLeave={e => {
-                        e.currentTarget.style.background = 'rgba(59, 130, 246, 0.06)';
-                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.15)';
+                        e.currentTarget.style.background = 'rgba(250, 125, 22, 0.12)';
+                        e.currentTarget.style.borderColor = 'rgba(250, 125, 22, 0.3)';
                      }}
                   >
-                     <span className="text-blue-400 font-bold text-xs mr-2">B</span>
+                     <span className="text-accent-400 font-bold text-xs mr-2">B</span>
                      {currentSQ.statementB}
                   </button>
                </div>
@@ -1811,7 +1155,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                      <span className="text-sm font-bold text-slate-400">{questionIndex + 1} / {sessionQuestions.length}</span>
                   </div>
                   <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-                     <div className="bg-teal-500 h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
+                     <div className="bg-accent-500 h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
                   </div>
                </div>
             </div>
@@ -1876,8 +1220,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    if (isError) {
       return (
          <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white p-4">
-            <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
-               <AlertTriangle className="w-10 h-10 text-red-500" />
+            <div className="w-20 h-20 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
+               <AlertTriangle className="w-10 h-10 text-accent-500" />
             </div>
             <h2 className="text-3xl font-bold mb-2 text-center">Connection Interrupted</h2>
             <p className="text-slate-400 text-lg mb-8 text-center max-w-md">
@@ -1912,7 +1256,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
          <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
             <div className="relative">
                <div className="w-24 h-24 border-4 border-slate-700 rounded-full"></div>
-               <div className="absolute top-0 left-0 w-24 h-24 border-4 border-t-teal-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+               <div className="absolute top-0 left-0 w-24 h-24 border-4 border-t-accent-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
             </div>
             <h2 className="text-3xl font-bold mt-8 mb-2 animate-pulse">Triangulating Profit Leaks...</h2>
             <p className="text-slate-400 text-lg">Comparing against {businessProfile.industry || 'Global'} benchmarks.</p>
@@ -1950,7 +1294,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       return (
          <div className="min-h-screen bg-[#FAFAFB] p-8 flex items-center justify-center">
             <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-10 text-center animate-scale-in">
-               <span className="inline-block px-4 py-1.5 rounded-full bg-teal-50 text-teal-700 font-bold text-sm uppercase tracking-wide mb-6">
+               <span className="inline-block px-4 py-1.5 rounded-full bg-accent-50 text-accent-700 font-bold text-sm uppercase tracking-wide mb-6">
                   Analysis Complete
                </span>
 
@@ -1964,7 +1308,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                      </p>
                      <div className="bg-slate-50 rounded-2xl p-6 mb-10 border border-slate-100 text-left">
                         <div className="flex items-start gap-4 mb-4">
-                           <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-1" />
+                           <AlertTriangle className="w-6 h-6 text-accent-500 shrink-0 mt-1" />
                            <div>
                               <h3 className="font-bold text-slate-900 mb-1">
                                  Signal: {specificHook.detection}
@@ -1975,7 +1319,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
                            </div>
                         </div>
                         <div className="pl-10">
-                           <p className="text-sm font-bold text-teal-700">
+                           <p className="text-sm font-bold text-accent-700">
                               Solution: {specificHook.cliffhanger}
                            </p>
                         </div>
@@ -1989,7 +1333,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
                      <div className="bg-slate-50 rounded-2xl p-6 mb-10 border border-slate-100 text-left">
                         <div className="flex items-center gap-4 mb-4">
-                           <AlertTriangle className="w-6 h-6 text-amber-500" />
+                           <AlertTriangle className="w-6 h-6 text-accent-500" />
                            <h3 className="font-bold text-slate-900">Critical Risk Detected</h3>
                         </div>
                         <p className="text-slate-600 mb-2">
@@ -2004,7 +1348,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
                <button
                   onClick={() => onComplete(results.archetype, results.scores, selectedPlan, generatedReport || undefined)}
-                  className="w-full bg-teal-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all shadow-lg hover:-translate-y-1 flex items-center justify-center gap-2"
+                  className="w-full bg-accent-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-accent-700 transition-all shadow-lg hover:-translate-y-1 flex items-center justify-center gap-2"
                >
                   View Mission Brief <ArrowRight className="w-5 h-5" />
                </button>

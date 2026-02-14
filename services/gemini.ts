@@ -6,6 +6,11 @@ import {
   PillarScores
 } from '../types';
 import { generateDeepScanChapter } from './textGen';
+import {
+  AI_PROXY_BASE,
+  ASSESSMENT_PROXY_BASE,
+  requestJson
+} from './apiClient';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -117,31 +122,11 @@ interface SecureAIClient {
   };
 }
 
-const AI_PROXY_BASE =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_AI_PROXY_BASE_URL) || '/api/ai';
-const ASSESSMENT_PROXY_BASE =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_ASSESSMENT_PROXY_BASE_URL) || '/api/assessment';
-
-const requestJson = async <T>(basePath: string, path: string, body: JsonRecord): Promise<T> => {
-  const response = await fetch(`${basePath}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `AI proxy request failed (${response.status})`);
-  }
-
-  return (await response.json()) as T;
-};
-
 const requestProxy = async <T>(path: string, body: JsonRecord): Promise<T> =>
-  requestJson<T>(AI_PROXY_BASE, path, body);
+  requestJson<T>(AI_PROXY_BASE, path, { method: 'POST', body });
 
 const requestAssessmentProxy = async <T>(path: string, body: JsonRecord): Promise<T> =>
-  requestJson<T>(ASSESSMENT_PROXY_BASE, path, body);
+  requestJson<T>(ASSESSMENT_PROXY_BASE, path, { method: 'POST', body });
 
 const createSecureClient = (): SecureAIClient => ({
   chat: {
@@ -266,7 +251,20 @@ const toCanonicalScoresFromReport = (report: GeneratedReport): PillarScores => {
 
 const hydrateDeepScanFallback = (quickScanReport: GeneratedReport) => {
   const fallback: Record<string, DeepScanChapter> = {};
-  for (const pillar of quickScanReport.pillars) {
+  const sourcePillars =
+    Array.isArray(quickScanReport.pillars) && quickScanReport.pillars.length > 0
+      ? quickScanReport.pillars
+      : [
+          { name: 'Operations', score: 50 },
+          { name: 'Money', score: 50 },
+          { name: 'Market', score: 50 },
+          { name: 'Leadership', score: 50 },
+          { name: 'Innovation', score: 50 },
+          { name: 'Risk', score: 50 },
+          { name: 'People', score: 50 }
+        ];
+
+  for (const pillar of sourcePillars) {
     const mapped = PILLAR_ALIASES[pillar.name] || pillar.name;
     const industry = quickScanReport.profileContext?.industry || 'general';
     fallback[pillar.name] = generateDeepScanChapter(mapped, pillar.score, industry);

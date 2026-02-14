@@ -24,6 +24,7 @@ export interface BusinessProfile {
     businessName: string;
     userName: string;
     userTitle: string;
+    department?: string;
     industry: string;
     subIndustry: string;
     country?: string;
