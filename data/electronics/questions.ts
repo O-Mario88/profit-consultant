@@ -1,5 +1,18 @@
 import { PillarId, QuestionDefinition, SignalTag } from '../../types';
 
+type Pair = {
+  textA: string;
+  textB: string;
+};
+
+type PillarQuestionBank = {
+  prefix: string;
+  pillar: PillarId;
+  signalTags: SignalTag[];
+  quickScan: Pair[];
+  deepScan: Pair[];
+};
+
 const q = (
   qid: string,
   pillar: PillarId,
@@ -19,111 +32,784 @@ const q = (
   textB
 });
 
-export const questions: QuestionDefinition[] = [
-  // QUICK SCAN (2 per pillar)
-  q('QS_OPS_01', 'Operations', ['inventory_accuracy_gap'], 'When a customer asks for a model, I quickly check around the shelves.', 'I check a simple list/system to confirm stock before I speak.', 1.1),
-  q('QS_OPS_02', 'Operations', ['no_standard_work'], 'Repairs are tracked mostly by memory and WhatsApp messages.', 'Repairs are tracked using a job card or log with clear stages.', 1.1),
-
-  q('QS_MONEY_01', 'Money', ['pricing_margin_blindspot'], 'I feel the business is doing well when cash moved a lot today.', 'I feel the business is doing well when I can explain today\'s margin clearly.', 1.0),
-  q('QS_MONEY_02', 'Money', ['discounting_leak'], 'Discounts depend on the conversation and urgency.', 'Discounts follow a small rule with bands and approval limits.', 1.0),
-
-  q('QS_MARKET_01', 'Market', ['followup_gap'], 'Most customers are one-time buyers unless they return by chance.', 'We have a small follow-up habit that brings people back.', 1.0),
-  q('QS_MARKET_02', 'Market', ['value_story_gap'], 'Customers mostly choose us because of price.', 'Customers mostly choose us because they trust our clarity and service.', 1.0),
-
-  q('QS_LEAD_01', 'Leadership', ['no_variance_review'], 'When things go wrong, we talk it out until everyone understands.', 'When things go wrong, we change a small system so it stops repeating.', 1.0),
-  q('QS_LEAD_02', 'Leadership', ['decision_bottleneck'], 'Decisions usually wait for one key person.', 'Decisions are guided by simple rules even when the owner is away.', 1.1),
-
-  q('QS_INNOV_01', 'Innovation', ['no_testing_rhythm'], 'We keep selling what has always sold; changing offers feels risky.', 'We test small offers and bundles to increase profit safely.', 1.0),
-  q('QS_INNOV_02', 'Innovation', ['offer_measurement_gap'], 'Display arrangement is mostly based on what looks neat.', 'Display arrangement is based on what converts and moves fast.', 1.0),
-
-  q('QS_RISK_01', 'Risk', ['supplier_doc_gap'], 'We mostly trust supplier and device story as long as it looks okay.', 'We verify key details (IMEI, condition, parts source) as routine.', 1.1),
-  q('QS_RISK_02', 'Risk', ['policy_vagueness'], 'Warranty terms are explained verbally depending on the situation.', 'Warranty terms are written so disputes reduce.', 1.0),
-
-  q('QS_PEOPLE_01', 'People', ['training_gap'], 'Good staff learn mainly by observing and adapting.', 'Good staff learn through a short checklist and coaching.', 1.0),
-  q('QS_PEOPLE_02', 'People', ['incentive_misalignment'], 'Sales performance is mainly measured by money collected and deals closed.', 'Sales performance includes returns, attach rate, and margin quality.', 1.0),
-
-  // DEEP SCAN (10 per pillar)
-  // Operations
-  q('DS_OPS_01', 'Operations', ['inventory_accuracy_gap'], 'We locate phones by remembering where they were placed.', 'We locate phones using labels/sections or a simple log.', 1.0),
-  q('DS_OPS_02', 'Operations', ['receiving_slippage'], 'New stock is added to shelves first and recorded later.', 'New stock is recorded first and then displayed.', 1.0),
-  q('DS_OPS_03', 'Operations', ['restock_delay'], 'We notice missing accessories when customers ask.', 'We notice missing accessories through a routine count of fast movers.', 1.0),
-  q('DS_OPS_04', 'Operations', ['returns_damage_blindspot'], 'A phone is ready to sell once it powers on.', 'A phone is ready to sell after a short quality checklist test.', 1.0),
-  q('DS_OPS_05', 'Operations', ['no_standard_work'], 'Repairs are tracked by conversation threads.', 'Repairs are tracked by status steps from intake to handover.', 1.0),
-  q('DS_OPS_06', 'Operations', ['supplier_doc_gap'], 'Parts are used if they fit and work.', 'Parts are used if they fit, work, and pass a sourcing rule.', 1.0),
-  q('DS_OPS_07', 'Operations', ['policy_vagueness'], 'Returns are handled after urgent dispatches.', 'Returns follow a standard flow and are logged by reason.', 1.0),
-  q('DS_OPS_08', 'Operations', ['receiving_slippage'], 'Staff handle receiving based on experience.', 'Staff handle receiving using a short checklist.', 1.0),
-  q('DS_OPS_09', 'Operations', ['restock_delay'], 'We reorder accessories when the shelf looks empty.', 'We reorder accessories when top items hit a defined low point.', 1.0),
-  q('DS_OPS_10', 'Operations', ['hero_staff_dependence'], 'If the owner is away, operations slow down.', 'If the owner is away, workflow still runs consistently.', 1.0),
-
-  // Money
-  q('DS_MONEY_01', 'Money', ['pricing_inconsistency'], 'I price based on the day\'s market mood and customer pressure.', 'I price from a baseline list with controlled flexibility.', 1.0),
-  q('DS_MONEY_02', 'Money', ['discounting_leak'], 'Discounts are used to end negotiations quickly.', 'Discounts are used when they protect volume and margin.', 1.0),
-  q('DS_MONEY_03', 'Money', ['pricing_margin_blindspot'], 'I know profit by feel after paying bills.', 'I know profit using a simple daily or weekly margin view.', 1.0),
-  q('DS_MONEY_04', 'Money', ['cash_recon_gap'], 'Cash and momo are checked when something feels off.', 'Cash and momo are reconciled daily as routine.', 1.0),
-  q('DS_MONEY_05', 'Money', ['returns_damage_blindspot'], 'Refunds and returns are handled case by case without logs.', 'Refunds and returns are logged so patterns become visible.', 1.0),
-  q('DS_MONEY_06', 'Money', ['policy_vagueness'], 'Warranty issues are treated as customer service moments only.', 'Warranty issues are tracked as measurable cost signals.', 1.0),
-  q('DS_MONEY_07', 'Money', ['credit_terms_risk'], 'Installment sales happen when the customer seems trustworthy.', 'Installment sales happen with deposit, terms, and limits.', 1.0),
-  q('DS_MONEY_08', 'Money', ['payment_terms_risk'], 'Supplier debt is paid when pressure comes.', 'Supplier payments follow a plan aligned to cash cycle.', 0.9),
-  q('DS_MONEY_09', 'Money', ['pricing_margin_blindspot'], 'Repairs are priced mainly by competitor rates.', 'Repairs are priced by parts, time, risk, and warranty tier.', 1.0),
-  q('DS_MONEY_10', 'Money', ['slow_mover_attachment'], 'We buy stock whenever we see a good deal.', 'We buy stock when it matches movement and cash reality.', 1.0),
-
-  // Market
-  q('DS_MARKET_01', 'Market', ['followup_gap'], 'We assume customers will return if they liked us.', 'We run a small follow-up habit so they return.', 1.0),
-  q('DS_MARKET_02', 'Market', ['followup_gap'], 'Our marketing is mostly being visible and waiting.', 'Our marketing includes capturing and nurturing leads.', 1.0),
-  q('DS_MARKET_03', 'Market', ['segment_blindspot'], 'We rely on walk-ins and referrals mostly.', 'We track which channels bring better buyers.', 0.9),
-  q('DS_MARKET_04', 'Market', ['value_story_gap'], 'Customers mainly ask about price first.', 'Customers mainly ask about trust, condition, and warranty clarity.', 1.0),
-  q('DS_MARKET_05', 'Market', ['followup_gap'], 'We do not record who bought what.', 'We record buyer basics for repeat and upsell.', 1.0),
-  q('DS_MARKET_06', 'Market', ['bundle_engine_missing'], 'Accessory selling depends on each staff mood and timing.', 'Accessory selling follows a simple attach script.', 1.0),
-  q('DS_MARKET_07', 'Market', ['value_story_gap'], 'We do not actively request reviews.', 'We request reviews as part of the process.', 0.9),
-  q('DS_MARKET_08', 'Market', ['pricing_positioning_gap'], 'We sell many categories without a clear identity.', 'We lead with one clear identity and trust promise.', 1.0),
-  q('DS_MARKET_09', 'Market', ['followup_gap'], 'Online inquiries are answered when free.', 'Online inquiries follow templates and response-time targets.', 1.0),
-  q('DS_MARKET_10', 'Market', ['complaint_handling_gap'], 'Complaints are handled privately and forgotten.', 'Complaints are logged and used to improve the system.', 1.0),
-
-  // Leadership
-  q('DS_LEAD_01', 'Leadership', ['kpi_cadence_gap'], 'Targets are discussed verbally.', 'Targets are visible and tracked.', 1.0),
-  q('DS_LEAD_02', 'Leadership', ['no_variance_review'], 'Problems are solved by working harder.', 'Problems are solved by changing the workflow.', 1.0),
-  q('DS_LEAD_03', 'Leadership', ['decision_bottleneck'], 'Exceptions require the owner most times.', 'Exceptions follow a rulebook.', 1.0),
-  q('DS_LEAD_04', 'Leadership', ['training_planning_gap'], 'Staff learn mostly by observation.', 'Staff learn through short training and checklists.', 1.0),
-  q('DS_LEAD_05', 'Leadership', ['accountability_soft'], 'Performance is judged by effort and loyalty.', 'Performance is judged by outcomes and quality.', 1.0),
-  q('DS_LEAD_06', 'Leadership', ['meeting_no_action'], 'Meetings are the main way we align.', 'Dashboards reduce meetings because truth stays visible.', 0.9),
-  q('DS_LEAD_07', 'Leadership', ['fear_silence'], 'Mistakes lead to blame so people do not repeat them.', 'Mistakes lead to root cause so process improves.', 1.0),
-  q('DS_LEAD_08', 'Leadership', ['role_clarity_gap'], 'Delegation means giving tasks.', 'Delegation means giving ownership of outcomes.', 0.9),
-  q('DS_LEAD_09', 'Leadership', ['policy_vagueness'], 'Everyone can change pricing if needed.', 'Pricing changes follow clear limits.', 1.0),
-  q('DS_LEAD_10', 'Leadership', ['fear_silence'], 'Staff feedback is rare to avoid tension.', 'Staff feedback is frequent to improve quality.', 0.9),
-
-  // Innovation
-  q('DS_INNOV_01', 'Innovation', ['bundle_engine_missing'], 'Bundles are offered when customers ask.', 'Bundles are offered as a default option.', 1.0),
-  q('DS_INNOV_02', 'Innovation', ['no_testing_rhythm'], 'We copy offers from nearby shops.', 'We test offers based on our buyer behavior.', 1.0),
-  q('DS_INNOV_03', 'Innovation', ['offer_measurement_gap'], 'Display is rearranged occasionally.', 'Display is optimized using sales evidence.', 0.9),
-  q('DS_INNOV_04', 'Innovation', ['slow_mover_attachment'], 'We hesitate to stop slow movers.', 'We clear slow movers routinely to free cash.', 1.0),
-  q('DS_INNOV_05', 'Innovation', ['pricing_inconsistency'], 'Repairs are one-price-fits-all.', 'Repairs have clear tiers by speed and warranty.', 1.0),
-  q('DS_INNOV_06', 'Innovation', ['offer_measurement_gap'], 'We avoid new systems because they may slow us.', 'We adopt small systems that remove repeat mistakes.', 0.9),
-  q('DS_INNOV_07', 'Innovation', ['training_planning_gap'], 'Training is informal.', 'Training is planned in short weekly sessions.', 0.9),
-  q('DS_INNOV_08', 'Innovation', ['no_market_feedback_loop'], 'We rely on memory for customer history.', 'We store customer history to improve selling.', 1.0),
-  q('DS_INNOV_09', 'Innovation', ['no_testing_rhythm'], 'We rarely run experiments.', 'We run small experiments monthly.', 1.0),
-  q('DS_INNOV_10', 'Innovation', ['value_story_gap'], 'We focus on selling products only.', 'We focus on selling confidence and experience.', 0.9),
-
-  // Risk
-  q('DS_RISK_01', 'Risk', ['supplier_doc_gap'], 'Devices are accepted if they look clean and work.', 'Devices are accepted after key verification steps.', 1.1),
-  q('DS_RISK_02', 'Risk', ['supplier_doc_gap'], 'IMEI and serial are recorded when needed.', 'IMEI and serial are recorded always.', 1.1),
-  q('DS_RISK_03', 'Risk', ['policy_vagueness'], 'Warranty is flexible to satisfy customers.', 'Warranty is clear and written to reduce disputes.', 1.0),
-  q('DS_RISK_04', 'Risk', ['supplier_selection_undisciplined'], 'Parts sourcing is based on availability.', 'Parts sourcing follows trusted supplier rules.', 1.0),
-  q('DS_RISK_05', 'Risk', ['shrinkage_leak'], 'High-value stock is accessible to many staff.', 'High-value stock access is controlled.', 1.0),
-  q('DS_RISK_06', 'Risk', ['contract_gap'], 'Refund decisions are negotiated each time.', 'Refund decisions follow defined steps.', 0.9),
-  q('DS_RISK_07', 'Risk', ['inventory_accuracy_gap'], 'Stock counts happen when something is missing.', 'Stock counts happen as routine.', 1.0),
-  q('DS_RISK_08', 'Risk', ['cash_recon_gap'], 'Cash handling relies on trust.', 'Cash handling relies on controls and reconciliation.', 1.0),
-  q('DS_RISK_09', 'Risk', ['data_security_gap'], 'Customer records are stored in chats.', 'Customer records are stored in a secure place.', 0.9),
-  q('DS_RISK_10', 'Risk', ['no_variance_review'], 'Security incidents are handled quietly.', 'Security incidents are logged and prevented systematically.', 1.0),
-
-  // People
-  q('DS_PEOPLE_01', 'People', ['incentive_misalignment'], 'Sales is rewarded mostly for closing deals.', 'Sales is rewarded for deals that do not bounce back as returns.', 1.0),
-  q('DS_PEOPLE_02', 'People', ['accountability_soft'], 'Technicians are praised mostly for speed.', 'Technicians are praised for first-time fix quality.', 1.0),
-  q('DS_PEOPLE_03', 'People', ['service_inconsistency'], 'Staff handle customers in their own style.', 'Staff use minimum trust and clarity scripts.', 0.9),
-  q('DS_PEOPLE_04', 'People', ['cross_team_friction'], 'Conflicts are avoided to keep peace.', 'Conflicts are surfaced early to protect output.', 0.9),
-  q('DS_PEOPLE_05', 'People', ['training_planning_gap'], 'Training is optional.', 'Training is routine.', 1.0),
-  q('DS_PEOPLE_06', 'People', ['onboarding_gap'], 'New hires learn by shadowing only.', 'New hires learn through checklist plus shadowing.', 1.0),
-  q('DS_PEOPLE_07', 'People', ['blame_culture'], 'Mistakes are punished.', 'Mistakes are analyzed.', 1.0),
-  q('DS_PEOPLE_08', 'People', ['accountability_soft'], 'Staff performance is reviewed when problems arise.', 'Staff performance is reviewed routinely.', 0.9),
-  q('DS_PEOPLE_09', 'People', ['hero_staff_dependence'], 'Customers depend on one trusted staff member.', 'Shop experience is consistent regardless of who serves.', 1.0),
-  q('DS_PEOPLE_10', 'People', ['blame_culture'], 'High performers are kept even if they create issues.', 'Culture is protected even when hard decisions are needed.', 0.9)
+// Mapping of the retail-specific pillars to the app's canonical scoring pillars:
+// P1 Offer & Merchandising -> Leadership
+// P2 Marketing & Demand -> Innovation
+// P3 Sales & Conversion -> Market
+// P4 Operations & Inventory -> Operations
+// P5 Finance & Cash Control -> Money
+// P6 People & Execution -> People
+// P7 Customer Trust & Retention -> Risk
+const BANKS: PillarQuestionBank[] = [
+  {
+    prefix: 'P1_OFFER',
+    pillar: 'Leadership',
+    signalTags: ['assortment_confusion', 'pricing_inconsistency', 'bundle_blindspot', 'slow_mover_attachment'],
+    quickScan: [
+      {
+        textA: 'We keep a tight top-sellers list and reorder those first.',
+        textB: 'We prefer to bring variety so customers always see something new.'
+      },
+      {
+        textA: 'We price used phones by grading and test results.',
+        textB: 'We price used phones mainly by market price and appearance.'
+      },
+      {
+        textA: 'We bundle accessories with phones using preset tiers.',
+        textB: 'We let customers choose accessories freely based on preference.'
+      },
+      {
+        textA: 'We choose stock based on weekly demand signals.',
+        textB: 'We choose stock based on supplier deals and availability.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We separate new, used, and refurb categories clearly in-store and online.',
+        textB: 'We mix them but explain differences during conversation.'
+      },
+      {
+        textA: 'We have margin targets per category (phones, accessories, repairs).',
+        textB: 'We set prices mainly to stay competitive and move volume.'
+      },
+      {
+        textA: 'We avoid stocking items without warranty support or reliable supplier proof.',
+        textB: 'We stock them cautiously if the price allows quick turnover.'
+      },
+      {
+        textA: 'We track dead stock days and run planned clearance.',
+        textB: 'We prefer occasional promos when we feel stock is heavy.'
+      },
+      {
+        textA: 'We buy fewer models but deeper quantities.',
+        textB: 'We buy more models but in smaller quantities.'
+      },
+      {
+        textA: 'We stock premium accessories (higher margin, fewer returns).',
+        textB: 'We stock budget accessories (faster sales, broad demand).'
+      },
+      {
+        textA: 'We push service add-ons (setup, transfer, screen protection).',
+        textB: 'We focus mainly on device sales and treat services as optional.'
+      },
+      {
+        textA: 'We keep spare parts inventory tied to repair history.',
+        textB: 'We keep spare parts based on what suppliers offer cheaply.'
+      },
+      {
+        textA: 'We treat chargers and cables as a curated quality line.',
+        textB: 'We offer many options at different prices and let customers decide.'
+      },
+      {
+        textA: 'We standardize trade-in offers with a rubric.',
+        textB: 'We negotiate trade-ins case-by-case.'
+      },
+      {
+        textA: 'We run a monthly model exit plan for slow sellers.',
+        textB: 'We keep slow sellers until the right buyer comes.'
+      },
+      {
+        textA: 'We use a written grading label customers can see.',
+        textB: 'We explain grading verbally during the sale.'
+      },
+      {
+        textA: 'We price bundles to protect margin first.',
+        textB: 'We price bundles to feel like a strong customer deal first.'
+      },
+      {
+        textA: 'We avoid brands and models with high return history.',
+        textB: 'We keep them because demand remains strong.'
+      },
+      {
+        textA: 'We track accessory attach rate weekly.',
+        textB: 'We track accessories as total sales, not tied to phone sales.'
+      },
+      {
+        textA: 'We limit SKUs to reduce complexity.',
+        textB: 'We expand SKUs to capture more niches.'
+      },
+      {
+        textA: 'We set minimum profit per phone sold.',
+        textB: 'We accept low profit if it brings customer volume.'
+      },
+      {
+        textA: 'We stock fewer trending items unless demand is proven.',
+        textB: 'We stock trending items early to catch the wave.'
+      },
+      {
+        textA: 'We use written product descriptions online per device.',
+        textB: 'We rely on photos and reply to questions in messages.'
+      },
+      {
+        textA: 'We do planned pricing reviews weekly.',
+        textB: 'We adjust prices when competitors move.'
+      }
+    ]
+  },
+  {
+    prefix: 'P2_MARKETING',
+    pillar: 'Innovation',
+    signalTags: ['no_testing_rhythm', 'offer_measurement_gap', 'no_market_feedback_loop', 'followup_gap'],
+    quickScan: [
+      {
+        textA: 'We prioritize maps and search visibility plus review growth.',
+        textB: 'We prioritize social content and direct messaging.'
+      },
+      {
+        textA: 'We run campaigns with a clear offer and expiry.',
+        textB: 'We run campaigns mainly to stay visible and remind people.'
+      },
+      {
+        textA: 'We track leads by source (calls, DMs, walk-ins).',
+        textB: 'We track overall sales and judge marketing by busy-ness.'
+      },
+      {
+        textA: 'We partner with groups (offices, schools, SMEs).',
+        textB: 'We rely on walk-in traffic and referrals naturally.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We post proof (tests, warranty, repairs) as much as products.',
+        textB: 'We post products mostly and handle proof in conversation.'
+      },
+      {
+        textA: 'We build audience lists (broadcasts, email, CRM).',
+        textB: 'We focus on fast response in DMs and comments.'
+      },
+      {
+        textA: 'We run offers built around problems (battery, screen, storage).',
+        textB: 'We run offers built around products (new arrivals, price drops).'
+      },
+      {
+        textA: 'We use customer testimonials and before-after repairs.',
+        textB: 'We use clean product photos and specs to sell.'
+      },
+      {
+        textA: 'We do weekly content themes (for example battery week).',
+        textB: 'We post based on what is available and trending.'
+      },
+      {
+        textA: 'We use paid ads carefully with tracking.',
+        textB: 'We prefer organic reach and community sharing.'
+      },
+      {
+        textA: 'We measure conversion from inquiries to purchases.',
+        textB: 'We measure engagement (views, likes) as the main indicator.'
+      },
+      {
+        textA: 'We publish pricing ranges to reduce low-quality leads.',
+        textB: 'We keep pricing in DMs to encourage conversation.'
+      },
+      {
+        textA: 'We optimize store visuals (signage, offers, trust cues).',
+        textB: 'We optimize speed (reply fast, deliver fast).'
+      },
+      {
+        textA: 'We focus on fewer channels but do them consistently.',
+        textB: 'We try many channels and keep whichever feels active.'
+      },
+      {
+        textA: 'We ask every buyer for a review.',
+        textB: 'We ask for reviews mainly after big purchases.'
+      },
+      {
+        textA: 'We create deal drops on a schedule.',
+        textB: 'We announce deals whenever stock arrives.'
+      },
+      {
+        textA: 'We have a referral reward structure.',
+        textB: 'We prefer surprise bonuses for referrals.'
+      },
+      {
+        textA: 'We run seasonal campaigns (back-to-school, holidays).',
+        textB: 'We run evergreen campaigns (always-on offers).'
+      },
+      {
+        textA: 'We maintain a customer FAQ (warranty, authenticity).',
+        textB: 'We answer FAQs individually in messages.'
+      },
+      {
+        textA: 'We use landing pages and catalogs for quick browsing.',
+        textB: 'We use chat as the main browsing experience.'
+      },
+      {
+        textA: 'We capture leads even when out of stock (waitlist).',
+        textB: 'We tell customers to check back later.'
+      },
+      {
+        textA: 'We build B2B relationships for steady volume.',
+        textB: 'We focus on retail because it is simpler.'
+      },
+      {
+        textA: 'We track marketing spend versus gross profit.',
+        textB: 'We track marketing spend versus total sales.'
+      },
+      {
+        textA: 'We test one new offer angle per week.',
+        textB: 'We reuse the same best offer most weeks.'
+      }
+    ]
+  },
+  {
+    prefix: 'P3_SALES',
+    pillar: 'Market',
+    signalTags: ['service_inconsistency', 'bundle_engine_missing', 'value_story_gap', 'discounting_leak'],
+    quickScan: [
+      {
+        textA: 'We use a needs-analysis script before showing options.',
+        textB: 'We show options quickly and refine based on reactions.'
+      },
+      {
+        textA: 'We present three tiers (good, better, best).',
+        textB: 'We present the customer\'s requested option first.'
+      },
+      {
+        textA: 'We bundle accessories by default.',
+        textB: 'We bundle only when the customer asks.'
+      },
+      {
+        textA: 'We document warranty and returns at checkout.',
+        textB: 'We explain warranty and returns verbally to keep checkout fast.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We coach objection handling weekly.',
+        textB: 'We let staff learn objection handling through experience.'
+      },
+      {
+        textA: 'We offer setup and data transfer as a paid service.',
+        textB: 'We include setup and data transfer to create goodwill.'
+      },
+      {
+        textA: 'We upsell protection based on lifestyle risk questions.',
+        textB: 'We upsell protection based on bundle discounts.'
+      },
+      {
+        textA: 'We track returns by reason and fix root causes.',
+        textB: 'We handle returns case-by-case without categorizing.'
+      },
+      {
+        textA: 'We use a checkout checklist (accessories, warranty, receipt).',
+        textB: 'We let each rep run checkout in their own style.'
+      },
+      {
+        textA: 'We prefer fewer discounts and stronger value explanation.',
+        textB: 'We prefer flexible pricing to close faster.'
+      },
+      {
+        textA: 'We quote customers with written breakdowns.',
+        textB: 'We quote customers with a single total price.'
+      },
+      {
+        textA: 'We keep quotes time-bound (valid for 24-48 hours).',
+        textB: 'We keep quotes open-ended to stay friendly.'
+      },
+      {
+        textA: 'We track conversion by rep and time blocks.',
+        textB: 'We track conversion mainly at store level.'
+      },
+      {
+        textA: 'We use add-on prompts at POS.',
+        textB: 'We rely on rep memory for add-ons.'
+      },
+      {
+        textA: 'We offer trade-in as a structured option.',
+        textB: 'We offer trade-in mainly when the customer mentions it.'
+      },
+      {
+        textA: 'We emphasize authenticity proof (tests and serial checks) early.',
+        textB: 'We emphasize authenticity proof after price agreement.'
+      },
+      {
+        textA: 'We cross-sell gadgets based on customer use case.',
+        textB: 'We cross-sell gadgets based on current promos.'
+      },
+      {
+        textA: 'We follow up on abandoned inquiries.',
+        textB: 'We wait for customers to return when ready.'
+      },
+      {
+        textA: 'We present financing options with clear terms.',
+        textB: 'We avoid financing complexity unless the customer insists.'
+      },
+      {
+        textA: 'We standardize delivery and payment rules.',
+        textB: 'We customize delivery and payment per customer situation.'
+      },
+      {
+        textA: 'We do end-of-day review of wins and losses in sales.',
+        textB: 'We do weekly review when time allows.'
+      },
+      {
+        textA: 'We maintain a top 20 objection script library.',
+        textB: 'We prefer natural conversation to avoid sounding scripted.'
+      },
+      {
+        textA: 'We treat accessories as part of the solution, not extras.',
+        textB: 'We treat accessories as optional extras.'
+      },
+      {
+        textA: 'We set targets for AOV and attach rate per rep.',
+        textB: 'We set targets mainly for total sales volume.'
+      }
+    ]
+  },
+  {
+    prefix: 'P4_OPERATIONS',
+    pillar: 'Operations',
+    signalTags: ['inventory_accuracy_gap', 'no_standard_work', 'supplier_doc_gap', 'shrinkage_leak'],
+    quickScan: [
+      {
+        textA: 'We cycle-count high-value items routinely.',
+        textB: 'We do full counts occasionally when we suspect mismatch.'
+      },
+      {
+        textA: 'Repairs have ticketing and approvals.',
+        textB: 'Repairs are managed via messages and memory.'
+      },
+      {
+        textA: 'Used phones must pass a test checklist before display.',
+        textB: 'Used phones are tested mainly when a customer is serious.'
+      },
+      {
+        textA: 'We lock and log high-value stock access.',
+        textB: 'We rely on staff trust and store awareness.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We separate fast-movers from high-value items in storage.',
+        textB: 'We store by category for easy picking.'
+      },
+      {
+        textA: 'We log stock transfers and adjustments with reasons.',
+        textB: 'We adjust stock quickly to keep selling moving.'
+      },
+      {
+        textA: 'We track shrink as a KPI and investigate patterns.',
+        textB: 'We treat shrink as occasional unavoidable loss.'
+      },
+      {
+        textA: 'We use ABC rules to decide count frequency.',
+        textB: 'We count based on available time and staff.'
+      },
+      {
+        textA: 'We quarantine returned devices for QA re-check.',
+        textB: 'We restock returns quickly if they look fine.'
+      },
+      {
+        textA: 'We photograph repair intake condition.',
+        textB: 'We note intake condition in writing only.'
+      },
+      {
+        textA: 'We require customer approval before part replacement.',
+        textB: 'We replace parts quickly to save turnaround time.'
+      },
+      {
+        textA: 'We maintain parts usage tracking per repair type.',
+        textB: 'We restock parts when they run low.'
+      },
+      {
+        textA: 'We maintain a repair rework log to fix root causes.',
+        textB: 'We handle rework quietly to protect reputation.'
+      },
+      {
+        textA: 'We enforce standardized testing before handover.',
+        textB: 'We test based on the reported issue only.'
+      },
+      {
+        textA: 'We keep high-risk accessories (tiny, high-theft) behind counter.',
+        textB: 'We display accessories openly to increase browsing.'
+      },
+      {
+        textA: 'We use device status checks where possible for used intake.',
+        textB: 'We rely on seller reputation and quick resale.'
+      },
+      {
+        textA: 'We run receiving checks versus invoices.',
+        textB: 'We accept supplier deliveries and confirm later.'
+      },
+      {
+        textA: 'We separate display stock from back stock.',
+        textB: 'We pull from one pool to simplify.'
+      },
+      {
+        textA: 'We have clear repair pricing menus for common issues.',
+        textB: 'We quote repairs after inspection each time.'
+      },
+      {
+        textA: 'We record serials and IMEIs at sale for warranty tracing.',
+        textB: 'We record only receipt details to keep checkout fast.'
+      },
+      {
+        textA: 'We maintain an incident log (lost items, disputes).',
+        textB: 'We solve incidents immediately and move on.'
+      },
+      {
+        textA: 'We limit who can approve stock write-offs.',
+        textB: 'We allow supervisors to adjust stock to stay accurate.'
+      },
+      {
+        textA: 'We schedule maintenance for tools and testers.',
+        textB: 'We fix tools when they fail.'
+      },
+      {
+        textA: 'We treat operations as a system with audits.',
+        textB: 'We treat operations as experience and common sense.'
+      }
+    ]
+  },
+  {
+    prefix: 'P5_FINANCE',
+    pillar: 'Money',
+    signalTags: ['pricing_margin_blindspot', 'discounting_leak', 'cash_recon_gap', 'payment_terms_risk'],
+    quickScan: [
+      {
+        textA: 'We track gross profit daily.',
+        textB: 'We track sales daily and check profit later.'
+      },
+      {
+        textA: 'We control discounts with rules.',
+        textB: 'We allow flexible discounts to close deals.'
+      },
+      {
+        textA: 'We reconcile cash and POS daily.',
+        textB: 'We reconcile cash and POS a few times per week.'
+      },
+      {
+        textA: 'We treat payment security as part of trust (baseline PCI mindset).',
+        textB: 'We rely on our payment provider to handle most security.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We calculate true margin including refurb, parts, and labor.',
+        textB: 'We estimate margin mainly from buy versus sell price.'
+      },
+      {
+        textA: 'We maintain a weekly cashflow forecast.',
+        textB: 'We manage cash day-to-day based on urgent needs.'
+      },
+      {
+        textA: 'We separate owner withdrawals from business expenses.',
+        textB: 'We mix sometimes, but track later.'
+      },
+      {
+        textA: 'We monitor discount percentage as a KPI.',
+        textB: 'We monitor total sales as the main KPI.'
+      },
+      {
+        textA: 'We track supplier payment terms and negotiate.',
+        textB: 'We pay suppliers when cash is available.'
+      },
+      {
+        textA: 'We track chargebacks and refunds and improve evidence.',
+        textB: 'We treat chargebacks and refunds as customer service costs.'
+      },
+      {
+        textA: 'We standardize return and refund approvals.',
+        textB: 'We handle refunds case-by-case to keep customers happy.'
+      },
+      {
+        textA: 'We record all repair costs and parts used.',
+        textB: 'We record repair revenue and estimate costs.'
+      },
+      {
+        textA: 'We set category margin targets and enforce them.',
+        textB: 'We aim for overall profit and adjust as needed.'
+      },
+      {
+        textA: 'We maintain tax readiness as a monthly routine.',
+        textB: 'We handle tax when deadlines approach.'
+      },
+      {
+        textA: 'We review expenses weekly (stop leaks early).',
+        textB: 'We review expenses monthly (less admin overhead).'
+      },
+      {
+        textA: 'We watch inventory days on hand.',
+        textB: 'We watch stock availability more than days on hand.'
+      },
+      {
+        textA: 'We price financing and trade-in risks into offers.',
+        textB: 'We keep financing and trade-in simple to avoid complexity.'
+      },
+      {
+        textA: 'We keep receipts and invoices organized for audits and claims.',
+        textB: 'We store key documents and search when needed.'
+      },
+      {
+        textA: 'We reconcile marketplace payouts and fees weekly.',
+        textB: 'We check marketplace payouts mainly when cash is tight.'
+      },
+      {
+        textA: 'We track payment fees and choose best methods.',
+        textB: 'We accept fees as cost of doing business.'
+      },
+      {
+        textA: 'We restrict who can issue refunds.',
+        textB: 'We empower staff to resolve issues quickly.'
+      },
+      {
+        textA: 'We set an internal fraud checklist.',
+        textB: 'We rely on experience to spot fraud.'
+      },
+      {
+        textA: 'We separate cash float from revenue.',
+        textB: 'We use cash on hand as needed and refill.'
+      },
+      {
+        textA: 'We use a monthly P and L review to set targets.',
+        textB: 'We set targets based on sales goals and intuition.'
+      }
+    ]
+  },
+  {
+    prefix: 'P6_PEOPLE',
+    pillar: 'People',
+    signalTags: ['role_clarity_gap', 'training_gap', 'incentive_misalignment', 'accountability_soft'],
+    quickScan: [
+      {
+        textA: 'We use role scorecards and review weekly.',
+        textB: 'We manage performance through daily supervision.'
+      },
+      {
+        textA: 'We reward attach rate, low returns, and reviews.',
+        textB: 'We reward total sales volume mostly.'
+      },
+      {
+        textA: 'We train weekly with scripts and product updates.',
+        textB: 'We train when new products arrive.'
+      },
+      {
+        textA: 'We schedule shifts to match traffic patterns.',
+        textB: 'We schedule shifts based on availability and fairness.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We have clear job descriptions per role.',
+        textB: 'We keep roles flexible to cover gaps.'
+      },
+      {
+        textA: 'We coach using numbers (AOV, attach, returns).',
+        textB: 'We coach using observation and feedback.'
+      },
+      {
+        textA: 'We use SOP checklists to reduce errors.',
+        textB: 'We rely on senior staff to guide juniors.'
+      },
+      {
+        textA: 'We train integrity and fraud awareness explicitly.',
+        textB: 'We expect integrity and correct problems when found.'
+      },
+      {
+        textA: 'We hold short daily huddles.',
+        textB: 'We prefer fewer meetings so staff can sell and repair.'
+      },
+      {
+        textA: 'We promote based on consistency and trust.',
+        textB: 'We promote based on talent and sales ability.'
+      },
+      {
+        textA: 'We rotate staff through roles with certification steps.',
+        textB: 'We keep staff in roles they prefer.'
+      },
+      {
+        textA: 'We measure productivity per staff hour.',
+        textB: 'We measure total output per day.'
+      },
+      {
+        textA: 'We track mistakes and fix root causes in training.',
+        textB: 'We correct mistakes individually as they happen.'
+      },
+      {
+        textA: 'We maintain a knowledge base for common device issues.',
+        textB: 'We rely on technician experience and learning.'
+      },
+      {
+        textA: 'We enforce punctuality and attendance policies.',
+        textB: 'We stay flexible for staff personal situations.'
+      },
+      {
+        textA: 'We standardize customer greetings and discovery questions.',
+        textB: 'We let staff be natural for better rapport.'
+      },
+      {
+        textA: 'We use probation checklists for new hires.',
+        textB: 'We assess new hires based on daily performance.'
+      },
+      {
+        textA: 'We track turnover and reasons.',
+        textB: 'We replace staff quickly when they leave.'
+      },
+      {
+        textA: 'We set weekly targets for each rep.',
+        textB: 'We set store targets and let reps contribute.'
+      },
+      {
+        textA: 'We reward teamwork (handoffs, support).',
+        textB: 'We reward individual performance (competition).'
+      },
+      {
+        textA: 'We do quarterly skills assessments.',
+        textB: 'We assess skills informally.'
+      },
+      {
+        textA: 'We use escalation rules for conflicts and disputes.',
+        textB: 'We handle conflicts case-by-case.'
+      },
+      {
+        textA: 'We maintain a standard onboarding plan.',
+        textB: 'We onboard by shadowing.'
+      },
+      {
+        textA: 'We run performance reviews monthly.',
+        textB: 'We run performance reviews when issues arise.'
+      }
+    ]
+  },
+  {
+    prefix: 'P7_TRUST',
+    pillar: 'Risk',
+    signalTags: ['policy_vagueness', 'complaint_handling_gap', 'followup_gap', 'supplier_doc_gap'],
+    quickScan: [
+      {
+        textA: 'We document warranty terms at sale.',
+        textB: 'We keep warranty flexible to preserve goodwill.'
+      },
+      {
+        textA: 'We follow up after purchase and repair.',
+        textB: 'We wait for customers to return if they need help.'
+      },
+      {
+        textA: 'We actively request reviews and respond to them.',
+        textB: 'We focus on service and assume reviews will come.'
+      },
+      {
+        textA: 'We educate customers on repair options and long-term care.',
+        textB: 'We focus on solving today\'s need quickly.'
+      }
+    ],
+    deepScan: [
+      {
+        textA: 'We treat returns as data to improve sales and QA.',
+        textB: 'We treat returns as customer service and move on.'
+      },
+      {
+        textA: 'We have a written returns policy visible in-store and online.',
+        textB: 'We explain returns policy verbally to stay flexible.'
+      },
+      {
+        textA: 'We give proof at handover (tests done).',
+        textB: 'We give proof when the customer asks.'
+      },
+      {
+        textA: 'We resolve complaints with an escalation timeline.',
+        textB: 'We resolve complaints as soon as possible without a formal timeline.'
+      },
+      {
+        textA: 'We offer a warranty option menu (basic and extended).',
+        textB: 'We offer one warranty approach for simplicity.'
+      },
+      {
+        textA: 'We track repeat purchase rate.',
+        textB: 'We notice repeat customers informally.'
+      },
+      {
+        textA: 'We keep a customer list for targeted offers.',
+        textB: 'We prefer broad offers to avoid being intrusive.'
+      },
+      {
+        textA: 'We request reviews at the moment of satisfaction.',
+        textB: 'We request reviews later via broadcast.'
+      },
+      {
+        textA: 'We respond to reviews within 24-48 hours.',
+        textB: 'We respond when time allows.'
+      },
+      {
+        textA: 'We use loyalty rewards tied to profitable behaviors.',
+        textB: 'We use loyalty rewards to increase visits generally.'
+      },
+      {
+        textA: 'We proactively educate about device care and protection.',
+        textB: 'We focus on selling protection products during checkout.'
+      },
+      {
+        textA: 'We maintain clear warranty exclusions to prevent disputes.',
+        textB: 'We keep exclusions flexible to reduce customer friction.'
+      },
+      {
+        textA: 'We photograph intake and handover for repairs.',
+        textB: 'We keep records mainly via receipts and messages.'
+      },
+      {
+        textA: 'We offer trade-in return windows with clear rules.',
+        textB: 'We keep trade-in final to reduce complications.'
+      },
+      {
+        textA: 'We design store experience around trust cues.',
+        textB: 'We design store experience around speed and convenience.'
+      },
+      {
+        textA: 'We handle data transfer with customer consent steps.',
+        textB: 'We handle data transfer quickly to reduce time.'
+      },
+      {
+        textA: 'We market repairability and repair services as a trust signal.',
+        textB: 'We keep repairs as a back-end service, not a marketing focus.'
+      },
+      {
+        textA: 'We publish warranty claim steps clearly.',
+        textB: 'We handle warranty claims through direct conversation.'
+      },
+      {
+        textA: 'We track complaint categories and staff retraining needs.',
+        textB: 'We solve complaints individually without categorizing.'
+      },
+      {
+        textA: 'We measure lifetime value using repeat plus referrals proxy.',
+        textB: 'We focus on daily sales targets as the main driver.'
+      }
+    ]
+  }
 ];
+
+const buildQuestionSet = (): QuestionDefinition[] => {
+  const out: QuestionDefinition[] = [];
+
+  BANKS.forEach((bank) => {
+    bank.quickScan.forEach((pair, index) => {
+      out.push(
+        q(
+          `QS_${bank.prefix}_${String(index + 1).padStart(2, '0')}`,
+          bank.pillar,
+          bank.signalTags,
+          pair.textA,
+          pair.textB,
+          1.0
+        )
+      );
+    });
+
+    bank.deepScan.forEach((pair, index) => {
+      out.push(
+        q(
+          `DS_${bank.prefix}_${String(index + 1).padStart(2, '0')}`,
+          bank.pillar,
+          bank.signalTags,
+          pair.textA,
+          pair.textB,
+          1.0
+        )
+      );
+    });
+  });
+
+  return out;
+};
+
+export const questions: QuestionDefinition[] = buildQuestionSet();

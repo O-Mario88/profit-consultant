@@ -2,19 +2,21 @@ import { ActionDefinition, PillarId, SignalTag } from '../../types';
 
 type BusinessSize = 'solo' | 'micro' | 'small' | 'small_med' | 'medium' | 'large' | 'enterprise';
 
-interface PackDef {
-  code: string;
+type ActionSeed = {
+  action_id: string;
   pillar: PillarId;
   signal_tags: SignalTag[];
-  title7: string;
-  title30: string;
-  kpi7: string;
-  kpi30: string;
-  proof7: string[];
-  proof30: string[];
-  impact7: number;
-  impact30: number;
-}
+  title: string;
+  days: 7 | 30;
+  effort: 'S' | 'M' | 'L';
+  kpi_links: string[];
+  proof_required: string[];
+  description: string;
+  steps: string[];
+  objective: string;
+  outcome: string;
+  impact_score: number;
+};
 
 const ownerMap: Record<BusinessSize, string> = {
   solo: 'Owner',
@@ -26,393 +28,382 @@ const ownerMap: Record<BusinessSize, string> = {
   enterprise: 'Function Head'
 };
 
-const packs: PackDef[] = [
-  // OPERATIONS
+const seeds: ActionSeed[] = [
+  // 7-day stabilize profit (fast wins)
   {
-    code: 'OPS_P1',
-    pillar: 'Operations',
-    signal_tags: ['inventory_accuracy_gap', 'supplier_doc_gap'],
-    title7: 'Stock Truth + IMEI Discipline (label + log all devices)',
-    title30: 'ABC Cycle Counts + Variance Root-Cause + IMEI audit loop',
-    kpi7: 'inventory_accuracy',
-    kpi30: 'imei_log_coverage',
-    proof7: ['labeled_stock_photo', 'imei_serial_log'],
-    proof30: ['cycle_count_report', 'variance_root_cause_log'],
-    impact7: 9,
-    impact30: 9
-  },
-  {
-    code: 'OPS_P2',
-    pillar: 'Operations',
-    signal_tags: ['restock_delay', 'stockout_tax'],
-    title7: 'Top 30 Accessories Count + Reorder Trigger',
-    title30: 'Fast-Mover Min/Max + Dead-Stock Cleanup Plan',
-    kpi7: 'top30_stockouts',
-    kpi30: 'attach_rate',
-    proof7: ['top30_sheet', 'daily_count_log'],
-    proof30: ['min_max_sheet', 'dead_stock_action_list'],
-    impact7: 8,
-    impact30: 8
-  },
-  {
-    code: 'OPS_P3',
-    pillar: 'Operations',
-    signal_tags: ['no_standard_work', 'returns_damage_blindspot'],
-    title7: 'Repair Job Cards + QC Before Handover',
-    title30: 'Repair SOP Library + Comeback Elimination Sprint',
-    kpi7: 'repair_cycle_time',
-    kpi30: 'repair_comeback_rate',
-    proof7: ['repair_job_cards', 'repair_qc_checklist'],
-    proof30: ['repair_sop_pack', 'comeback_root_cause_log'],
-    impact7: 9,
-    impact30: 9
-  },
-  {
-    code: 'OPS_P4',
-    pillar: 'Operations',
-    signal_tags: ['receiving_slippage', 'supplier_selection_undisciplined'],
-    title7: 'Receiving & Grading Checklist (model/condition/serial)',
-    title30: 'Approved Supplier + Device Grading Consistency Program',
-    kpi7: 'receiving_error_rate',
-    kpi30: 'supplier_defect_rate',
-    proof7: ['receiving_forms', 'grading_samples'],
-    proof30: ['approved_supplier_list', 'supplier_scorecard'],
-    impact7: 8,
-    impact30: 8
-  },
-  {
-    code: 'OPS_P5',
-    pillar: 'Operations',
-    signal_tags: ['kpi_cadence_gap', 'hero_staff_dependence'],
-    title7: 'Daily Open/Close Routine (cash, stock, pending repairs)',
-    title30: 'Routine Compliance Tracker + Shift Handover Controls',
-    kpi7: 'open_close_compliance',
-    kpi30: 'handover_compliance',
-    proof7: ['open_close_checklist', 'pending_repairs_log'],
-    proof30: ['routine_compliance_report', 'handover_notes'],
-    impact7: 7,
-    impact30: 8
-  },
-
-  // MONEY
-  {
-    code: 'MNY_P1',
+    action_id: 'ACT_ELECTRONICS_DAY1_PROFIT_REALITY_7',
     pillar: 'Money',
-    signal_tags: ['pricing_margin_blindspot', 'category_margin_blindspot'],
-    title7: 'Margin Map by Category (phones/accessories/repairs)',
-    title30: 'Weekly Margin Bridge + Leak Ownership Review',
-    kpi7: 'gross_margin_by_category',
-    kpi30: 'net_margin_estimate',
-    proof7: ['category_margin_sheet', 'cost_assumption_notes'],
-    proof30: ['margin_bridge_report', 'leak_owner_actions'],
-    impact7: 9,
-    impact30: 10
+    signal_tags: ['pricing_margin_blindspot', 'cash_recon_gap'],
+    title: 'Day 1 Profit Reality Check: 14-day margin split and loss-maker map',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['daily_gross_profit', 'category_margin', 'loss_maker_count'],
+    proof_required: ['14_day_sales_split', 'top_20_sku_margin_sheet', 'top_10_loss_maker_list'],
+    description:
+      'Create immediate margin visibility by separating phones, accessories, and repairs, then identifying low-margin high-return SKUs.',
+    steps: [
+      'Owner or Finance Manager pulls last 14 days of transactions and groups by phones, accessories, repairs.',
+      'Pricing Analyst identifies top 20 SKUs and top 10 loss-makers (low margin plus high return profile).',
+      'Store Manager starts daily gross-profit log including discounts, payment fees, and expected gross margin.'
+    ],
+    objective: 'Replace sales-only visibility with true profit visibility.',
+    outcome: 'Daily profit reality baseline is live and leak candidates are named.',
+    impact_score: 10
   },
   {
-    code: 'MNY_P2',
+    action_id: 'ACT_ELECTRONICS_DAY2_DISCOUNT_CONTROL_7',
     pillar: 'Money',
     signal_tags: ['discounting_leak', 'pricing_inconsistency'],
-    title7: 'Pricing Guardrails + Discount Bands',
-    title30: 'Price List Standardization + Discount Drift Monitor',
-    kpi7: 'discount_rate',
-    kpi30: 'price_variance',
-    proof7: ['discount_policy', 'sales_discount_audit'],
-    proof30: ['price_list', 'discount_drift_report'],
-    impact7: 8,
-    impact30: 9
+    title: 'Day 2 Stop Discount Bleed: discount approval matrix and 3 bundle closes',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['discount_percent', 'bundle_penetration'],
+    proof_required: ['discount_matrix', 'bundle_pricing_card', 'discount_exception_log'],
+    description:
+      'Move from random discounting to governed discount bands with pre-priced Basic, Better, Best bundle options.',
+    steps: [
+      'Finance Manager publishes discount limits by role and price band.',
+      'Sales Lead deploys three approved bundle closes at POS and chat channels.',
+      'Shift Leads log every discount exception with reason and approving role.'
+    ],
+    objective: 'Protect gross margin while preserving close rate.',
+    outcome: 'Discount drift drops and bundles replace ad-hoc markdown behavior.',
+    impact_score: 9
   },
   {
-    code: 'MNY_P3',
-    pillar: 'Money',
-    signal_tags: ['cash_recon_gap'],
-    title7: 'Cash + Momo Daily Reconciliation + Variance Log',
-    title30: 'Cash-Control SOP + Weekly Spot Audit',
-    kpi7: 'daily_recon_variance',
-    kpi30: 'cash_exception_count',
-    proof7: ['reconciliation_sheet', 'variance_reasons_log'],
-    proof30: ['cash_control_sop', 'audit_spotcheck_notes'],
-    impact7: 9,
-    impact30: 9
-  },
-  {
-    code: 'MNY_P4',
-    pillar: 'Money',
-    signal_tags: ['policy_vagueness', 'returns_damage_blindspot'],
-    title7: 'Warranty/Returns Cost Tracker + Rule Clarification',
-    title30: 'Warranty Tier Model + Return Cause Elimination Loop',
-    kpi7: 'warranty_cost_per_100_sales',
-    kpi30: 'warranty_dispute_rate',
-    proof7: ['warranty_cost_log', 'written_warranty_rules'],
-    proof30: ['warranty_tier_matrix', 'return_cause_closure_log'],
-    impact7: 8,
-    impact30: 9
-  },
-  {
-    code: 'MNY_P5',
-    pillar: 'Money',
-    signal_tags: ['credit_terms_risk', 'payment_terms_risk'],
-    title7: 'Installment/Credit Rules (deposit, limits, terms)',
-    title30: 'AR Aging Cadence + Escalation Rules',
-    kpi7: 'credit_rule_compliance',
-    kpi30: 'dso',
-    proof7: ['credit_terms_doc', 'active_credit_list'],
-    proof30: ['ar_aging_report', 'collections_cadence_log'],
-    impact7: 9,
-    impact30: 10
-  },
-
-  // MARKET
-  {
-    code: 'MKT_P1',
-    pillar: 'Market',
-    signal_tags: ['value_story_gap', 'policy_vagueness'],
-    title7: 'Trust Engine: quality proof + clear warranty language',
-    title30: 'Trust Proof Pack + Sales Script Standardization',
-    kpi7: 'trust_signal_compliance',
-    kpi30: 'repeat_customer_rate',
-    proof7: ['warranty_board_photo', 'quality_check_script'],
-    proof30: ['trust_proof_pack', 'sales_script_samples'],
-    impact7: 7,
-    impact30: 8
-  },
-  {
-    code: 'MKT_P2',
-    pillar: 'Market',
-    signal_tags: ['followup_gap', 'segment_blindspot'],
-    title7: 'Lead Capture + Response SLA (WhatsApp/online)',
-    title30: 'Lead Pipeline Tracker + Channel Conversion Review',
-    kpi7: 'lead_response_sla',
-    kpi30: 'lead_to_sale_conversion',
-    proof7: ['lead_capture_sheet', 'response_template'],
-    proof30: ['pipeline_report', 'channel_conversion_report'],
-    impact7: 8,
-    impact30: 8
-  },
-  {
-    code: 'MKT_P3',
+    action_id: 'ACT_ELECTRONICS_DAY3_ATTACH_SPRINT_7',
     pillar: 'Market',
     signal_tags: ['bundle_engine_missing', 'service_inconsistency'],
-    title7: 'Attach Rate Script + 3 Bundle Offers',
-    title30: 'Bundle Catalog by Buyer Type + Attach Coaching Loop',
-    kpi7: 'attach_rate',
-    kpi30: 'average_order_value',
-    proof7: ['bundle_offers', 'attach_script'],
-    proof30: ['bundle_catalog', 'attach_coaching_notes'],
-    impact7: 8,
-    impact30: 8
+    title: 'Day 3 Attach Rate Sprint: mandatory offers and checkout prompts',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['attach_rate', 'aov'],
+    proof_required: ['attach_script', 'pos_prompt_sheet', 'rep_attach_dashboard'],
+    description:
+      'Standardize accessory and service offers for every phone transaction to increase basket value.',
+    steps: [
+      'Sales Manager enforces two mandatory offers: protector and case, then charger as conditional prompt.',
+      'POS Attendant uses add-on prompts at checkout and records acceptance.',
+      'Store Manager reviews attach-rate leaderboard by rep at end of day.'
+    ],
+    objective: 'Increase margin per transaction without price wars.',
+    outcome: 'Attach rate rises with visible rep-level accountability.',
+    impact_score: 9
   },
   {
-    code: 'MKT_P4',
-    pillar: 'Market',
-    signal_tags: ['followup_gap', 'complaint_handling_gap'],
-    title7: 'Reviews + Referral Ask Routine',
-    title30: 'Referral Engine + Complaint-to-Recovery Loop',
-    kpi7: 'review_volume',
-    kpi30: 'referral_rate',
-    proof7: ['review_request_log', 'referral_ask_script'],
-    proof30: ['referral_tracker', 'recovery_case_log'],
-    impact7: 7,
-    impact30: 8
+    action_id: 'ACT_ELECTRONICS_DAY4_STOCK_SHOCK_TEST_7',
+    pillar: 'Operations',
+    signal_tags: ['inventory_accuracy_gap', 'shrinkage_leak'],
+    title: 'Day 4 Stock Accuracy Shock Test: high-value count and variance lock',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['inventory_accuracy', 'shrink_rate'],
+    proof_required: ['90_min_cycle_count', 'variance_reason_codes', 'access_control_update'],
+    description:
+      'Run a focused cycle count on high-value phones and fast accessories, then close custody gaps immediately.',
+    steps: [
+      'Inventory Controller runs 90-minute cycle count on highest-value SKUs.',
+      'Store Manager tags variances by cause (miscount, process gap, suspected theft).',
+      'Loss Prevention or Supervisor updates lock-access and handover controls for exposed areas.'
+    ],
+    objective: 'Re-establish inventory truth and remove immediate shrink openings.',
+    outcome: 'Variance root causes are visible and first-layer controls are active.',
+    impact_score: 10
+  },
+  {
+    action_id: 'ACT_ELECTRONICS_DAY5_USED_TRUST_SHIELD_7',
+    pillar: 'Risk',
+    signal_tags: ['supplier_doc_gap', 'policy_vagueness'],
+    title: 'Day 5 Used Phone Trust Shield: test checklist plus grading label and IMEI checks',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['used_return_rate', 'imei_log_coverage', 'warranty_dispute_rate'],
+    proof_required: ['25_point_test_checklist', 'grade_label_samples', 'imei_intake_log'],
+    description:
+      'Standardize used-device trust controls with visible grading, repeatable testing, and device status verification.',
+    steps: [
+      'QA Technician applies 25-point test before display or resale release.',
+      'Refurb Specialist assigns A, B, or C grade label with pricing band reference.',
+      'Intake Officer logs IMEI or MEID and performs status checks where available.'
+    ],
+    objective: 'Reduce trust failures and avoidable used-device disputes.',
+    outcome: 'Used sales become evidence-backed and policy-safe.',
+    impact_score: 10
+  },
+  {
+    action_id: 'ACT_ELECTRONICS_DAY6_REPAIR_FLOW_7',
+    pillar: 'Operations',
+    signal_tags: ['no_standard_work', 'returns_damage_blindspot'],
+    title: 'Day 6 Repairs Workflow Cleanup: intake to handover stage control',
+    days: 7,
+    effort: 'M',
+    kpi_links: ['repair_tat', 'first_time_fix_rate', 'rework_rate'],
+    proof_required: ['repair_ticket_template', 'approval_records', 'qa_handover_checklist'],
+    description:
+      'Enforce repair ticketing with quote approval gates, QA checks, and proactive status updates.',
+    steps: [
+      'Repair Technician logs every job with intake condition and expected completion window.',
+      'Service Desk obtains quote approval (signature or OTP) before part replacement.',
+      'Team sends two daily updates (morning and evening) until handover complete.'
+    ],
+    objective: 'Shrink repair disputes and reduce rework loops.',
+    outcome: 'Repair pipeline becomes predictable with lower comeback risk.',
+    impact_score: 9
+  },
+  {
+    action_id: 'ACT_ELECTRONICS_DAY7_REPUTATION_BOOST_7',
+    pillar: 'Risk',
+    signal_tags: ['complaint_handling_gap', 'followup_gap'],
+    title: 'Day 7 Reputation and Repeat Boost: review ask plus post-purchase follow-up',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['review_velocity', 'repeat_rate', 'complaint_resolution_time'],
+    proof_required: ['review_request_template', 'follow_up_log', 'issue_escalation_tracker'],
+    description:
+      'Capture immediate trust signals by requesting reviews and running a 24-72 hour follow-up cadence.',
+    steps: [
+      'Customer Service asks every satisfied buyer for a review using QR and message template.',
+      'Sales Rep sends follow-up message asking setup outcome and support needs.',
+      'Store Manager logs complaints and enforces response SLA.'
+    ],
+    objective: 'Convert transaction success into reputation and repeat demand.',
+    outcome: 'Review flow and customer recovery loop are operational.',
+    impact_score: 8
   },
 
-  // LEADERSHIP
+  // 30-day build control (system wins)
   {
-    code: 'LDR_P1',
+    action_id: 'ACT_ELECTRONICS_WEEK1_STANDARDIZE_30',
     pillar: 'Leadership',
-    signal_tags: ['kpi_cadence_gap', 'no_kpi_ownership'],
-    title7: 'KPI Wall + Daily 10-min Standup',
-    title30: 'KPI Cadence Compliance + Weekly Leak Review',
-    kpi7: 'kpi_update_compliance',
-    kpi30: 'repeat_incident_rate',
-    proof7: ['kpi_wall_photo', 'standup_notes'],
-    proof30: ['kpi_cadence_log', 'weekly_leak_review_notes'],
-    impact7: 8,
-    impact30: 9
+    signal_tags: ['kpi_cadence_gap', 'role_clarity_gap'],
+    title: 'Week 1 Standardize: SOP baseline and role scorecards',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['sop_compliance', 'role_scorecard_coverage'],
+    proof_required: ['sop_pack', 'role_scorecards', 'weekly_audit_log'],
+    description:
+      'Standardize core workflows: intake/testing, bundles, discounts, returns, repairs, and cash-up routines.',
+    steps: [
+      'General Manager signs off SOP library with owner per workflow.',
+      'Department Leads publish role scorecards and minimum standards.',
+      'Weekly audit verifies compliance and closes corrective actions.'
+    ],
+    objective: 'Move execution from memory-driven to system-driven.',
+    outcome: 'Core processes are documented, owned, and audited.',
+    impact_score: 9
   },
   {
-    code: 'LDR_P2',
-    pillar: 'Leadership',
-    signal_tags: ['decision_bottleneck', 'approval_bottleneck'],
-    title7: 'Approval Limits for Discount/Refund/Warranty Exceptions',
-    title30: 'Delegation Matrix + Decision Latency Dashboard',
-    kpi7: 'decision_latency',
-    kpi30: 'approval_bottleneck_cases',
-    proof7: ['approval_limit_doc', 'exception_log'],
-    proof30: ['delegation_matrix', 'decision_latency_report'],
-    impact7: 8,
-    impact30: 8
+    action_id: 'ACT_ELECTRONICS_WEEK2_INVENTORY_SYSTEM_30',
+    pillar: 'Operations',
+    signal_tags: ['inventory_accuracy_gap', 'shrinkage_leak'],
+    title: 'Week 2 Inventory and Shrink System: ABC counts and access discipline',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['inventory_accuracy', 'stockout_rate', 'shrink_rate'],
+    proof_required: ['abc_count_calendar', 'high_value_access_log', 'reorder_rule_sheet'],
+    description:
+      'Implement ABC cycle counts, high-value custody controls, and reorder points for top sellers.',
+    steps: [
+      'Inventory Controller runs A weekly, B monthly, C quarterly cycle-count schedule.',
+      'Supervisor enforces high-value access log with dual sign-off where needed.',
+      'Procurement sets reorder points and min-max levels for fast movers.'
+    ],
+    objective: 'Increase availability and reduce inventory leakage.',
+    outcome: 'Inventory system supports both control and throughput.',
+    impact_score: 10
   },
   {
-    code: 'LDR_P3',
-    pillar: 'Leadership',
-    signal_tags: ['training_planning_gap', 'accountability_soft'],
-    title7: 'Role Scorecards + Weekly Coaching Start',
-    title30: 'Performance Coaching Cadence + Ownership Audit',
-    kpi7: 'scorecard_coverage',
-    kpi30: 'task_closure_rate',
-    proof7: ['role_scorecards', 'coaching_notes_week1'],
-    proof30: ['coaching_calendar', 'ownership_audit'],
-    impact7: 7,
-    impact30: 8
+    action_id: 'ACT_ELECTRONICS_WEEK3_FINANCE_VISIBILITY_30',
+    pillar: 'Money',
+    signal_tags: ['pricing_margin_blindspot', 'cash_recon_gap'],
+    title: 'Week 3 Finance and Visibility: true margin calculator plus rolling cash forecast',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['net_margin', 'cash_forecast_accuracy', 'supplier_aging'],
+    proof_required: ['true_margin_calculator', '4_week_cash_forecast', 'supplier_aging_review'],
+    description:
+      'Operationalize true margin calculations, 4-week cash forecast, and supplier-aging review cadence.',
+    steps: [
+      'Finance Manager builds true-margin model with labor, parts, fees, and warranty impacts.',
+      'Accountant maintains 4-week rolling cashflow view and weekly variance review.',
+      'Leadership reviews supplier aging and payment priority against stock risk.'
+    ],
+    objective: 'Protect cashflow and pricing quality under real cost structure.',
+    outcome: 'Management decisions are grounded in verified margin and cash position.',
+    impact_score: 10
+  },
+  {
+    action_id: 'ACT_ELECTRONICS_WEEK4_GROWTH_ENGINE_30',
+    pillar: 'Innovation',
+    signal_tags: ['no_testing_rhythm', 'offer_measurement_gap'],
+    title: 'Week 4 Growth Engine: referral program, inventory-linked promo calendar, trust messaging',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['referral_rate', 'promo_redemption_rate', 'repeat_rate'],
+    proof_required: ['referral_program_rules', 'monthly_promo_calendar', 'trust_messaging_assets'],
+    description:
+      'Scale controlled growth with referral mechanics, promo planning tied to inventory goals, and repairability trust cues.',
+    steps: [
+      'Marketing Lead launches referral give-get structure with redemption tracking.',
+      'Merchandising Lead aligns monthly promotions to dead-stock and margin targets.',
+      'Sales and Service teams embed trust messaging: warranty clarity, QA proof, and repair options.'
+    ],
+    objective: 'Build repeatable growth without panic discounting.',
+    outcome: 'Demand engine is measurable and aligned with profit control.',
+    impact_score: 8
   },
 
-  // INNOVATION
+  // Pillar-specific snippet library actions (for grounding)
   {
-    code: 'INN_P1',
-    pillar: 'Innovation',
-    signal_tags: ['no_testing_rhythm', 'bundle_engine_missing'],
-    title7: 'Run 1 Offer Experiment (bundle/warranty tier)',
-    title30: 'Monthly Offer Test Pipeline + Win/Loss Log',
-    kpi7: 'experiments_run',
-    kpi30: 'experiment_win_rate',
-    proof7: ['experiment_plan', 'week1_results'],
-    proof30: ['experiment_pipeline', 'win_loss_log'],
-    impact7: 6,
-    impact30: 8
+    action_id: 'ACT_ELECTRONICS_P1_BUNDLE_BUILDER_7',
+    pillar: 'Leadership',
+    signal_tags: ['bundle_blindspot', 'pricing_inconsistency'],
+    title: 'P1 Offer Snippet: Good-Better-Best bundle builder with margin bands',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['aov', 'bundle_penetration', 'category_margin'],
+    proof_required: ['bundle_matrix', 'price_band_policy'],
+    description: 'Deploy a structured bundle template: phone, case, protector, charger with tiered pricing logic.',
+    steps: [
+      'Merchandiser drafts three bundle tiers with minimum margin thresholds.',
+      'Sales Manager trains reps to present all tiers before single-item pricing.',
+      'Pricing Analyst reviews weekly conversion and margin by tier.'
+    ],
+    objective: 'Increase AOV while protecting margin floor.',
+    outcome: 'Bundle strategy is repeatable and auditable.',
+    impact_score: 8
   },
   {
-    code: 'INN_P2',
-    pillar: 'Innovation',
-    signal_tags: ['pricing_inconsistency', 'no_standard_work'],
-    title7: 'Productize Repair Services (tiered turnaround + warranty)',
-    title30: 'Repair Service Catalog + Promise Tracking',
-    kpi7: 'repair_tier_adoption',
-    kpi30: 'repair_margin_per_job',
-    proof7: ['repair_tier_sheet', 'service_terms_display'],
-    proof30: ['service_catalog', 'promise_vs_actual_report'],
-    impact7: 7,
-    impact30: 8
-  },
-  {
-    code: 'INN_P3',
+    action_id: 'ACT_ELECTRONICS_P2_CAMPAIGN_TRACKER_30',
     pillar: 'Innovation',
     signal_tags: ['offer_measurement_gap', 'no_market_feedback_loop'],
-    title7: 'Automation Lite: structured templates for order, repair, and follow-up',
-    title30: 'POS/Sheets/Labels rollout with usage discipline',
-    kpi7: 'template_adoption',
-    kpi30: 'workflow_error_rate',
-    proof7: ['structured_templates', 'adoption_log_week1'],
-    proof30: ['system_usage_report', 'error_rate_before_after'],
-    impact7: 7,
-    impact30: 8
-  },
-
-  // RISK
-  {
-    code: 'RSK_P1',
-    pillar: 'Risk',
-    signal_tags: ['supplier_doc_gap', 'inventory_accuracy_gap'],
-    title7: 'IMEI/Serial Mandatory Logging + Intake Verification',
-    title30: 'IMEI Firewall Audit + Incident Escalation Rules',
-    kpi7: 'imei_log_coverage',
-    kpi30: 'stolen_device_incidents',
-    proof7: ['imei_intake_log', 'verification_checklist'],
-    proof30: ['imei_audit_report', 'incident_escalation_policy'],
-    impact7: 9,
-    impact30: 9
+    title: 'P2 Demand Snippet: source-to-margin campaign tracker',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['lead_to_sale_conversion', 'cost_per_sale', 'gross_profit_by_channel'],
+    proof_required: ['campaign_tracker_sheet', 'channel_report'],
+    description: 'Track source, lead, sale, and margin per campaign to replace visibility metrics with profitability metrics.',
+    steps: [
+      'Performance Marketer tags every campaign and channel source code.',
+      'Sales Ops logs conversion and gross profit by lead source.',
+      'Weekly review kills low-margin campaigns and scales proven offers.'
+    ],
+    objective: 'Align marketing spend to profitable demand.',
+    outcome: 'Campaign decisions become evidence-led.',
+    impact_score: 8
   },
   {
-    code: 'RSK_P2',
-    pillar: 'Risk',
-    signal_tags: ['supplier_selection_undisciplined', 'supplier_doc_gap'],
-    title7: 'Approved Parts List + Unknown Parts Quarantine',
-    title30: 'Supplier Defect Scorecard + Authenticity Checks',
-    kpi7: 'unknown_parts_rate',
-    kpi30: 'supplier_defect_rate',
-    proof7: ['approved_parts_list', 'quarantine_log'],
-    proof30: ['supplier_scorecard', 'auth_check_records'],
-    impact7: 8,
-    impact30: 9
+    action_id: 'ACT_ELECTRONICS_P3_CLOSE_SCRIPT_7',
+    pillar: 'Market',
+    signal_tags: ['service_inconsistency', 'bundle_engine_missing'],
+    title: 'P3 Sales Snippet: seven-question needs analysis and three-option close script',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['conversion_rate', 'attach_rate'],
+    proof_required: ['needs_script', 'close_script_cards', 'rep_coaching_log'],
+    description: 'Standardize discovery and close behavior across in-store and DM channels.',
+    steps: [
+      'Sales Lead introduces seven-question discovery script for every lead.',
+      'Reps close with three-option structure and explicit warranty proof.',
+      'Daily huddle reviews objection patterns and script adherence.'
+    ],
+    objective: 'Improve conversion quality and reduce avoidable returns.',
+    outcome: 'Sales execution variance drops across reps.',
+    impact_score: 8
   },
   {
-    code: 'RSK_P3',
-    pillar: 'Risk',
-    signal_tags: ['contract_gap', 'policy_vagueness'],
-    title7: 'Written Warranty/Return Rules + Dispute Register',
-    title30: 'Dispute Response SOP + Evidence Archive',
-    kpi7: 'dispute_rate',
-    kpi30: 'warranty_dispute_rate',
-    proof7: ['written_policy', 'dispute_register'],
-    proof30: ['dispute_sop', 'evidence_archive'],
-    impact7: 8,
-    impact30: 8
+    action_id: 'ACT_ELECTRONICS_P4_REPAIR_TICKETING_30',
+    pillar: 'Operations',
+    signal_tags: ['no_standard_work', 'returns_damage_blindspot'],
+    title: 'P4 Operations Snippet: repair ticketing, approval proof, and QA gate library',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['repair_tat', 'first_time_fix_rate', 'warranty_claim_rate'],
+    proof_required: ['repair_workflow_board', 'customer_approval_archive', 'qa_gate_audit'],
+    description: 'Install full repair control library from intake photos through QA handover evidence.',
+    steps: [
+      'Service Manager maps stages and max WIP per stage.',
+      'Technicians attach approval proof before part swap.',
+      'QA Technician validates final checklist before customer handover.'
+    ],
+    objective: 'Create predictable repair throughput with lower rework.',
+    outcome: 'Repair operations become measurable and dispute-safe.',
+    impact_score: 9
   },
   {
-    code: 'RSK_P4',
-    pillar: 'Risk',
-    signal_tags: ['shrinkage_leak', 'cash_recon_gap'],
-    title7: 'High-Value Access Controls + Spot Counts',
-    title30: 'Shrinkage Dashboard + Security Incident Review',
-    kpi7: 'shrinkage_percent',
-    kpi30: 'security_incidents',
-    proof7: ['access_control_rules', 'spot_count_log'],
-    proof30: ['shrinkage_dashboard', 'incident_review_notes'],
-    impact7: 8,
-    impact30: 9
+    action_id: 'ACT_ELECTRONICS_P5_CASH_ROUTINE_7',
+    pillar: 'Money',
+    signal_tags: ['cash_recon_gap', 'discounting_leak'],
+    title: 'P5 Finance Snippet: daily cash-up variance log and discount approval workflow',
+    days: 7,
+    effort: 'S',
+    kpi_links: ['daily_recon_variance', 'discount_percent'],
+    proof_required: ['cash_up_sheet', 'variance_log', 'discount_approval_records'],
+    description: 'Run close-of-day reconciliation with explicit variance coding and discount authorization evidence.',
+    steps: [
+      'Cashier closes shift with POS-cash variance capture.',
+      'Store Manager approves variance closure steps same day.',
+      'Finance reviews discount outliers by rep weekly.'
+    ],
+    objective: 'Remove silent cash and discount leakage.',
+    outcome: 'Cash control and discount discipline are visible daily.',
+    impact_score: 9
   },
-
-  // PEOPLE
   {
-    code: 'PPL_P1',
+    action_id: 'ACT_ELECTRONICS_P6_TRAINING_CADENCE_30',
     pillar: 'People',
-    signal_tags: ['incentive_misalignment', 'accountability_soft'],
-    title7: 'Profit-Safe Incentives (margin + attach + low returns)',
-    title30: 'Incentive Alignment Review + Staff Score Outcomes',
-    kpi7: 'incentive_alignment_score',
-    kpi30: 'returns_rate_by_staff',
-    proof7: ['incentive_rule_doc', 'staff_brief_note'],
-    proof30: ['incentive_review', 'staff_outcome_report'],
-    impact7: 8,
-    impact30: 9
+    signal_tags: ['training_gap', 'incentive_misalignment'],
+    title: 'P6 People Snippet: weekly two-hour training and balanced incentive plan',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['training_completion', 'returns_rate_by_staff', 'profit_per_staff_hour'],
+    proof_required: ['weekly_training_agenda', 'staff_scorecards', 'incentive_policy'],
+    description: 'Institutionalize weekly capability cadence and incentives tied to profit-safe behavior.',
+    steps: [
+      'HR or Store Manager runs weekly two-hour training agenda (products, scripts, fraud controls).',
+      'Role scorecards track attach, returns, and review quality per staff.',
+      'Incentives rebalance from volume-only to quality-margin outcomes.'
+    ],
+    objective: 'Stabilize execution quality and reduce turnover-driven drift.',
+    outcome: 'Team behavior aligns with margin and trust goals.',
+    impact_score: 8
   },
   {
-    code: 'PPL_P2',
-    pillar: 'People',
-    signal_tags: ['onboarding_gap', 'training_gap'],
-    title7: 'Onboarding Checklist + Technician/Sales Skill Check',
-    title30: 'Certification Matrix + Weekly Training Cadence',
-    kpi7: 'onboarding_completion',
-    kpi30: 'first_time_fix_rate',
-    proof7: ['onboarding_checklist', 'skill_check_results'],
-    proof30: ['certification_matrix', 'training_log'],
-    impact7: 8,
-    impact30: 9
+    action_id: 'ACT_ELECTRONICS_P7_TRUST_LOOP_30',
+    pillar: 'Risk',
+    signal_tags: ['policy_vagueness', 'complaint_handling_gap'],
+    title: 'P7 Trust Snippet: warranty clarity pack, review response SLA, and customer-save SOP',
+    days: 30,
+    effort: 'M',
+    kpi_links: ['warranty_claim_rate', 'review_response_time', 'repeat_rate'],
+    proof_required: ['warranty_card_template', 'review_response_log', 'customer_save_cases'],
+    description: 'Systematize trust protection through clear policy language, response discipline, and escalation controls.',
+    steps: [
+      'Warranty and Returns Officer publishes plain-language warranty card with exclusions.',
+      'Customer Service responds to reviews within defined SLA window.',
+      'Store Manager runs customer-save escalation for high-risk complaints.'
+    ],
+    objective: 'Reduce trust volatility and preserve referral engine.',
+    outcome: 'Trust control becomes routine, documented, and measurable.',
+    impact_score: 8
   }
 ];
 
-export const actions: ActionDefinition[] = packs.flatMap((pack) => {
-  const normalized = pack.code.replace(/-/g, '_');
-  const line_type = ['all'];
-
-  const sevenDay: ActionDefinition = {
-    action_id: `ACT_ELECTRONICS_${normalized}_7`,
-    industry: 'retail',
-    line_type,
-    pillar: pack.pillar,
-    signal_tags: pack.signal_tags,
-    title: pack.title7,
-    days: 7,
-    effort: 'S',
-    default_owner_by_size: ownerMap,
-    kpi_links: [pack.kpi7],
-    proof_required: pack.proof7,
-    impact_score: pack.impact7
-  };
-
-  const thirtyDay: ActionDefinition = {
-    action_id: `ACT_ELECTRONICS_${normalized}_30`,
-    industry: 'retail',
-    line_type,
-    pillar: pack.pillar,
-    signal_tags: pack.signal_tags,
-    title: pack.title30,
-    days: 30,
-    effort: 'M',
-    default_owner_by_size: ownerMap,
-    kpi_links: [pack.kpi30],
-    proof_required: pack.proof30,
-    impact_score: pack.impact30
-  };
-
-  return [sevenDay, thirtyDay];
-});
+export const actions: ActionDefinition[] = seeds.map((seed) => ({
+  action_id: seed.action_id,
+  industry: 'retail',
+  line_type: ['all'],
+  pillar: seed.pillar,
+  signal_tags: seed.signal_tags,
+  title: seed.title,
+  days: seed.days,
+  effort: seed.effort,
+  default_owner_by_size: ownerMap,
+  kpi_links: seed.kpi_links,
+  proof_required: seed.proof_required,
+  impact_score: seed.impact_score,
+  description: seed.description,
+  steps: seed.steps,
+  objective: seed.objective,
+  outcome: seed.outcome
+}));

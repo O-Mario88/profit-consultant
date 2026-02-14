@@ -62,7 +62,8 @@ const ROLE_FAMILY_RULES = [
     titleKeywords: [
       'founder', 'co founder', 'owner', 'proprietor', 'managing director', 'md', 'ceo', 'chief executive',
       'president', 'general manager', 'gm', 'country manager', 'regional gm', 'business unit head', 'bu manager',
-      'managing partner', 'chief of staff', 'head of strategy', 'strategy director', 'head of transformation'
+      'managing partner', 'chief of staff', 'head of strategy', 'strategy director', 'head of transformation',
+      'store manager', 'assistant manager', 'floor supervisor'
     ],
     departmentKeywords: ['executive', 'management', 'leadership', 'board', 'owner']
   },
@@ -72,7 +73,8 @@ const ROLE_FAMILY_RULES = [
     titleKeywords: [
       'cfo', 'chief financial', 'finance director', 'vp finance', 'controller', 'accountant',
       'ap manager', 'ar manager', 'billing', 'payroll', 'tax manager', 'fp a', 'fp and a',
-      'financial analyst', 'cost accountant', 'treasurer', 'treasury', 'credit manager', 'internal auditor'
+      'financial analyst', 'cost accountant', 'treasurer', 'treasury', 'credit manager', 'internal auditor',
+      'finance manager', 'bookkeeper', 'cashier', 'pos attendant', 'pricing analyst'
     ],
     departmentKeywords: ['finance', 'accounting', 'treasury', 'fp a', 'audit', 'credit']
   },
@@ -92,7 +94,8 @@ const ROLE_FAMILY_RULES = [
     titleKeywords: [
       'coo', 'chief operating', 'operations director', 'head of operations', 'plant manager', 'factory manager',
       'production manager', 'production supervisor', 'shift lead', 'line leader', 'workshop manager', 'site manager',
-      'service delivery manager', 'field operations manager', 'continuous improvement', 'lean manager'
+      'service delivery manager', 'field operations manager', 'continuous improvement', 'lean manager',
+      'refurb specialist', 'used phones specialist', 'trade in specialist'
     ],
     departmentKeywords: ['operations', 'production', 'manufacturing', 'plant', 'service delivery']
   },
@@ -102,7 +105,8 @@ const ROLE_FAMILY_RULES = [
     titleKeywords: [
       'quality director', 'head of quality', 'quality manager', 'qa qc', 'quality assurance', 'quality control',
       'qc supervisor', 'quality engineer', 'regulatory affairs', 'compliance manager', 'qms manager',
-      'validation engineer', 'gmp manager', 'ehs', 'hse', 'safety officer', 'environmental manager'
+      'validation engineer', 'gmp manager', 'ehs', 'hse', 'safety officer', 'environmental manager',
+      'qa technician', 'device tester', 'warranty returns officer', 'claims officer', 'fraud risk officer', 'loss prevention officer'
     ],
     departmentKeywords: ['quality', 'qa', 'qc', 'compliance', 'regulatory', 'ehs', 'hse', 'safety']
   },
@@ -113,7 +117,8 @@ const ROLE_FAMILY_RULES = [
       'cpo', 'chief procurement', 'supply chain director', 'head of supply chain', 'procurement director',
       'purchasing manager', 'buyer', 'sourcing specialist', 'category manager', 'vendor manager',
       'supply planner', 'demand planner', 'materials planner', 'logistics manager', 'warehouse manager',
-      'distribution manager', 'transport manager', 'dispatch supervisor', 'inventory controller', 'import export'
+      'distribution manager', 'transport manager', 'dispatch supervisor', 'inventory controller', 'import export',
+      'procurement officer', 'stock clerk', 'receiving officer', 'vendor relations', 'backroom lead', 'delivery coordinator', 'rider coordinator'
     ],
     departmentKeywords: ['procurement', 'supply chain', 'logistics', 'warehouse', 'inventory', 'planning']
   },
@@ -124,7 +129,10 @@ const ROLE_FAMILY_RULES = [
       'cro', 'chief revenue', 'sales director', 'vp sales', 'commercial director', 'head of sales',
       'head of growth', 'business development', 'account manager', 'key account', 'sales manager',
       'territory manager', 'channel manager', 'partnerships manager', 'customer success', 'customer service',
-      'client relationship', 'marketing manager', 'digital marketing', 'demand generation'
+      'client relationship', 'marketing manager', 'digital marketing', 'demand generation',
+      'sales associate', 'senior sales rep', 'b2b sales rep', 'corporate sales exec', 'customer service rep',
+      'e commerce manager', 'marketplace manager', 'social media manager', 'content creator', 'performance marketer',
+      'partnerships lead', 'product specialist', 'accessories specialist'
     ],
     departmentKeywords: ['sales', 'commercial', 'customer success', 'customer service', 'marketing', 'growth']
   },
@@ -134,7 +142,9 @@ const ROLE_FAMILY_RULES = [
     titleKeywords: [
       'cto', 'chief technology', 'engineering director', 'head of engineering', 'r and d', 'head of r and d',
       'product director', 'head of product', 'engineering manager', 'product manager', 'project engineer',
-      'manufacturing engineer', 'process engineer', 'design engineer', 'test engineer', 'automation engineer'
+      'manufacturing engineer', 'process engineer', 'design engineer', 'test engineer', 'automation engineer',
+      'phone repair technician', 'microsoldering technician', 'screen technician', 'battery technician',
+      'software flashing technician', 'data transfer technician'
     ],
     departmentKeywords: ['engineering', 'product', 'technical', 'r and d', 'process engineering']
   },
@@ -152,7 +162,7 @@ const ROLE_FAMILY_RULES = [
     titleKeywords: [
       'cio', 'it director', 'head of it', 'it manager', 'systems administrator', 'network engineer',
       'cybersecurity manager', 'security analyst', 'data analyst', 'bi analyst', 'data engineer',
-      'erp administrator', 'systems analyst', 'crm manager'
+      'erp administrator', 'systems analyst', 'crm manager', 'it support', 'pos admin'
     ],
     departmentKeywords: ['it', 'data', 'systems', 'erp', 'security', 'technology']
   }

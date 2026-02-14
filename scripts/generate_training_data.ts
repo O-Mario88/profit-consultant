@@ -119,14 +119,27 @@ async function generateData() {
 
             // Extract Actions
             if (pack.actions) {
-                if (Array.isArray(pack.actions.snippets)) {
-                    pack.actions.snippets.forEach(s => combinedData.actions.snippets.push({ ...s, sourcePack: dir }));
-                }
-                if (Array.isArray(pack.actions.fixPlans7Day)) {
-                    pack.actions.fixPlans7Day.forEach(p => combinedData.actions.fixPlans7Day.push({ ...p, sourcePack: dir }));
-                }
-                if (Array.isArray(pack.actions.fixPlans30Day)) {
-                    pack.actions.fixPlans30Day.forEach(p => combinedData.actions.fixPlans30Day.push({ ...p, sourcePack: dir }));
+                if (Array.isArray(pack.actions)) {
+                    pack.actions.forEach(action => {
+                        const enriched = { ...action, sourcePack: dir };
+                        combinedData.actions.snippets.push(enriched);
+
+                        if (Number(action?.days) === 7) {
+                            combinedData.actions.fixPlans7Day.push(enriched);
+                        } else if (Number(action?.days) === 30) {
+                            combinedData.actions.fixPlans30Day.push(enriched);
+                        }
+                    });
+                } else {
+                    if (Array.isArray(pack.actions.snippets)) {
+                        pack.actions.snippets.forEach(s => combinedData.actions.snippets.push({ ...s, sourcePack: dir }));
+                    }
+                    if (Array.isArray(pack.actions.fixPlans7Day)) {
+                        pack.actions.fixPlans7Day.forEach(p => combinedData.actions.fixPlans7Day.push({ ...p, sourcePack: dir }));
+                    }
+                    if (Array.isArray(pack.actions.fixPlans30Day)) {
+                        pack.actions.fixPlans30Day.forEach(p => combinedData.actions.fixPlans30Day.push({ ...p, sourcePack: dir }));
+                    }
                 }
             }
 

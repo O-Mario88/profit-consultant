@@ -397,12 +397,12 @@ const collectPillarEvidenceBundle = ({
       limit: limitPerCategory,
       primaryFilters: {
         documentTypes: ['question'],
-        questionStages: ['forced_pair'],
+        questionStages: ['forced_pair', 'quick_scan', 'deep_scan'],
         requirePillar: true
       },
       fallbackFilters: {
         documentTypes: ['question'],
-        questionStages: ['forced_pair']
+        questionStages: ['forced_pair', 'quick_scan', 'deep_scan']
       }
     })
   };

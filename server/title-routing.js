@@ -48,6 +48,9 @@ const FAMILY_DEFINITIONS = [
       'President',
       'General Manager',
       'GM',
+      'Store Manager',
+      'Assistant Manager',
+      'Floor Supervisor',
       'Country Manager',
       'Regional GM',
       'Business Unit Head',
@@ -64,7 +67,7 @@ const FAMILY_DEFINITIONS = [
       'PMO Director',
       'Head of PMO'
     ],
-    keywordRegex: /\b(founder|owner|proprietor|ceo|chief executive|managing director|general manager|country manager|regional gm|business unit|chief of staff|strategy|transformation)\b/
+    keywordRegex: /\b(founder|owner|proprietor|ceo|chief executive|managing director|general manager|store manager|assistant manager|floor supervisor|country manager|regional gm|business unit|chief of staff|strategy|transformation)\b/
   },
   {
     id: 'finance_accounting_treasury_audit',
@@ -107,6 +110,10 @@ const FAMILY_DEFINITIONS = [
       'Management Accountant',
       'Pricing Analyst',
       'Revenue Analyst',
+      'Finance Manager',
+      'Bookkeeper',
+      'Cashier',
+      'POS Attendant',
       'Treasurer',
       'Treasury Manager',
       'Cash Manager',
@@ -117,7 +124,7 @@ const FAMILY_DEFINITIONS = [
       'Credit Manager',
       'Credit Controller'
     ],
-    keywordRegex: /\b(cfo|finance|account|controller|fp a|fp and a|treasury|treasurer|auditor|tax|billing|payroll|credit|financial analyst|pricing analyst|revenue analyst)\b/
+    keywordRegex: /\b(cfo|finance|bookkeeper|cashier|pos attendant|account|controller|fp a|fp and a|treasury|treasurer|auditor|tax|billing|payroll|credit|financial analyst|pricing analyst|revenue analyst)\b/
   },
   {
     id: 'hr_people_admin_learning',
@@ -184,6 +191,9 @@ const FAMILY_DEFINITIONS = [
       'Team Lead',
       'Workshop Manager',
       'Site Manager',
+      'Refurb Specialist',
+      'Used Phones Specialist',
+      'Trade-In Specialist',
       'Service Delivery Manager',
       'Field Operations Manager',
       'Operations Coordinator',
@@ -194,7 +204,7 @@ const FAMILY_DEFINITIONS = [
       'Industrial Engineer',
       'Methods Engineer'
     ],
-    keywordRegex: /\b(coo|operations|plant|factory|production|shift|line leader|service delivery|field operations|continuous improvement|lean|six sigma|industrial engineer|methods engineer)\b/
+    keywordRegex: /\b(coo|operations|plant|factory|production|shift|line leader|service delivery|field operations|refurb|trade in|continuous improvement|lean|six sigma|industrial engineer|methods engineer)\b/
   },
   {
     id: 'quality_compliance_ehs',
@@ -218,6 +228,12 @@ const FAMILY_DEFINITIONS = [
       'QC Inspector',
       'Metrology Technician',
       'Calibration Technician',
+      'Device Tester',
+      'QA Technician',
+      'Warranty and Returns Officer',
+      'Claims Officer',
+      'Fraud and Risk Officer',
+      'Loss Prevention Officer',
       'Regulatory Affairs Manager',
       'Compliance Manager',
       'QMS Manager',
@@ -229,7 +245,7 @@ const FAMILY_DEFINITIONS = [
       'HSE Manager',
       'Environmental Manager'
     ],
-    keywordRegex: /\b(quality|qa|qc|regulatory|compliance|qms|gmp|validation|ehs|hse|safety|environmental|metrology|calibration)\b/
+    keywordRegex: /\b(quality|qa|qc|device tester|warranty|claims|fraud|loss prevention|regulatory|compliance|qms|gmp|validation|ehs|hse|safety|environmental|metrology|calibration)\b/
   },
   {
     id: 'procurement_supply_chain_logistics',
@@ -245,10 +261,14 @@ const FAMILY_DEFINITIONS = [
       'Procurement Director',
       'Purchasing Director',
       'Procurement Manager',
+      'Procurement Officer',
       'Purchasing Manager',
       'Buyer',
       'Senior Buyer',
       'Sourcing Specialist',
+      'Stock Clerk',
+      'Receiving Officer',
+      'Vendor Relations Lead',
       'Category Manager',
       'Vendor Manager',
       'Supplier Manager',
@@ -260,18 +280,21 @@ const FAMILY_DEFINITIONS = [
       'Inventory Planner',
       'Logistics Manager',
       'Warehouse Manager',
+      'Warehouse Backroom Lead',
       'Distribution Manager',
       'Transport Manager',
       'Fleet Manager',
       'Shipping Supervisor',
       'Dispatch Supervisor',
+      'Delivery Coordinator',
+      'Rider Coordinator',
       'Stores Manager',
       'Storekeeper',
       'Inventory Controller',
       'Import/Export Manager',
       'Customs Compliance Coordinator'
     ],
-    keywordRegex: /\b(cpo|procurement|purchasing|buyer|sourcing|category manager|vendor|supplier|supply chain|logistics|warehouse|distribution|transport|fleet|shipping|dispatch|storekeeper|inventory|import|export|customs|planner)\b/
+    keywordRegex: /\b(cpo|procurement|purchasing|buyer|sourcing|stock clerk|receiving|vendor|supplier|supply chain|logistics|warehouse|backroom|distribution|transport|fleet|shipping|dispatch|delivery coordinator|rider coordinator|storekeeper|inventory|import|export|customs|planner)\b/
   },
   {
     id: 'sales_commercial_customer_success_marketing',
@@ -295,6 +318,10 @@ const FAMILY_DEFINITIONS = [
       'Sales Manager',
       'Sales Representative',
       'Sales Executive',
+      'Sales Associate',
+      'Senior Sales Rep',
+      'B2B Sales Rep',
+      'Corporate Sales Executive',
       'Territory Manager',
       'Channel Manager',
       'Partnerships Manager',
@@ -304,15 +331,23 @@ const FAMILY_DEFINITIONS = [
       'Customer Success Manager',
       'CSM',
       'Customer Service Manager',
+      'Customer Service Rep',
       'Client Relationship Manager',
       'Call Center Manager',
       'Marketing Manager',
       'Growth Marketing Manager',
       'Brand Manager',
       'Digital Marketing Manager',
-      'Demand Generation Manager'
+      'Demand Generation Manager',
+      'E-commerce Manager',
+      'Marketplace Manager',
+      'Social Media Manager',
+      'Content Creator',
+      'Performance Marketer',
+      'Product Specialist',
+      'Accessories Specialist'
     ],
-    keywordRegex: /\b(cro|sales|commercial|business development|account manager|territory|channel|partnership|inside sales|sdr|bdr|customer success|customer service|marketing|brand|demand generation|growth)\b/
+    keywordRegex: /\b(cro|sales|sales associate|commercial|business development|account manager|territory|channel|partnership|inside sales|sdr|bdr|customer success|customer service|marketing|e commerce|marketplace|social media|content creator|performance marketer|brand|demand generation|growth)\b/
   },
   {
     id: 'engineering_rnd_product_technical',
@@ -339,9 +374,15 @@ const FAMILY_DEFINITIONS = [
       'Mechanical Engineer',
       'Test Engineer',
       'Automation Engineer',
-      'Maintenance Engineer'
+      'Maintenance Engineer',
+      'Phone Repair Technician',
+      'Microsoldering Technician',
+      'Screen Technician',
+      'Battery Technician',
+      'Software/Flashing Technician',
+      'Data Transfer Technician'
     ],
-    keywordRegex: /\b(cto|engineering|r d|research and development|product manager|project engineer|manufacturing engineer|process engineer|design engineer|electrical engineer|mechanical engineer|test engineer|automation engineer|maintenance engineer)\b/
+    keywordRegex: /\b(cto|engineering|repair technician|microsoldering|screen technician|battery technician|flashing technician|data transfer|r d|research and development|product manager|project engineer|manufacturing engineer|process engineer|design engineer|electrical engineer|mechanical engineer|test engineer|automation engineer|maintenance engineer)\b/
   },
   {
     id: 'it_data_security',
@@ -364,9 +405,11 @@ const FAMILY_DEFINITIONS = [
       'Data Engineer',
       'ERP Administrator',
       'Systems Analyst',
-      'CRM Manager'
+      'CRM Manager',
+      'IT Support',
+      'POS Admin'
     ],
-    keywordRegex: /\b(cio|it director|head of it|it manager|systems administrator|network engineer|cybersecurity|security analyst|data analyst|bi analyst|data engineer|erp|crm)\b/
+    keywordRegex: /\b(cio|it director|head of it|it manager|it support|pos admin|systems administrator|network engineer|cybersecurity|security analyst|data analyst|bi analyst|data engineer|erp|crm)\b/
   },
   {
     id: 'project_program_pmo',
