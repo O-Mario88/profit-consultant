@@ -1,6 +1,6 @@
 
 import { DepartmentId, DepartmentStack, Department } from '../types/department';
-import { PillarId } from '../types/core';
+import { PillarId } from '../types/core.ts';
 
 export const DEPARTMENT_DEFINITIONS: Record<DepartmentId, Department> = {
     'operations': { id: 'operations', name: 'Operations / Service Delivery', ownedPillars: ['Operations', 'People'] },

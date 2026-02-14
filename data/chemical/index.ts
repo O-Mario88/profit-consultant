@@ -1,10 +1,9 @@
-
-import { questions } from './questions';
-import { library } from './library';
-import { actions } from './actions';
+import { QUESTIONS } from './questions';
+import { CHEMICAL_LIBRARY, CHEMICAL_MISSION_BRIEFS } from './library';
+import { CHEMICAL_ACTIONS } from './actions';
 
 export const CHEMICAL_PACK = {
-    questions,
-    library,
-    actions: Object.values(actions)
+    questions: QUESTIONS,
+    library: [...CHEMICAL_LIBRARY, ...CHEMICAL_MISSION_BRIEFS],
+    actions: CHEMICAL_ACTIONS
 };

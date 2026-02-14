@@ -83,6 +83,24 @@ const PILLAR_ALIASES: Record<string, string> = {
     'Tribe': 'People',
 };
 
+const ADAPTIVE_PILLAR_TO_LEGACY: Record<string, string> = {
+    P1: 'Risk',
+    P2: 'Innovation',
+    P3: 'Market',
+    P4: 'Money',
+    P5: 'Operations',
+    P6: 'Leadership',
+    P7: 'People'
+};
+
+const normalizeLegacyPillar = (value: string): DeepScanItem['pillar'] => {
+    const direct = (PILLAR_ALIASES[value] || value) as DeepScanItem['pillar'];
+    if (['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'].includes(direct)) {
+        return direct;
+    }
+    return 'Operations';
+};
+
 const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onComplete, onBack }) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -91,6 +109,33 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
 
     // Generate targeted questions (NOW: All 7 Pillars for full depth)
     const questions = useMemo(() => {
+        const adaptivePillars = report.profileContext?.adaptiveQuestionBank?.pillars;
+        if (
+            report.profileContext?.assessmentQuestionSource === 'adaptive' &&
+            Array.isArray(adaptivePillars) &&
+            adaptivePillars.length > 0
+        ) {
+            const adaptiveDeepQuestions: DeepScanItem[] = [];
+            adaptivePillars.forEach((pillar) => {
+                const legacyPillar = normalizeLegacyPillar(
+                    pillar.legacyPillar || ADAPTIVE_PILLAR_TO_LEGACY[pillar.id] || pillar.name || 'Operations'
+                );
+                (pillar.deepScan || []).forEach((pair, idx) => {
+                    if (!pair?.textA || !pair?.textB) return;
+                    adaptiveDeepQuestions.push({
+                        id: pair.id || `${pillar.id}_DS_${idx + 1}`,
+                        pillar: legacyPillar,
+                        a: pair.textA,
+                        b: pair.textB
+                    });
+                });
+            });
+
+            if (adaptiveDeepQuestions.length > 0) {
+                return adaptiveDeepQuestions;
+            }
+        }
+
         // We want a full 360 scan, so we take ALL pillars
         const allPillars = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'];
         const allQuestions: DeepScanItem[] = [];
@@ -114,7 +159,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
         });
 
         return allQuestions;
-    }, []);
+    }, [report.profileContext]);
 
     const currentQuestion = questions[currentStep];
     const progress = ((currentStep + 1) / questions.length) * 100;
@@ -193,6 +238,7 @@ const DeepScanAssessment: React.FC<DeepScanAssessmentProps> = ({ report, onCompl
                     <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                         <div className="bg-gradient-to-r from-brand-500 to-purple-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
                     </div>
+                    <p className="text-[10px] text-slate-500">Using full backend orchestration</p>
                     <p className="text-[11px] text-slate-500">Powered by OpenAI • Personalized to your business</p>
                 </div>
             </div>

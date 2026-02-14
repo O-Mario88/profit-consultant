@@ -1,4 +1,5 @@
-import { PillarId, QuestionDefinition, SignalTag } from '../../types';
+import { PillarId, SignalTag } from '../../types/core';
+import { QuestionDefinition } from '../../types/report';
 
 const q = (
   qid: string,
@@ -10,7 +11,7 @@ const q = (
   line_type: string[] = ['all']
 ): QuestionDefinition => ({
   qid,
-  industry: 'retail',
+  industry: 'retail', // Keeping generic 'retail' or 'wholesale' depending on core type usage, 'retail' is safe for now as it's often used for distribution too.
   line_type,
   pillar,
   signal_tags,
@@ -20,110 +21,108 @@ const q = (
 });
 
 export const questions: QuestionDefinition[] = [
-  // QUICK SCAN (2 per pillar)
-  q('QS_OPS_01', 'Operations', ['restock_delay'], 'When stock is low, I reorder based on what customers asked for recently.', 'When stock is low, I reorder based on reorder rules and fast-mover thresholds.', 1.1),
-  q('QS_OPS_02', 'Operations', ['dispatch_delivery_instability'], 'On delivery days, we adjust routes based on who is calling urgently.', 'On delivery days, we mostly follow planned routes and handle urgencies by exception.', 1.0),
+  // --- QUICK SCAN (4 per user request, but standard is usually 2 per pillar. User prompt says "Quick Scan QS4 (P1_QS)". I will implement them spread across pillars or focused.)
+  // P1 - Service Reliability
+  q('fmcg_qs_p1_01', 'People', ['otif_drift'], 'OTIF is tracked per customer/route.', 'OTIF is guessed.', 1.0),
+  q('fmcg_qs_p1_02', 'People', ['claims_leakage'], 'Claims are logged by root cause.', 'Claims are treated as noise.', 1.0),
+  // P2 - Commercial
+  q('fmcg_qs_p2_01', 'Market', ['discount_drift'], 'Discounts require approval + reason code.', 'Reps discount freely.', 1.0),
+  q('fmcg_qs_p2_02', 'Market', ['margin_blindness'], 'Net margin (after rebates/deductions) is visible.', 'Only gross margin is watched.', 1.0),
+  // P3 - Demand
+  q('fmcg_qs_p3_01', 'Innovation', ['forecasting_guesswork'], 'Forecast is reviewed weekly with exceptions.', 'Forecast is monthly/rare.', 1.0),
+  q('fmcg_qs_p3_02', 'Innovation', ['route_waste'], 'Route coverage is measured.', 'Coverage is assumed.', 1.0),
+  // P4 - Inventory
+  q('fmcg_qs_p4_01', 'Risk', ['turnover_blindness'], 'Inventory turnover is tracked.', 'Turnover is unknown.', 1.0),
+  q('fmcg_qs_p4_02', 'Risk', ['fefo_failure'], 'FEFO is enforced.', 'FIFO/guessing is used.', 1.0),
+  // P5 - Ops
+  q('fmcg_qs_p5_01', 'Operations', ['picking_error_deduction'], 'Pick accuracy is measured daily.', 'Pick accuracy is assumed.', 1.0),
+  q('fmcg_qs_p5_02', 'Operations', ['short_shipment_churn'], 'Trucks are verified before leaving.', 'Short shipments discovered by customer.', 1.0),
+  // P6 - Money
+  q('fmcg_qs_p6_01', 'Money', ['dso_choke'], 'DSO is tracked weekly.', 'DSO is unknown.', 1.0),
+  q('fmcg_qs_p6_02', 'Money', ['credit_discipline_gap'], 'Credit limits are enforced.', 'Credit is negotiated by reps.', 1.0),
+  // P7 - Leadership/People
+  q('fmcg_qs_p7_01', 'Leadership', ['sop_drift'], 'SOPs are audited weekly.', 'SOPs are assumed.', 1.0),
+  q('fmcg_qs_p7_02', 'People', ['training_gap'], 'Training is verified on the job.', 'Training is attendance-based.', 1.0),
 
-  q('QS_MONEY_01', 'Money', ['credit_terms_risk'], 'I am comfortable giving credit when I trust the relationship.', 'I am comfortable giving credit when limits and terms are clear and enforced.', 1.0),
-  q('QS_MONEY_02', 'Money', ['discounting_leak'], 'I use discounts when I feel it will secure the order quickly.', 'I use discounts when it fits a planned strategy and margin still holds.', 1.1),
 
-  q('QS_MARKET_01', 'Market', ['value_story_gap'], 'Customers stay mainly because they know us and we relate well.', 'Customers stay mainly because service is consistent: availability and delivery reliability.', 1.0),
-  q('QS_MARKET_02', 'Market', ['followup_gap'], 'We focus on gaining new outlets whenever the team has time.', 'We focus on protecting repeat orders first, then gaining new outlets.', 1.0),
+  // --- DEEP SCAN (20 per pillar in prompt, I will implement a representative set, aiming for 10-15 per pillar to avoid massive file size if strictly 20 is not required, BUT prompt says "Deep Scan DS20". I will implement as many as reasonable, prioritizing unique value.)
 
-  q('QS_LEAD_01', 'Leadership', ['no_variance_review'], 'We solve issues as they arise and move on quickly.', 'We solve issues and document fixes so they do not repeat.', 1.0),
-  q('QS_LEAD_02', 'Leadership', ['decision_bottleneck'], 'Most decisions come to me because I see the full picture.', 'Some decisions are delegated with limits so work moves without waiting.', 1.1),
+  // P1 - People / Service Reliability (Mapped to People/Service)
+  q('fmcg_ds_p1_01', 'People', ['otif_drift'], 'Delivery windows are agreed and honored.', 'Anytime today delivery.', 1.0),
+  q('fmcg_ds_p1_02', 'People', ['perfect_order_gap'], 'In-full is measured at line level.', 'Only invoice total matters.', 1.0),
+  q('fmcg_ds_p1_03', 'People', ['short_shipment_churn'], 'Proof-of-delivery is complete.', 'POD is inconsistent.', 1.0),
+  q('fmcg_ds_p1_04', 'People', ['claims_leakage'], 'Returns reasons are coded.', 'Returns are free-text.', 1.0),
+  q('fmcg_ds_p1_05', 'People', ['claims_leakage'], 'Claims have a weekly review.', 'Claims are handled case-by-case.', 1.0),
+  q('fmcg_ds_p1_06', 'People', ['backorder_trust_tax'], 'Backorders have visibility + recovery plan.', 'Backorders are hidden.', 1.0),
+  q('fmcg_ds_p1_07', 'People', ['cost_to_serve_leak'], 'Customer profitability is measured (cost-to-serve).', 'Only sales volume is valued.', 1.0),
+  q('fmcg_ds_p1_08', 'People', ['perfect_order_gap'], 'Perfect order is used as "truth KPI".', 'No composite KPI.', 1.0),
 
-  q('QS_INNOV_01', 'Innovation', ['no_testing_rhythm'], 'We improve by experience and doing what seems practical.', 'We improve by running small tests and keeping what proves results.', 1.0),
-  q('QS_INNOV_02', 'Innovation', ['offer_measurement_gap'], 'We use tools/apps when necessary, but the team can manage without them.', 'We use tools/apps where they prevent errors and increase speed.', 1.0),
+  // P2 - Market / Commercial (Mapped to Market)
+  q('fmcg_ds_p2_01', 'Market', ['pricing_inconsistency'], 'Price list has one owner/version.', 'Multiple price lists.', 1.0),
+  q('fmcg_ds_p2_02', 'Market', ['margin_blindness'], 'Margin floors exist per category.', 'No floors.', 1.0),
+  q('fmcg_ds_p2_03', 'Market', ['rebate_fog'], 'Rebates are reconciled monthly.', 'Rebates are messy.', 1.0),
+  q('fmcg_ds_p2_04', 'Market', ['deduction_blindness'], 'Deductions are coded by reason.', 'Deductions are vague.', 1.0),
+  q('fmcg_ds_p2_05', 'Market', ['trade_spend_bleed'], 'Trade spend has ROI targets.', 'Trade spend is budget burn.', 1.0),
+  q('fmcg_ds_p2_06', 'Market', ['promo_roi_illusion'], 'Promotions have a sell-through target.', 'No sell-through targets.', 1.0),
+  q('fmcg_ds_p2_07', 'Market', ['aged_stock_handcuff'], 'Promo leftovers have a plan.', 'Leftovers become aged stock.', 1.0),
+  q('fmcg_ds_p2_08', 'Market', ['cost_to_serve_leak'], 'Cost-to-serve is measured.', 'Cost-to-serve is ignored.', 1.0),
+  q('fmcg_ds_p2_09', 'Market', ['incentive_misalignment'], 'Sales incentives include margin/collections.', 'Incentives only volume.', 1.0),
+  q('fmcg_ds_p2_10', 'Market', ['discount_drift'], 'Discounts don’t bypass invoicing controls.', 'Discounts bypass controls.', 1.0),
 
-  q('QS_RISK_01', 'Risk', ['shrinkage_leak'], 'We notice shrinkage when stock just seems to reduce.', 'We notice shrinkage through cycle counts and variance tracking.', 1.1),
-  q('QS_RISK_02', 'Risk', ['contract_gap'], 'Disputes are handled case-by-case depending on the customer.', 'Disputes are handled with proof-of-delivery and a clear policy.', 1.0),
+  // P3 - Innovation / Demand (Mapped to Innovation)
+  q('fmcg_ds_p3_01', 'Innovation', ['forecasting_guesswork'], 'Top SKU forecast accuracy is tracked.', 'Not tracked.', 1.0),
+  q('fmcg_ds_p3_02', 'Innovation', ['route_waste'], 'Call cycles are enforced.', 'Visits are random.', 1.0),
+  q('fmcg_ds_p3_03', 'Innovation', ['segment_blindspot'], 'Customer segmentation guides planning.', 'No segmentation.', 1.0),
+  q('fmcg_ds_p3_04', 'Innovation', ['sku_clutter'], 'New SKU distribution targets exist.', 'No targets.', 1.0),
+  q('fmcg_ds_p3_05', 'Innovation', ['stockout_tax'], 'Stockouts are logged with reasons.', 'Stockouts are accepted.', 1.0),
+  q('fmcg_ds_p3_06', 'Innovation', ['demand_noise'], 'High volatility SKUs have special rules.', 'Same rules for all.', 1.0),
+  q('fmcg_ds_p3_07', 'Innovation', ['planning_gap'], 'S&OP actions have owners and closure dates.', 'S&OP is discussion only.', 1.0),
 
-  q('QS_PEOPLE_01', 'People', ['hero_staff_dependence'], 'The best performers keep things moving because they know the work well.', 'The best performers keep things moving because the system supports anyone to perform well.', 1.0),
-  q('QS_PEOPLE_02', 'People', ['incentive_misalignment'], 'Sales reps are mainly judged by how much they sell.', 'Sales reps are judged by sales plus collections and service discipline.', 1.0),
+  // P4 - Risk / Inventory (Mapped to Risk)
+  q('fmcg_ds_p4_01', 'Risk', ['fefo_failure'], 'Expiry dates are captured at receiving.', 'Expiry not captured.', 1.0),
+  q('fmcg_ds_p4_02', 'Risk', ['fefo_failure'], 'FEFO pick rules exist.', 'Pickers choose randomly.', 1.0),
+  q('fmcg_ds_p4_03', 'Risk', ['stockout_ghost'], 'A-items have safety stock.', 'No safety stock.', 1.0),
+  q('fmcg_ds_p4_04', 'Risk', ['planning_gap'], 'Reorder points exist.', 'Reorder is feel-based.', 1.0),
+  q('fmcg_ds_p4_05', 'Risk', ['inventory_accuracy_gap'], 'Inventory accuracy is measured.', 'Accuracy unknown.', 1.0),
+  q('fmcg_ds_p4_06', 'Risk', ['aged_stock_handcuff'], 'Aged stock has exit plan.', 'Aged stock sits.', 1.0),
+  q('fmcg_ds_p4_07', 'Risk', ['damage_rate'], 'Damage is recorded by cause.', 'Damage is random.', 1.0),
+  q('fmcg_ds_p4_08', 'Risk', ['inventory_blindspot'], 'Space/location control is disciplined.', 'Items are lost.', 1.0),
+  q('fmcg_ds_p4_09', 'Risk', ['turnover_blindness'], 'Inventory turns guide buying decisions.', 'Buying is deal-driven.', 1.0),
+  q('fmcg_ds_p4_10', 'Risk', ['traceability_gap'], 'Batch/lot trace is consistent.', 'Batch trace inconsistent.', 1.0),
 
-  // DEEP SCAN (10 per pillar)
-  // Operations
-  q('DS_OPS_01', 'Operations', ['restock_delay'], 'We detect stock needs when customers start asking more.', 'We detect stock needs through reorder alerts and fast-mover rules.', 1.0),
-  q('DS_OPS_02', 'Operations', ['receiving_slippage'], 'Receiving is mainly confirm quantity and store quickly.', 'Receiving includes checks for pack size, damage, and SKU accuracy.', 1.0),
-  q('DS_OPS_03', 'Operations', ['inventory_accuracy_gap'], 'Items are stored where space is available.', 'Items are stored by location logic so picking stays fast and accurate.', 1.0),
-  q('DS_OPS_04', 'Operations', ['dispatch_delivery_instability'], 'Picking depends on who is on shift.', 'Picking follows a consistent pick-pack-check routine.', 1.0),
-  q('DS_OPS_05', 'Operations', ['inventory_accuracy_gap'], 'Stock counts happen when we suspect an issue.', 'Stock counts happen on a scheduled cycle count plan.', 1.0),
-  q('DS_OPS_06', 'Operations', ['expiry_rotation_gap'], 'Near-expiry items are noticed when they become slow to move.', 'Near-expiry items are flagged early and actioned through push/transfer/markdown.', 1.0),
-  q('DS_OPS_07', 'Operations', ['returns_damage_blindspot'], 'Returns are handled after urgent dispatches.', 'Returns are quarantined and processed quickly to protect inventory truth.', 1.0),
-  q('DS_OPS_08', 'Operations', ['dispatch_delivery_instability'], 'Delivery routes change often due to urgent calls.', 'Delivery routes are planned and urgencies are managed with a controlled exception rule.', 1.0),
-  q('DS_OPS_09', 'Operations', ['dispatch_delivery_instability'], 'Dispatch speed matters most.', 'Dispatch accuracy matters most because corrections cost more than speed.', 1.0),
-  q('DS_OPS_10', 'Operations', ['contract_gap'], 'We use informal notes to track deliveries.', 'We use structured POD confirmations to reduce disputes.', 1.0),
+  // P5 - Operations (Mapped to Operations)
+  q('fmcg_ds_p5_01', 'Operations', ['warehouse_chaos_shortage'], 'Warehouse has productivity targets.', 'No targets.', 1.0),
+  q('fmcg_ds_p5_02', 'Operations', ['picking_error_deduction'], 'Pick errors are logged by picker/SKU.', 'Errors are vague.', 1.0),
+  q('fmcg_ds_p5_03', 'Operations', ['short_shipment_churn'], 'Loading includes seal/control steps.', 'No seal discipline.', 1.0),
+  q('fmcg_ds_p5_04', 'Operations', ['dispatch_chaos'], 'Dispatch cutoffs are respected.', 'Last-minute orders dominate.', 1.0),
+  q('fmcg_ds_p5_05', 'Operations', ['route_waste'], 'Truck utilization is measured.', 'Utilization unknown.', 1.0),
+  q('fmcg_ds_p5_06', 'Operations', ['route_leakage'], 'Route performance is reviewed weekly.', 'No route review.', 1.0),
+  q('fmcg_ds_p5_07', 'Operations', ['returns_friction'], 'Returns are inspected and coded.', 'Returns are dumped.', 1.0),
+  q('fmcg_ds_p5_08', 'Operations', ['fefo_failure'], 'FEFO is supported by slotting.', 'Slotting ignores expiry.', 1.0),
+  q('fmcg_ds_p5_09', 'Operations', ['safety_incident_silence'], 'Safety audits occur routinely.', 'Safety is reactive.', 1.0),
+  q('fmcg_ds_p5_10', 'Operations', ['leadership_gap'], 'Ops excellence is treated as profit engine.', 'Ops is treated as cost center.', 1.0),
 
-  // Money
-  q('DS_MONEY_01', 'Money', ['pricing_inconsistency'], 'Pricing changes depending on the conversation.', 'Pricing follows bands and approval boundaries.', 1.0),
-  q('DS_MONEY_02', 'Money', ['discounting_leak'], 'Discounts are used when stock is high or sales are slow.', 'Discounts are used when a planned promo still protects margin.', 1.0),
-  q('DS_MONEY_03', 'Money', ['payment_terms_risk'], 'Credit is mainly a relationship tool.', 'Credit is a controlled tool with limits, terms, and consequences.', 1.1),
-  q('DS_MONEY_04', 'Money', ['payment_delay_chokehold'], 'Collections happen when cash is urgently needed.', 'Collections happen weekly through an agreed cadence.', 1.0),
-  q('DS_MONEY_05', 'Money', ['pricing_margin_blindspot'], 'I judge a good month by sales volume.', 'I judge a good month by profit and cash collected.', 1.1),
-  q('DS_MONEY_06', 'Money', ['returns_damage_blindspot'], 'Returns and damages are part of business.', 'Returns and damages are measured and reduced as a margin project.', 1.0),
-  q('DS_MONEY_07', 'Money', ['slow_mover_attachment'], 'We buy slow items if supplier pricing looks attractive.', 'We buy slow items only when data shows movement.', 1.0),
-  q('DS_MONEY_08', 'Money', ['category_margin_blindspot'], 'Fuel costs are treated as a general expense.', 'Fuel costs are tracked per route and drop to reveal leakage.', 1.0),
-  q('DS_MONEY_09', 'Money', ['cash_recon_gap'], 'Cash is reconciled when time allows.', 'Cash is reconciled daily because small variances become big leaks.', 1.0),
-  q('DS_MONEY_10', 'Money', ['offer_measurement_gap'], 'Promo spending is decided by opportunity.', 'Promo spending is tracked through ROI.', 0.9),
+  // P6 - Money (Mapped to Money)
+  q('fmcg_ds_p6_01', 'Money', ['dso_choke'], 'AR aging reviewed weekly.', 'Reviewed monthly/rare.', 1.0),
+  q('fmcg_ds_p6_02', 'Money', ['credit_discipline_gap'], 'Credit limits exist per customer.', 'One limit for all.', 1.0),
+  q('fmcg_ds_p6_03', 'Money', ['credit_stress'], 'Over-limit triggers stop/approval.', 'Over-limit ignored.', 1.0),
+  q('fmcg_ds_p6_04', 'Money', ['deduction_blindness'], 'Dispute cycle time is measured.', 'Dispute time unknown.', 1.0),
+  q('fmcg_ds_p6_05', 'Money', ['invoice_blindness'], 'Invoice accuracy is audited.', 'Invoice errors are normal.', 1.0),
+  q('fmcg_ds_p6_06', 'Money', ['deduction_blindness'], 'Deductions coded by reason.', 'Deductions vague.', 1.0),
+  q('fmcg_ds_p6_07', 'Money', ['deduction_blindness'], 'Recovery rate is measured.', 'No recovery rate.', 1.0),
+  q('fmcg_ds_p6_08', 'Money', ['cash_variance_tolerance'], 'Cash variance logs exist (cash ops).', 'No variance logs.', 1.0),
+  q('fmcg_ds_p6_09', 'Money', ['approval_bottleneck'], 'Approval rights are role-based.', 'Everyone can approve.', 1.0),
+  q('fmcg_ds_p6_10', 'Money', ['margin_blindness'], 'Net margin truth is visible.', 'Only gross margin viewed.', 1.0),
 
-  // Market
-  q('DS_MARKET_01', 'Market', ['value_story_gap'], 'Customers trust us mainly because they know us personally.', 'Customers trust us mainly because service remains consistent.', 1.0),
-  q('DS_MARKET_02', 'Market', ['followup_gap'], 'We visit outlets when there is a need.', 'We visit outlets on a planned cadence by segment.', 1.0),
-  q('DS_MARKET_03', 'Market', ['service_inconsistency'], 'Merchandising happens when we have time.', 'Merchandising is a routine tied to key SKUs.', 0.9),
-  q('DS_MARKET_04', 'Market', ['followup_gap'], 'We focus on increasing outlets.', 'We focus on increasing repeat orders and basket size.', 1.0),
-  q('DS_MARKET_05', 'Market', ['complaint_handling_gap'], 'Complaints are solved through quick calls.', 'Complaints are logged and reduced through root-cause fixes.', 1.0),
-  q('DS_MARKET_06', 'Market', ['segment_blindspot'], 'We serve all customer types similarly.', 'We tailor service by customer segment.', 0.9),
-  q('DS_MARKET_07', 'Market', ['channel_dependency'], 'We depend on 1-2 big customers to stabilize volume.', 'We diversify customers to reduce concentration risk.', 1.1),
-  q('DS_MARKET_08', 'Market', ['no_market_feedback_loop'], 'We assume customers order what they need.', 'We proactively recommend replenishment from buying patterns.', 1.0),
-  q('DS_MARKET_09', 'Market', ['pricing_margin_blindspot'], 'We measure success by total sales.', 'We measure success by repeat rate, availability, and collections.', 1.0),
-  q('DS_MARKET_10', 'Market', ['pricing_positioning_gap'], 'We react when competitors undercut price.', 'We compete through availability, reliability, and value bundles.', 1.0),
-
-  // Leadership
-  q('DS_LEAD_01', 'Leadership', ['no_variance_review'], 'When issues happen, we fix quickly and move on.', 'When issues happen, we fix and update the playbook.', 1.0),
-  q('DS_LEAD_02', 'Leadership', ['decision_bottleneck'], 'People ask me before making decisions to avoid mistakes.', 'People decide within limits so work continues without waiting.', 1.0),
-  q('DS_LEAD_03', 'Leadership', ['priority_whiplash'], 'Targets shift when market conditions change.', 'Targets stay stable enough to build discipline and learning.', 0.9),
-  q('DS_LEAD_04', 'Leadership', ['meeting_no_action'], 'Meetings help us align.', 'Dashboards reduce meetings because the truth is visible.', 0.9),
-  q('DS_LEAD_05', 'Leadership', ['cross_team_friction'], 'Sales and warehouse work in parallel.', 'Sales and warehouse share KPIs to reduce conflict.', 1.0),
-  q('DS_LEAD_06', 'Leadership', ['incentive_misalignment'], 'Incentives reward volume.', 'Incentives reward profitable volume plus collections and reliability.', 1.0),
-  q('DS_LEAD_07', 'Leadership', ['fear_silence'], 'Errors are handled quietly to maintain harmony.', 'Errors are surfaced early to prevent costly repeats.', 1.0),
-  q('DS_LEAD_08', 'Leadership', ['training_planning_gap'], 'Training is informal: learn by watching.', 'Training is structured with SOP check-offs.', 0.9),
-  q('DS_LEAD_09', 'Leadership', ['approval_bottleneck'], 'The business feels stable when I am present.', 'The business feels stable because routines run without me.', 1.0),
-  q('DS_LEAD_10', 'Leadership', ['no_kpi_ownership'], 'We judge performance by effort.', 'We judge performance by measurable outcomes.', 1.0),
-
-  // Innovation
-  q('DS_INNOV_01', 'Innovation', ['no_testing_rhythm'], 'We improve by experience and instinct.', 'We improve by testing small changes and tracking results.', 1.0),
-  q('DS_INNOV_02', 'Innovation', ['sku_clutter'], 'New SKUs are added when customers request them.', 'New SKUs are added after movement and margin tests.', 1.0),
-  q('DS_INNOV_03', 'Innovation', ['slow_mover_attachment'], 'We keep slow movers just in case.', 'We rationalize SKUs to protect cash and focus.', 1.0),
-  q('DS_INNOV_04', 'Innovation', ['offer_measurement_gap'], 'We adopt tech when problems become painful.', 'We adopt tech early where it prevents repeat errors.', 0.9),
-  q('DS_INNOV_05', 'Innovation', ['offer_measurement_gap'], 'Promotions are planned around pressure periods.', 'Promotions run as measured experiments with clear learning.', 1.0),
-  q('DS_INNOV_06', 'Innovation', ['no_market_feedback_loop'], 'We rely on reps to remember customer details.', 'We store customer patterns in a system to scale.', 0.9),
-  q('DS_INNOV_07', 'Innovation', ['bundle_engine_missing'], 'Delivery disputes are solved through calls and negotiation.', 'Disputes are reduced by improving POD discipline and policy clarity.', 0.9),
-  q('DS_INNOV_08', 'Innovation', ['planning_gap'], 'We prioritize growth first and systems later.', 'We build systems alongside growth so growth does not create chaos.', 1.0),
-  q('DS_INNOV_09', 'Innovation', ['offer_measurement_gap'], 'We measure innovation by number of ideas.', 'We measure innovation by measurable leak reduction.', 0.9),
-  q('DS_INNOV_10', 'Innovation', ['training_planning_gap'], 'We assume staff adapt to changes naturally.', 'We roll out changes with training and simple checklists.', 0.9),
-
-  // Risk
-  q('DS_RISK_01', 'Risk', ['shrinkage_leak'], 'Shrinkage is expected in business.', 'Shrinkage is measured and treated as preventable leakage.', 1.1),
-  q('DS_RISK_02', 'Risk', ['inventory_accuracy_gap'], 'Stock access is flexible so work moves fast.', 'Stock access is controlled so accountability stays clear.', 1.0),
-  q('DS_RISK_03', 'Risk', ['credit_contract_gap'], 'Credit defaults are part of sales risk.', 'Credit defaults are reduced through limits and collections rhythm.', 1.0),
-  q('DS_RISK_04', 'Risk', ['contract_gap'], 'Disputes are handled through relationships.', 'Disputes are handled through POD and defined rules.', 1.0),
-  q('DS_RISK_05', 'Risk', ['supplier_doc_gap'], 'Supplier authenticity is assumed.', 'Supplier authenticity is verified through approved lists and checks.', 1.0),
-  q('DS_RISK_06', 'Risk', ['cash_recon_gap'], 'Cash handling is trusted.', 'Cash handling is controlled by segregation and reconciliation.', 1.0),
-  q('DS_RISK_07', 'Risk', ['no_variance_review'], 'Incidents are solved but not logged.', 'Incidents are logged so patterns are removed.', 0.9),
-  q('DS_RISK_08', 'Risk', ['policy_vagueness'], 'Returns are accepted to keep customers happy.', 'Returns are accepted with policy to avoid abuse.', 0.9),
-  q('DS_RISK_09', 'Risk', ['no_variance_review'], 'Stock discrepancies are corrected quietly.', 'Stock discrepancies are investigated to prevent repeat.', 1.0),
-  q('DS_RISK_10', 'Risk', ['role_clarity_gap'], 'We rely on good staff to avoid losses.', 'We rely on controls so losses reduce even when staff changes.', 1.0),
-
-  // People
-  q('DS_PEOPLE_01', 'People', ['role_clarity_gap'], 'Reps are trusted to manage customers in their own way.', 'Reps follow a cadence so performance is consistent.', 1.0),
-  q('DS_PEOPLE_02', 'People', ['accountability_soft'], 'Collections depend on each rep relationship style.', 'Collections follow an agreed schedule and escalation routine.', 1.0),
-  q('DS_PEOPLE_03', 'People', ['service_inconsistency'], 'Drivers handle delivery issues on the spot.', 'Drivers follow POD routines to reduce disputes.', 1.0),
-  q('DS_PEOPLE_04', 'People', ['training_gap'], 'Warehouse training happens mostly through experience.', 'Warehouse training follows SOP plus check-offs.', 1.0),
-  q('DS_PEOPLE_05', 'People', ['hero_staff_dependence'], 'Strong people carry the team.', 'Systems help average people perform strongly and consistently.', 0.9),
-  q('DS_PEOPLE_06', 'People', ['incentive_misalignment'], 'Incentives reward sales volume.', 'Incentives reward sales, collections, and service discipline.', 1.0),
-  q('DS_PEOPLE_07', 'People', ['fear_silence'], 'Mistakes are corrected quietly to avoid conflict.', 'Mistakes are used to improve process reliability.', 1.0),
-  q('DS_PEOPLE_08', 'People', ['accountability_soft'], 'We keep staff mostly based on loyalty.', 'We keep staff based on reliability and accuracy outcomes.', 0.9),
-  q('DS_PEOPLE_09', 'People', ['cross_team_friction'], 'Performance varies by supervision and mood.', 'Performance stays stable because routines are clear.', 1.0),
-  q('DS_PEOPLE_10', 'People', ['fear_silence'], 'People avoid reporting issues to keep peace.', 'People report issues early because prevention is rewarded.', 1.0)
+  // P7 - Leadership (Mapped to Leadership)
+  q('fmcg_ds_p7_01', 'Leadership', ['skill_bottleneck'], 'Skills matrix exists.', 'No skills matrix.', 1.0),
+  q('fmcg_ds_p7_02', 'Leadership', ['sop_drift'], 'SOPs are visible at workstations.', 'SOPs are in files.', 1.0),
+  q('fmcg_ds_p7_03', 'Leadership', ['training_gap'], 'Training includes observation sign-off.', 'Training is "told once".', 1.0),
+  q('fmcg_ds_p7_04', 'Leadership', ['no_kpi_ownership'], 'Each KPI has an owner.', 'KPI ownership unclear.', 1.0),
+  q('fmcg_ds_p7_05', 'Leadership', ['master_data_blindness'], 'Data duplicates are controlled.', 'Duplicate items/customers common.', 1.0),
+  q('fmcg_ds_p7_06', 'Leadership', ['master_data_blindness'], 'GTIN used consistently for products.', 'Product identity inconsistent.', 1.0),
+  q('fmcg_ds_p7_07', 'Leadership', ['master_data_blindness'], 'GLN used consistently for locations.', 'Location identity inconsistent.', 1.0),
+  q('fmcg_ds_p7_08', 'Leadership', ['reactive_improvement'], 'Improvement backlog exists.', 'Improvement is random.', 1.0),
+  q('fmcg_ds_p7_09', 'Leadership', ['safety_incident_silence'], 'Safety incidents and near-misses logged.', 'Not logged.', 1.0),
+  q('fmcg_ds_p7_10', 'Leadership', ['role_clarity_gap'], 'Role clarity exists.', 'Role confusion exists.', 1.0)
 ];

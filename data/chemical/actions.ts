@@ -1,130 +1,77 @@
+import { ActionDefinition } from '../../types/report';
 
-import { SignalTag } from '../../types';
-
-export const actions = {
-    // P1: Risk
-    batch_trace_drill: {
-        title: 'Traceability Drill',
-        description: 'Trace a batch to raw material lots and customers in <30 mins.',
-        link: '#',
-        days: 7,
-        pillar: 'Risk',
-        signal_tags: ['traceability_blackout', 'audit_panic_premium'] as SignalTag[]
-    },
-    sds_label_sync: {
-        title: 'SDS/Label Sync',
-        description: 'Create single source of truth for SDS and labels; check top 20 SKUs.',
-        link: '#',
-        days: 7,
-        pillar: 'Risk',
-        signal_tags: ['label_drift_penalty', 'sds_scramble_cost'] as SignalTag[]
-    },
-
-    // P2: Innovation
-    master_formula_lock: {
-        title: 'Master Formula Cards',
-        description: 'Lock top SKUs with printed cards (sequence, hold points); no verbal recipes.',
-        link: '#',
-        days: 7,
-        pillar: 'Innovation',
-        signal_tags: ['recipe_drift', 'batch_lottery'] as SignalTag[]
-    },
-    qc_gate_fill: {
-        title: 'Pre-Fill QC Gate',
-        description: 'Implement mandatory QC check (pH/viscosity) before filling starts.',
-        link: '#',
-        days: 7,
-        pillar: 'Innovation',
-        signal_tags: ['qc_at_the_end_trap', 'rework_spiral'] as SignalTag[]
-    },
-
-    // P3: Market
-    lead_time_publish: {
-        title: 'Standard Lead Times',
-        description: 'Publish standard lead times and stop "special promise" chaos.',
-        link: '#',
-        days: 7,
-        pillar: 'Market',
-        signal_tags: ['promise_reality_gap', 'channel_chaos_tax'] as SignalTag[]
-    },
-    credit_hold_fast: {
-        title: 'Credit Hold Enforcement',
-        description: 'Freeze orders for chronic overdue accounts immediately.',
-        link: '#',
-        days: 7,
-        pillar: 'Market',
-        signal_tags: ['credit_fueled_growth_trap', 'cash_hostage_customers'] as SignalTag[]
-    },
-
-    // P4: Leadership
-    cost_to_serve_top20: {
-        title: 'Cost-to-Serve Analysis',
-        description: 'Analyze top 20 customers for hidden costs (freight, returns, discounts).',
-        link: '#',
-        days: 7,
-        pillar: 'Leadership',
-        signal_tags: ['margin_evaporation', 'claims_eat_profit'] as SignalTag[]
-    },
-    discount_freeze: {
-        title: 'Discount Freeze',
-        description: 'Stop all discretionary discounts below margin floor.',
-        link: '#',
-        days: 7,
-        pillar: 'Leadership',
-        signal_tags: ['discount_drift', 'volume_trap'] as SignalTag[]
-    },
-
-    // P5: Operations
-    downtime_log_start: {
-        title: 'Downtime Log',
-        description: 'Start logging downtime reason codes; fix top #1 in 7 days.',
-        link: '#',
-        days: 7,
-        pillar: 'Operations',
-        signal_tags: ['micro_stoppage_tax', 'downtime_theft'] as SignalTag[]
-    },
-    changeover_std: {
-        title: 'Standard Changeover',
-        description: 'Checklist for cleaning verification and restart checks.',
-        link: '#',
-        days: 7,
-        pillar: 'Operations',
-        signal_tags: ['changeover_bleed', 'contamination_roulette'] as SignalTag[]
-    },
-
-    // P6: Money
-    cycle_count_crit: {
-        title: 'Critical Cycle Count',
-        description: 'Count top 20 raw materials and packaging; correct errors.',
-        link: '#',
-        days: 7,
-        pillar: 'Money',
-        signal_tags: ['inventory_fiction', 'packaging_choke'] as SignalTag[]
-    },
-    reorder_triggers: {
-        title: 'Min/Max Triggers',
-        description: 'Set simple reorder points for "line-stopper" items.',
-        link: '#',
-        days: 7,
-        pillar: 'Money',
-        signal_tags: ['stop_start_tax', 'emergency_buy_premium'] as SignalTag[]
-    },
-
-    // P7: People
-    safety_walk_fix: {
-        title: 'Hazard Hunt',
-        description: 'Walk floor, find top 10 hazards (labeling, spills), fix immediately.',
-        link: '#',
-        days: 7,
-        pillar: 'People',
-        signal_tags: ['safety_under_pressure_slip', 'spill_bleed'] as SignalTag[]
-    },
-    stop_escalate_rule: {
-        title: 'Stop & Escalate',
-        description: 'Authorize any operator to stop for safety/spill risks.',
-        link: '#',
-        days: 7,
-        pillar: 'People',
-        signal_tags: ['incident_downtime_tax', 'waste_blindness'] as SignalTag[]
-    }
+export const CHEMICAL_ACTIONS = {
+    snippets: [
+        {
+            action_id: 'chem_gold_sample',
+            title: "Create 'Golden Sample' Bank",
+            type: 'standardization',
+            industry: 'chemical',
+            line_type: ['Chemical / Light Industrial'],
+            text: "Keep a 100ml retained sample of every batch. Label it with Batch ID. If a client claims 'bad quality', test the sample.",
+            days: 7,
+            effort: 'L',
+            pillar: 'Market',
+            signal_tags: ['claims_leakage', 'channel_trust_leak']
+        },
+        {
+            action_id: 'chem_mass_balance',
+            title: "Daily Mass Balance Check",
+            type: 'financial',
+            industry: 'chemical',
+            line_type: ['Chemical / Light Industrial'],
+            text: "Compare Total Input Kg vs. Total Output Kg (Finished + Waste) for one week. Find the missing %. ",
+            days: 7,
+            effort: 'M',
+            pillar: 'Money',
+            signal_tags: ['hidden_yield_loss', 'yield_illusion']
+        },
+        {
+            action_id: 'chem_batch_record',
+            title: "Lock the Batch Record",
+            type: 'process',
+            industry: 'chemical',
+            line_type: ['Chemical / Light Industrial'],
+            text: "Print the recipe. Operators must sign off each step (Order of Addition) as they do it. No sign, no next step.",
+            days: 7,
+            effort: 'M',
+            pillar: 'Operations',
+            signal_tags: ['operator_process_drift']
+        }
+    ],
+    fixPlans7Day: [
+        {
+            id: 'chem_7day_stabilize',
+            title: '7-Day Stability & Yield Protocol',
+            description: 'Stop the bleeding from inconsistent batches and unknown yield loss.',
+            pillar: 'Operations',
+            steps: [
+                { day: 1, action: "Mass Balance Setup: Measure exactly what enters the mixer vs. what goes into pails." },
+                { day: 2, action: "Recipe Lock: Print physical batch sheets. Explicit 'Order of Addition' steps." },
+                { day: 3, action: "Retain Bank: Start keeping one jar from every batch for liability protection." },
+                { day: 4, action: "Label Audit: Check your top 3 sellers against GHS/Local compliance rules." },
+                { day: 5, action: "Waste Bin Check: Weigh the waste. If you don't weigh it, you can't reduce it." },
+                { day: 6, action: "Operator Brief: Explain that 'creative cooking' is over. Follow the sheet." },
+                { day: 7, action: "Yield Review: Calculate the variance for the week. Set the new baseline." }
+            ],
+            time_to_value: 7,
+            signal_tag: 'hidden_yield_loss'
+        }
+    ],
+    fixPlans30Day: [
+        {
+            id: 'chem_30day_sku_rationalize',
+            title: '30-Day Formulation & SKU Cleanup',
+            description: 'Remove complexity that does not pay rent. Focus on high-margin volume.',
+            pillar: 'Innovation',
+            steps: [
+                { week: 1, action: "Tail Analysis: List all products by Volume and Margin. Identify the bottom 20%." },
+                { week: 2, action: "Kill Candidate Review: Can we migrate customers to a standard product? If yes, plan it." },
+                { week: 3, action: "Formula Standardization: Merge similar recipes. Reduce raw material variety." },
+                { week: 4, action: "The Cut: Inform sales/customers of discontinuation. Free up the warehouse." }
+            ],
+            time_to_value: 30,
+            signal_tag: 'sku_complexity_tax'
+        }
+    ]
 };

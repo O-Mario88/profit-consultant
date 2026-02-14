@@ -5,6 +5,12 @@ import {
   normalizePillar,
   searchKnowledgeBase
 } from './knowledge-base.js';
+import {
+  formatRoleRoutingBlock,
+  getRoleWeightForPillar,
+  resolveRoleRouting,
+  sortPillarsByScoreAndRoleWeight
+} from './title-routing.js';
 
 const QUICK_REPORT_MODEL = process.env.OPENAI_REPORT_MODEL || process.env.OPENAI_FINE_TUNED_MODEL || 'gpt-4o-mini';
 const DEEP_SCAN_MODEL = process.env.OPENAI_DEEP_SCAN_MODEL || QUICK_REPORT_MODEL;
@@ -233,15 +239,22 @@ const searchCategory = ({
 const collectPillarEvidenceBundle = ({
   kb,
   profile,
+  roleRouting,
   pillar,
   score,
   snippets = [],
   limitPerCategory = 3
 }) => {
+  const roleSearchTerms = Array.isArray(roleRouting?.searchTerms)
+    ? roleRouting.searchTerms.slice(0, 6).join(' ')
+    : '';
+
   const query = [
     profile?.industry || '',
     profile?.subIndustry || '',
     profile?.userTitle || '',
+    roleRouting?.familyLabel || '',
+    roleSearchTerms,
     profile?.country || '',
     profile?.regionGroup || '',
     pillar,
@@ -432,7 +445,7 @@ const formatDeepAnswers = (answers = []) =>
     .map((item, idx) => `${idx + 1}. ${sanitize(item?.pillar, 'General')} | Q: ${sanitize(item?.question)} | A: ${sanitize(item?.answer)}`)
     .join('\n');
 
-const profileContextBlock = (profile, archetype) => {
+const profileContextBlock = (profile, archetype, roleRouting) => {
   const goals = Array.isArray(profile?.goals) && profile.goals.length > 0 ? profile.goals.join(', ') : 'None provided';
   const channels = Array.isArray(profile?.salesChannels) && profile.salesChannels.length > 0
     ? profile.salesChannels.join(', ')
@@ -440,11 +453,13 @@ const profileContextBlock = (profile, archetype) => {
   const products = Array.isArray(profile?.products) && profile.products.length > 0
     ? profile.products.join(', ')
     : 'Not provided';
+  const roleBlock = formatRoleRoutingBlock(roleRouting);
 
   return [
     `- Business: ${sanitize(profile?.businessName, 'Unnamed Business')}`,
     `- Owner/Lead: ${sanitize(profile?.userName, 'Not provided')}`,
     `- Role/Title: ${sanitize(profile?.userTitle, 'Not provided')}`,
+    roleBlock,
     `- Industry: ${sanitize(profile?.industry, 'General')}`,
     `- Sub-industry/Species: ${sanitize(profile?.subIndustry, 'General')}`,
     `- Team size: ${sanitize(profile?.size, 'Unknown')}`,
@@ -579,6 +594,7 @@ export const generatePremiumQuickReport = async ({
   quickScanAnswers
 }) => {
   const kb = loadKnowledgeBase();
+  const roleRouting = resolveRoleRouting(profile?.userTitle || '');
   const pillars = scoreKeysToPillars(scores);
   const answerBuckets = buildAnswerBuckets(quickScanAnswers || {});
 
@@ -589,6 +605,7 @@ export const generatePremiumQuickReport = async ({
     const bundle = collectPillarEvidenceBundle({
       kb,
       profile,
+      roleRouting,
       pillar,
       score: pillarScore,
       snippets,
@@ -604,11 +621,7 @@ export const generatePremiumQuickReport = async ({
     38000
   );
 
-  const sortedWeakest = [...pillars].sort((a, b) => {
-    const scoreA = Number(scores?.[a.toLowerCase()] ?? scores?.[a] ?? 0);
-    const scoreB = Number(scores?.[b.toLowerCase()] ?? scores?.[b] ?? 0);
-    return scoreA - scoreB;
-  });
+  const sortedWeakest = sortPillarsByScoreAndRoleWeight(pillars, scores, roleRouting);
 
   const instructions = `
 You are a premium management consulting AI for Profit Driven Channel.
@@ -623,13 +636,16 @@ Return strict JSON only.
 
   const input = clampText(`
 CLIENT PROFILE
-${profileContextBlock(profile, archetype)}
+${profileContextBlock(profile, archetype, roleRouting)}
 
 PILLAR SCORES (0-100)
 ${JSON.stringify(scores || {}, null, 2)}
 
 WEAKEST PILLARS
 ${sortedWeakest.slice(0, 3).join(', ')}
+
+ROLE ROUTING SUMMARY
+${sanitize(roleRouting?.summary, 'No role routing summary available.')}
 
 ALL QUICK SCAN RESPONSES
 ${toKvpString(quickScanAnswers || {}) || '- No quick scan responses captured.'}
@@ -642,9 +658,10 @@ OUTPUT REQUIREMENTS
 - pillars: one entry per pillar with:
   - name
   - quickScan (70-120 words)
-  - deepDive.theory, diagnosis, psychology, financials, prescription.
+- deepDive.theory, diagnosis, psychology, financials, prescription.
 - each prescription must include clear 7-day stabilization and 30-day control actions.
 - each diagnosis must reference KPI movement and likely profit leak mechanism.
+- prioritize the most role-owned pillars first when sequencing actions.
   `.trim(), 52000);
 
   let parsed = null;
@@ -694,7 +711,9 @@ const groupDeepAnswersByPillar = (deepScanAnswers) => {
 const generateSinglePillarChapter = async ({
   openai,
   profile,
+  roleRouting,
   pillar,
+  pillarRoleWeight,
   score,
   band,
   quickInsight,
@@ -714,12 +733,13 @@ Return valid JSON only.
 
   const input = clampText(`
 CLIENT
-${profileContextBlock(profile, '')}
+${profileContextBlock(profile, '', roleRouting)}
 
 PILLAR
 - Name: ${pillar}
 - Score: ${score}/100
 - Band: ${sanitize(band, 'Unknown')}
+- Role ownership weight: ${Math.round((pillarRoleWeight || 0) * 100)} / 100
 
 CURRENT QUICK SCAN INSIGHT
 ${sanitize(quickInsight, 'No quick insight provided.')}
@@ -759,6 +779,7 @@ OUTPUT REQUIREMENTS
 const generateExecutiveSummary = async ({
   openai,
   profile,
+  roleRouting,
   pillarScores,
   chapterDrafts,
   quickScanResponses,
@@ -777,7 +798,10 @@ Return JSON only.
 
   const input = clampText(`
 CLIENT PROFILE
-${profileContextBlock(profile, '')}
+${profileContextBlock(profile, '', roleRouting)}
+
+ROLE ROUTING SUMMARY
+${sanitize(roleRouting?.summary, 'No role routing summary available.')}
 
 PILLAR SCORES
 ${JSON.stringify(pillarScores, null, 2)}
@@ -822,6 +846,7 @@ export const generatePremiumDeepScanReport = async ({
 }) => {
   const kb = loadKnowledgeBase();
   const profile = quickScanReport?.profileContext || {};
+  const roleRouting = resolveRoleRouting(profile?.userTitle || '');
   const quickScanResponses = quickScanReport?.quickScanResponses || {};
 
   const quickAnswerBuckets = buildAnswerBuckets(quickScanResponses);
@@ -834,9 +859,16 @@ export const generatePremiumDeepScanReport = async ({
       canonical: canonicalFromReportPillar(pillar.name),
       score: Number(pillar.score || 0),
       band: sanitize(pillar.band, 'Unknown'),
-      quickInsight: sanitize(pillar?.quickScanAnalysis?.insight, pillar.hiddenCost || '')
+      quickInsight: sanitize(pillar?.quickScanAnalysis?.insight, pillar.hiddenCost || ''),
+      roleWeight: getRoleWeightForPillar(roleRouting, canonicalFromReportPillar(pillar.name))
     }))
-    .filter((item) => item.canonical);
+    .filter((item) => item.canonical)
+    .sort((left, right) => {
+      const leftPriority = left.score - left.roleWeight * 12;
+      const rightPriority = right.score - right.roleWeight * 12;
+      if (leftPriority !== rightPriority) return leftPriority - rightPriority;
+      return left.score - right.score;
+    });
 
   const chapters = {};
 
@@ -851,10 +883,11 @@ export const generatePremiumDeepScanReport = async ({
       const evidenceBundle = collectPillarEvidenceBundle({
         kb,
         profile,
+        roleRouting,
         pillar: item.canonical,
         score: item.score,
         snippets: combinedSnippets,
-        limitPerCategory: 4
+        limitPerCategory: item.roleWeight >= 0.95 ? 5 : 4
       });
 
       const knowledgeContext = clampText(
@@ -866,7 +899,9 @@ export const generatePremiumDeepScanReport = async ({
         const parsed = await generateSinglePillarChapter({
           openai,
           profile,
+          roleRouting,
           pillar: item.canonical,
+          pillarRoleWeight: item.roleWeight,
           score: item.score,
           band: item.band,
           quickInsight: item.quickInsight,
@@ -911,6 +946,7 @@ export const generatePremiumDeepScanReport = async ({
     executiveSummary = await generateExecutiveSummary({
       openai,
       profile,
+      roleRouting,
       pillarScores: requested.reduce((acc, item) => {
         acc[item.canonical] = item.score;
         return acc;
@@ -924,7 +960,15 @@ export const generatePremiumDeepScanReport = async ({
   }
 
   if (!executiveSummary) {
-    const weak = [...requested].sort((a, b) => a.score - b.score).slice(0, 2).map((p) => p.canonical);
+    const weak = [...requested]
+      .sort((a, b) => {
+        const aPriority = a.score - (a.roleWeight || 0) * 12;
+        const bPriority = b.score - (b.roleWeight || 0) * 12;
+        if (aPriority !== bPriority) return aPriority - bPriority;
+        return a.score - b.score;
+      })
+      .slice(0, 2)
+      .map((p) => p.canonical);
     executiveSummary = `The current operating risk is concentrated in ${weak.join(' and ')}. Immediate priority is a 7-day stabilization plan with named ownership, measurable controls, and weekly leadership review to prevent further margin leakage.`;
   }
 

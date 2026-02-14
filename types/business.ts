@@ -1,5 +1,25 @@
 import { PillarScores } from './core';
 
+export interface AdaptiveQuestionPair {
+    id: string;
+    textA: string;
+    textB: string;
+    metadataTag?: string;
+}
+
+export interface AdaptiveQuestionPillar {
+    id: string;
+    name: string;
+    legacyPillar?: string;
+    whyItMatters?: string;
+    qs4: AdaptiveQuestionPair[];
+    deepScan: AdaptiveQuestionPair[];
+}
+
+export interface AdaptiveQuestionBank {
+    pillars: AdaptiveQuestionPillar[];
+}
+
 export interface BusinessProfile {
     businessName: string;
     userName: string;
@@ -30,6 +50,9 @@ export interface BusinessProfile {
     salesChannels?: string[];
     paymentTerms?: string;
     complianceLevel?: 'informal' | 'basic' | 'audit-ready';
+    priority?: string;
+    assessmentQuestionSource?: 'static' | 'adaptive';
+    adaptiveQuestionBank?: AdaptiveQuestionBank;
 }
 
 export interface CompanyProfile {

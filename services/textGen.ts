@@ -1,5 +1,22 @@
 
-import { PillarStatus } from "../data/missionBriefLibrary";
+import type { PillarStatus } from "../data/missionBriefLibrary.ts";
+import { normalizeRole, BASE_ROLE_WEIGHTS } from "../data/roleWeights.ts";
+import type { RoleFamily } from "../data/roleWeights.ts";
+import { PRIORITY_BOOSTS } from "../data/priorityWeights.ts";
+import type { PillarId } from "../types/core.ts";
+
+// ... (Keep existing Type Definitions and Helpers if needed, or replace if V3 supersedes them)
+// Actually, looking at the file, the previous content was just `generateQuickScanAnalysis` and `generateDeepScanChapter`.
+// The user request implies `generateDiagnosticQuestions` is the target, which might be in a DIFFERENT file or implied to be here.
+// The file viewed `services/textGen.ts` DOES NOT contain `generateDiagnosticQuestions`. 
+// It contains `generateQuickScanAnalysis` and `generateDeepScanChapter`.
+// `generateDiagnosticQuestions` must be in `services/questionGeneration.ts` or similar? 
+// Or maybe I am supposed to CREATE it here. 
+// "Refactor generateDiagnosticQuestions (or create a new V3 function)."
+// If it's not here, I should check where it is.
+// But wait, the previous turn 14 said "Refactoring services/textGen.ts".
+// Let me check `services/ai.ts` or similar after this if I can't find it.
+// BUT, I will Add the new logic here as requested by the plan.
 
 type PillarDetail = {
   systemRole: string;
@@ -216,7 +233,6 @@ export const generateDeepScanChapter = (pillar: string, score: number, industry:
 
   return {
     theory: `### What ${detail.humanName} Really Controls
-
 ${detail.humanName} isn't just a department or a function — it governs ${detail.systemRole}. When it's healthy, decisions become repeatable, ownership is clear, and you can predict outcomes with confidence. When it breaks down, everything downstream suffers.
 
 ${industryLens}
@@ -269,3 +285,125 @@ ${score < 50 ? '**Target:** Reduce variance by 30% in 30 days.' : '**Target:** S
 Track ${detail.coreKpi} weekly. ${score < 50 ? 'Move from red to amber zone.' : 'Lock in green-zone performance.'} Review process adherence monthly. Expected ROI: 5–15% margin improvement in ${detail.humanName.toLowerCase()}-driven outcomes within 90 days.`
   };
 };
+
+// =============================================
+// MASTER PROMPT V3 LOGIC
+// =============================================
+
+export interface PromptInput {
+  industry: string;
+  subIndustry: string;
+  responderTitle: string;
+  priority: string;
+  department?: string;
+  secondaryPriorities?: string;
+  variant?: string;
+  complianceMode?: string;
+  size?: string;
+  region?: string;
+  vocabularyList?: string;
+}
+
+const PILLARS_ORDER: PillarId[] = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'];
+
+export const calculatePillarDepths = (title: string, priority: string): Record<PillarId, 'QS4+DS20' | 'QS4+DS10' | 'QS4'> => {
+  // Step A: Role Ownership
+  const roleFamily = normalizeRole(title || 'Executive');
+  const baseWeights = BASE_ROLE_WEIGHTS[roleFamily];
+
+  // Step B: Priority Boosts
+  const boosts = PRIORITY_BOOSTS[priority] || {};
+
+  // Calculate Final Weights
+  const finalWeights = PILLARS_ORDER.map(pillar => {
+    const base = baseWeights[pillar] || 3;
+    const boost = boosts[pillar] || 0;
+    return { pillar, weight: base + boost };
+  });
+
+  // Rank Pillars
+  finalWeights.sort((a, b) => b.weight - a.weight);
+
+  // Step C: Depth Rules
+  const depths: Record<PillarId, 'QS4+DS20' | 'QS4+DS10' | 'QS4'> = {} as any;
+
+  finalWeights.forEach((item, index) => {
+    if (index < 3) {
+      depths[item.pillar] = 'QS4+DS20';
+    } else if (index < 5) {
+      depths[item.pillar] = 'QS4+DS10';
+    } else {
+      depths[item.pillar] = 'QS4';
+    }
+  });
+
+  return depths;
+};
+
+export const generateMasterPromptV3 = (input: PromptInput): string => {
+  const depths = calculatePillarDepths(input.responderTitle, input.priority);
+
+  return `
+You are an expert industrial psychologist and operations consultant scanning a business for profit leaks.
+Generate a diagnostic assessment using the Master Prompt v3 logic.
+
+1) INPUTS
+Industry: ${input.industry}
+Sub-Industry: ${input.subIndustry}
+Responder Title: ${input.responderTitle}
+${input.department ? `Responder Department: ${input.department}` : ''}
+Primary Priority Goal: ${input.priority}
+${input.secondaryPriorities ? `Secondary Priorities: ${input.secondaryPriorities}` : ''}
+${input.variant ? `Business Variant: ${input.variant}` : ''}
+${input.complianceMode ? `Compliance Mode: ${input.complianceMode}` : ''}
+${input.size ? `Company Size: ${input.size}` : ''}
+${input.region ? `Region/Market Context: ${input.region}` : ''}
+${input.vocabularyList ? `Sub-Industry Vocabulary Injector: ${input.vocabularyList}` : ''}
+
+2) NON-NEGOTIABLE RULES
+- No generic questions. Use sub-industry reality.
+- Role relevance filter: Ask only what ${input.responderTitle} can reasonably know/control.
+- Priority alignment: At least 60% of Deep Scan items must directly drive "${input.priority}".
+- A/B pairs must be balanced (no obvious "good vs bad").
+- Operational truth over opinions.
+- Global audience language.
+
+3) THE 7 PILLARS & DISPLAY DEPTH
+Based on the Role and Priority, here is the required depth for each pillar:
+
+${Object.entries(depths).map(([pillar, depth]) => `- ${pillar}: ${depth}`).join('\n')}
+
+4) OUTPUT FORMAT (Produce valid JSON)
+Returns a JSON object with this structure:
+{
+  "header": {
+    "title": "Assessment for ${input.subIndustry} - ${input.responderTitle}",
+    "intro": "...",
+    "top3Pillars": ["Pillar1", "Pillar2", "Pillar3"],
+    "narrative": "One sentence on why these matter..."
+  },
+  "pillarBlocks": [
+    {
+      "pillarId": "Operations",
+      "whyItMatters": "...",
+      "qs4": [
+        { "id": "q1", "textA": "...", "textB": "..." },
+        ...
+      ],
+      "deepScan": [ ... ] (10 or 20 questions based on depth)
+    }
+    ...
+  ],
+  "resultsSummary": {
+    "strengths": ["...", ...],
+    "improvements": ["...", ...],
+    "leaks": ["...", ...]
+  },
+  "actionPlans": {
+    "stabilize7Day": ["Day 1-7 plan..."],
+    "build30Day": ["Week 1-4 plan..."]
+  }
+}
+`;
+};
+

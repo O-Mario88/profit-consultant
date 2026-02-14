@@ -14,7 +14,7 @@ import {
 import { STRENGTHS_PROXY_QUESTIONS } from '../data/strengths/proxyQuestions';
 import { CLIFTON_THEMES, STRENGTHS_LEAK_MAP, DOMAIN_BUSINESS_MAP } from '../data/strengths/themes';
 import { DepartmentId } from '../types/department';
-import { PillarScores } from '../types/core';
+import { PillarScores } from '../types/core.ts';
 
 // ─── Constants ───
 

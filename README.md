@@ -25,10 +25,13 @@ All marketplace/course/consultant/blog/ad-management surfaces were removed.
    - `OPENAI_API_KEY=...`
    - Note: `GEMINI_API_KEY` is legacy and is not used by this build.
    - Optional: `API_PORT=8787`
-   - Optional: `OPENAI_REPORT_MODEL=gpt-5.2-mini`
-   - Optional: `OPENAI_DEEP_SCAN_MODEL=gpt-5.2-mini`
+   - Optional: `OPENAI_REPORT_MODEL=gpt-4o-mini`
+   - Optional: `OPENAI_DEEP_SCAN_MODEL=gpt-4o-mini`
+   - Optional: `OPENAI_ASSESSMENT_MODEL=gpt-4o`
    - Optional: `OPENAI_FINE_TUNED_MODEL=<ft-model-id>`
    - Optional: `OPENAI_VECTOR_STORE_ID=<vs-id>`
+   - Optional: `API_RATE_MAX=120`
+   - Optional: `API_RATE_WINDOW_MS=60000`
 4. Run frontend + backend together:
    `npm run dev:all`
 5. Run only the frontend (if backend is already running):
@@ -45,8 +48,14 @@ The app now uses a server-only AI pipeline:
 - `POST /api/ai/chat/completions`
 - `POST /api/ai/images/generate`
 - `POST /api/ai/models/generate-content`
+- `POST /api/ai/knowledge/search`
 - `POST /api/ai/report/generate`
 - `POST /api/ai/report/deep-scan`
+- `POST /api/assessment/quick-scan`
+- `POST /api/assessment/deep-scan`
+- `POST /api/assessment/full-report`
+- `POST /api/assessment/adaptive`
+- `POST /api/assessment/adaptive/questions`
 - `GET /api/ai/knowledge/status`
 - `GET /api/health`
 

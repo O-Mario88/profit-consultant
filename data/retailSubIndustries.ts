@@ -73,3 +73,19 @@ export const SPARE_PARTS_SUB_INDUSTRIES = [
   'Online-first (WhatsApp/Delivery)',
   'Garage-linked shop (attached to mechanic workshop)'
 ];
+
+export const PHARMACY_SUB_INDUSTRIES = [
+  'Community Pharmacy (Independent)',
+  'Retail Chain Pharmacy',
+  'Hospital Outpatient Pharmacy',
+  'Compounding Pharmacy',
+  'Specialty Pharmacy (Oncology/Fertility)',
+  'Online / Digital Pharmacy'
+];
+
+export const DRUG_SHOP_SUB_INDUSTRIES = [
+  'Drug Shop / Medicine Outlet',
+  'OTC Medicine Store',
+  'Patent Medicine Vendor (PMV)',
+  'Chemist (Non-Pharmacy)'
+];

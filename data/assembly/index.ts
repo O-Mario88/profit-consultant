@@ -1,30 +1,11 @@
-import { questions } from './questions';
-import { library } from './library';
-import { actions } from './actions';
-import {
-  ASSEMBLY_CLIFFHANGER_STARTERS,
-  ASSEMBLY_COST_FRAMING_STYLES,
-  ASSEMBLY_SIGNAL_INTELLIGENCE,
-  buildAssemblyCostNarrative,
-  buildAssemblyEvidencePrompt,
-  buildAssemblySymptom,
-  getAssemblySignalIntel
-} from './signalIntelligence';
-import { deriveAssemblyAutoTags } from './tagRules';
+import { QUESTIONS } from './questions';
+import { ASSEMBLY_LIBRARY, ASSEMBLY_MISSION_BRIEFS } from './library';
+import { ASSEMBLY_ACTIONS } from './actions';
 
 export const ASSEMBLY_PACK = {
-  questions,
-  library,
-  actions
+  questions: QUESTIONS,
+  library: [...ASSEMBLY_LIBRARY, ...ASSEMBLY_MISSION_BRIEFS],
+  actions: ASSEMBLY_ACTIONS
 };
 
-export {
-  ASSEMBLY_SIGNAL_INTELLIGENCE,
-  ASSEMBLY_COST_FRAMING_STYLES,
-  ASSEMBLY_CLIFFHANGER_STARTERS,
-  getAssemblySignalIntel,
-  buildAssemblySymptom,
-  buildAssemblyCostNarrative,
-  buildAssemblyEvidencePrompt,
-  deriveAssemblyAutoTags
-};
+export * from './reportHelpers';

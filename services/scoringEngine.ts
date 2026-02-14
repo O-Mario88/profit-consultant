@@ -1,4 +1,5 @@
 import { QuestionDefinition, SignalTag, PillarId } from '../types';
+import { PRIORITY_WEIGHTS } from '../data/priorityWeights';
 
 export interface SignalScore {
     tag: SignalTag;
@@ -49,7 +50,8 @@ export const SPECIES_WEIGHTS: Record<string, Record<PillarId, number>> = {
 export const calculateSignalScores = (
     answers: Record<string, number>, // qid -> answerIndex (0-4)
     questions: QuestionDefinition[],
-    species?: string
+    species?: string,
+    priority?: string
 ): { pillarResults: Record<PillarId, PillarResult>, signalScores: SignalScore[] } => {
 
     const pillarTotals: Record<string, { raw: number, min: number, max: number }> = {};
@@ -80,7 +82,12 @@ export const calculateSignalScores = (
         // Apply Species Weighting if applicable
         let signalMultiplier = 1.0;
         if (species && SPECIES_WEIGHTS[species] && SPECIES_WEIGHTS[species][question.pillar]) {
-            signalMultiplier = SPECIES_WEIGHTS[species][question.pillar];
+            signalMultiplier *= SPECIES_WEIGHTS[species][question.pillar];
+        }
+
+        // Apply Priority Weighting if applicable
+        if (priority && PRIORITY_WEIGHTS[priority] && PRIORITY_WEIGHTS[priority][question.pillar]) {
+            signalMultiplier *= PRIORITY_WEIGHTS[priority][question.pillar];
         }
 
         // LEAKS (Negative Values)

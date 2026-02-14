@@ -278,7 +278,7 @@ export const generateSignalBasedReport = async (
   const scopedQuestions = (relevantQuestions.length > 0 ? relevantQuestions : pack.questions)
     .filter(q => answers.hasOwnProperty(q.qid));
   // @ts-ignore
-  const { pillarResults, signalScores } = calculateSignalScores(answers, scopedQuestions);
+  const { pillarResults, signalScores } = calculateSignalScores(answers, scopedQuestions, undefined, profile.priority);
   const archetype = deriveSignalArchetype(pillarResults as Record<string, PillarResult>);
   const assemblyAutoTags = isAssemblyManufacturing ? deriveAssemblyAutoTags(signalScores) : [];
   const quickScanResponses = buildQuickScanResponseMap(scopedQuestions as QuestionDefinition[], answers);

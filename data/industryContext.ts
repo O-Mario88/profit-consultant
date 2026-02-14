@@ -1,7 +1,7 @@
 import { KPI } from "../types";
 import { ELECTRONICS_SHOP_SUB_INDUSTRIES, FASHION_SUB_INDUSTRIES, FMCG_SUB_INDUSTRIES, HARDWARE_SUB_INDUSTRIES, SPARE_PARTS_SUB_INDUSTRIES, STATIONERY_SUB_INDUSTRIES } from "./retailSubIndustries";
 
-export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'mining' | 'oil_gas_services' | 'produce' | 'other';
+export type IndustryKey = 'retail' | 'tech' | 'agriculture' | 'hospitality' | 'services' | 'transport' | 'rework_treadmill' | 'traceability_blackout' | 'revision_confusion' | 'board_layout_chaos' | 'eco_absorption' | 'first_article_skip_fee' | 'hold_pile_up' | 'manufacturing' | 'construction' | 'livestock' | 'aquaculture' | 'agro_processing' | 'mining' | 'oil_gas_services' | 'produce' | 'other';
 
 export interface Lexicon {
   customer: string;
@@ -160,6 +160,60 @@ export const FORESTRY_HOOKS: Record<string, string[]> = {
   ]
 };
 
+export const FURNITURE_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Your brand is 'premium', but your finish quality is a lottery.",
+    "You overpromise delivery and pay for it with your reputation.",
+    "Claims and returns are eating your margin alive."
+  ],
+  'Money': [
+    "You quote a profit, but rework and waste steal it before you ship.",
+    "Custom changes are 'free', turning you into the customer’s unpaid engineer.",
+    "Inventory is cash rotting in the form of offcuts and dead stock."
+  ],
+  'Operations': [
+    "Searching for tools and materials consumes your paid hours.",
+    "Bottlenecks in finishing are choking your entire factory.",
+    "Rework is the 'hidden factory' that produces nothing but cost."
+  ],
+  'People': [
+    "Quality depends on one 'hero' craftsman; when they are gone, you are in trouble.",
+    "Dust and mess are not just ugly; they are a health tax on your team.",
+    "Safety is a suggestion, not a standard."
+  ],
+  'Innovation': [
+    "You build custom 'prototypes' for every job instead of standard products.",
+    "Design mistakes are discovered on the shop floor, not on the drawing board."
+  ]
+};
+
+export const ASSEMBLY_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "Your 'pass' quality is someone else's 'fail'.",
+    "One escape erases ten perfect shipments.",
+    "You are the bank for your customers' inventory."
+  ],
+  'Money': [
+    "Yield loss is invisible money on the floor.",
+    "NRE is real work you are giving away for free.",
+    "Expedite fees are burning your margin."
+  ],
+  'Operations': [
+    "Tribal knowledge walks out the door every evening.",
+    "Rework is not production; it's a crime scene.",
+    "Searching for tools is the most expensive hobby."
+  ],
+  'People': [
+    "Training by shadowing is just copying bad habits.",
+    "ESD is invisible, but the failures are real.",
+    "Hero culture means your process is broken."
+  ],
+  'Innovation': [
+    "Change without control is just chaos.",
+    "No traceability means no defense."
+  ]
+};
+
 // Map industry ID to specific leak symptoms for Mission Brief
 export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   retail: ['stock-outs', 'shrinkage', 'expiry loss', 'supplier terms'],
@@ -185,7 +239,12 @@ export const INDUSTRY_LEAK_TOKENS: Record<string, string[]> = {
   beekeeping: ["Varroa", "Swarm Control", "Extraction Yield", "Queen Quality"],
   input_supply: ["Expired Stock", "Counterfeit", "Regulatory Fine", "Batch Traceability", "Credit Drift"],
   produce_aggregation: ["shrinkage", "rejected loads", "price volatility", "storage rot"],
-  forestry: ["stump_stack_leak", "grade_drift", "moisture_penalty", "conversion_bleed", "inventory_rot", "sort_failure"]
+  forestry: ["stump_stack_leak", "grade_drift", "moisture_penalty", "conversion_bleed", "inventory_rot", "sort_failure"],
+  furniture: ["finish redo", "callback bleed", "wood movement", "hardware choke", "dust debt", "cutlist chaos"],
+  assembly: ["inspection lottery", "revision roulette", "expedite burn", "nre giveaway", "wip swamp", "shortage spiral"],
+  supermarket: ["stockout ghost", "shelf price mismatch", "shrink normalization", "expiry waste", "queue churn"],
+  fmcg_wholesale: ["otif drift", "rebate fog", "perfect order gap", "aged stock", "route leakage"],
+  pharmacy: ["cold chain drift", "expiry profit leak", "claim rejection", "dispensing error", "counseling gap"]
 };
 
 export const INPUT_SUPPLY_HOOKS = {
@@ -238,6 +297,20 @@ export const FARM_MACHINERY_QUIZ_COPY = {
   surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes."
 };
 
+export const FURNITURE_QUIZ_COPY = {
+  welcomeTitle: "Furniture & Carpentry Audit",
+  welcomeSubtitle: "Identify profit leaks in design, production, and installation.",
+  surveyTitle: "Carpentry Shop Diagnostic",
+  surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes."
+};
+
+export const ASSEMBLY_WELCOME_COPY = {
+  welcomeTitle: "Assembly / OEM Audit",
+  welcomeSubtitle: "Identify profit leaks in EMS, box build, and cable assembly.",
+  surveyTitle: "Assembly/OEM Diagnostic",
+  surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes."
+};
+
 export const CROP_FARMING_QUIZ_COPY = {
   welcomeTitle: "Crop Profit & Yield Audit",
   welcomeSubtitle: "Identify hidden leaks in agronomy, post-harvest, and marketing.",
@@ -254,8 +327,6 @@ export const CATTLE_QUIZ_COPY = {
 
 export const SMALL_RUMINANTS_QUIZ_COPY = {
   welcomeTitle: "Sheep & Goat Profit Scan",
-  welcomeSubtitle: "Identify profit leaks in your flock management, market strategy, and feed costs.",
-  surveyTitle: "Small Ruminants Diagnostic",
   surveySubtitle: "Assess your 8 Pillars of Profitability in 5-7 minutes."
 };
 
@@ -265,6 +336,36 @@ export const FORESTRY_QUIZ_COPY = {
   surveyTitle: "Forestry Diagnostic",
   surveySubtitle: "Assess your 7 Pillars of Profitability in 5-7 minutes."
 };
+
+export const FMCG_HOOKS: Record<string, string[]> = {
+  'Market': [
+    "OTIF looks fine—until you measure 'Perfect Order'.",
+    "Rebate fog is silent margin theft.",
+    "Discount drift turns growth into fake profit."
+  ],
+  'Money': [
+    "Aged stock is cash handcuffed in a warehouse.",
+    "Credit without discipline is a slow bankruptcy.",
+    "Your P&L is lying if deductions aren’t tracked.",
+    "Cost-to-serve is the profit killer nobody invoices."
+  ],
+  'Operations': [
+    "Short shipments create long-term churn.",
+    "Pick errors become deductions—and deductions become culture.",
+    "Route leakage: your best customers are underserved while trucks chase noise.",
+    "Warehouse chaos becomes customer shortages."
+  ],
+  'Risk': [
+    "FEFO failure becomes expiry write-offs.",
+    "Backorders are a hidden tax on trust."
+  ],
+  'Leadership': [
+    "Master data mess = decision blindness.",
+    "Claims are profit leaving in slow motion."
+  ]
+};
+
+
 
 export const SMALL_RUMINANTS_HOOKS: Record<string, string[]> = {
   'Market': [
@@ -367,6 +468,18 @@ export const INDUSTRY_LEXICON_TOKENS: Record<string, Record<string, string>> = {
     'product': 'Timber / Log',
     'service': 'Harvest / Transport',
     'competitor': 'Other Mill'
+  },
+  'furniture': {
+    'customer': 'Client / Project',
+    'product': 'Unit / Piece',
+    'service': 'Joinery / Fit-out',
+    'competitor': 'Other Shop'
+  },
+  'assembly': {
+    'customer': 'Client / OEM',
+    'product': 'PCBA / Unit',
+    'service': 'Assembly',
+    'competitor': 'EMS / CM'
   }
 };
 
@@ -405,6 +518,21 @@ export const INDUSTRY_QUIZ_TOKENS: Record<string, Record<string, string>> = {
     'leak': 'Yield / Value Leak',
     'margin': 'Recovery Margin',
     'waste': 'Offcuts / Waste'
+  },
+  'furniture': {
+    'leak': 'Rework / Callback',
+    'margin': 'Job Margin',
+    'waste': 'Scrap / Offcuts'
+  },
+  'assembly': {
+    'leak': 'Rework / Yield Loss',
+    'margin': 'Program Margin',
+    'waste': 'Scrap / Attrition'
+  },
+  'retail': {
+    'leak': 'Shrink / Stockout',
+    'margin': 'Category Margin',
+    'waste': 'Expiry / Damage'
   }
 };
 
@@ -599,6 +727,26 @@ export const INDUSTRY_LEXICONS: Record<string, Lexicon> = {
     quality: 'grade/recovery',
     cash_risk: 'claims/rejects',
     staff: 'crew'
+  },
+  furniture: {
+    customer: 'client',
+    order: 'job/project',
+    delivery: 'install',
+    stock: 'materials',
+    lead: 'inquiry/tender',
+    quality: 'finish/fit',
+    cash_risk: 'callbacks/rework',
+    staff: 'craftsmen'
+  },
+  assembly: {
+    customer: 'client/OEM',
+    order: 'PO/build',
+    delivery: 'shipment',
+    stock: 'components/WIP',
+    lead: 'RFQ/quote',
+    quality: 'yield/IPC class',
+    cash_risk: 'excess inventory/RMA',
+    staff: 'operators/techs'
   }
 };
 
@@ -1128,15 +1276,8 @@ export const TEXTILE_HOOKS = {
   People: "Overtime Culture"
 };
 
-export const FURNITURE_HOOKS = {
-  Risk: "Warranty Factory",
-  Innovation: "Drawing Drift",
-  Market: "Quote Fog",
-  Leadership: "Busy-But-Broke Pricing",
-  Operations: "WIP Swamp",
-  Money: "Cash Locked in Wood",
-  People: "Skill Bottleneck"
-};
+// Duplicates removed
+
 
 export const METAL_HOOKS = {
   Risk: "Rework Factory",
@@ -1189,14 +1330,75 @@ export const WATER_HOOKS = {
 };
 
 export const CHEMICAL_HOOKS = {
-  Risk: "Compliance Fog",
-  Innovation: "Batch Lottery",
-  Market: "Channel Chaos Tax",
-  Leadership: "Margin Evaporation",
-  Operations: "Hidden Yield Loss",
-  Money: "Inventory Fiction",
-  People: "Spill Bleed"
+  Risk: [
+    "One mislabeled drum can trigger a site-wide recall.",
+    "You are one audit away from a shutdown.",
+    "Safety is a 'stop-work' authority, not a poster on the wall."
+  ],
+  Innovation: [
+    "You are running 'zombie formulas' that consume QC time but don't pay rent.",
+    "Single-source raw materials are a ticking time bomb."
+  ],
+  Market: [
+    "Your distributors are destroying your brand by storing your product wrong.",
+    "Without retained samples, every complaint becomes a credit note."
+  ],
+  Leadership: [
+    "Reactive scheduling is killing your OEE.",
+    "You are managing by 'urgent calls' instead of a production plan."
+  ],
+  Operations: [
+    "Operators are cooking by 'feel', not by the batch record.",
+    "Changeovers are the black hole where your capacity disappears."
+  ],
+  Money: [
+    "Invisible yield loss (evaporation, spills) is a tax on your net profit.",
+    "You are pricing based on volume, but compliance costs are eating the margin."
+  ],
+  People: [
+    "Safety shortcuts are normalized until someone gets hurt.",
+    "Hero operators define the quality; when they leave, quality leaves."
+  ]
 };
+
+export const CHEMICAL_QUIZ_COPY = {
+  Operations: {
+    detection: 'batch drift + manual "cooking"',
+    cost: 'rework, dead stock, and unpredictable consistency',
+    cliffhanger: 'Deep Scan will lock your Order of Addition and batch records.'
+  },
+  Money: {
+    detection: 'yield blindness + cogs fog',
+    cost: 'paying for raw materials that end up in the drain or evaporation',
+    cliffhanger: 'Deep Scan will install a Mass Balance audit to find the missing %.'
+  },
+  Market: {
+    detection: 'claim leakage + defenseless shipping',
+    cost: 'accepting returns because you have no retained sample to prove quality',
+    cliffhanger: 'Deep Scan will build your Golden Sample bank and claim defense wall.'
+  },
+  Leadership: {
+    detection: 'panic scheduling + reactive maintenance',
+    cost: 'fighting fires instead of optimizing the asset',
+    cliffhanger: 'Deep Scan will install a fixed production wheel and limit unplanned breaks.'
+  },
+  Innovation: {
+    detection: 'sku sprawl + substitution risk',
+    cost: 'warehouse full of slow movers and R&D stuck on maintenance',
+    cliffhanger: 'Deep Scan will rationalize your tail and qualify backup sources.'
+  },
+  Risk: {
+    detection: 'label/compliance debt + traceability blackout',
+    cost: 'fines, seizures, or recalls that could kill the company',
+    cliffhanger: 'Deep Scan will ensure GHS compliance and 4-hour traceability.'
+  },
+  People: {
+    detection: 'safety theater + hero reliance',
+    cost: 'one incident stops the plant; knowledge leaves with the operator',
+    cliffhanger: 'Deep Scan will build safety culture that stops work before accidents happen.'
+  }
+};
+
 
 export const OIL_GAS_HOOKS = {
   Risk: "Prequal Panic",
@@ -1322,43 +1524,7 @@ export const TEXTILE_QUIZ_COPY = {
   }
 };
 
-export const FURNITURE_QUIZ_COPY = {
-  Operations: {
-    detection: 'measurement and finishing flow breakdown',
-    cost: 'rework, material waste, and late-stage bottlenecks are stretching cycle time and delivery promises',
-    cliffhanger: 'Deep Scan will lock measurement discipline and finishing flow to stop deadline collapse.'
-  },
-  Money: {
-    detection: 'underpricing + hidden scope/cost leakage',
-    cost: 'good-looking jobs are losing margin through unpaid extras and weak cost visibility',
-    cliffhanger: 'Deep Scan will install job costing and change-order pricing so extra work becomes paid margin.'
-  },
-  Market: {
-    detection: 'spec confusion + weak referral reliability',
-    cost: 'trust declines when expectations drift and delivery communication is inconsistent',
-    cliffhanger: 'Deep Scan will deploy spec-pack and customer update routines to recover referrals and repeat demand.'
-  },
-  Leadership: {
-    detection: 'founder bottleneck + weak ownership cadence',
-    cost: 'approval drag and recurring mistakes are slowing workshop throughput',
-    cliffhanger: 'Deep Scan will assign stage owners and enforce root-cause closure on repeat failures.'
-  },
-  Innovation: {
-    detection: 'from-scratch dependency + weak modular design leverage',
-    cost: 'speed, consistency, and scalable margin are lost when standard components are absent',
-    cliffhanger: 'Deep Scan will create a modular core + premium upgrade model to raise speed and margin.'
-  },
-  Risk: {
-    detection: 'contract/documentation gaps + delivery damage exposure',
-    cost: 'disputes, remakes, and delayed payments are creating preventable cash shocks',
-    cliffhanger: 'Deep Scan will harden contract/change-order controls and delivery sign-off standards.'
-  },
-  People: {
-    detection: 'skill variance + informal apprenticeship handovers',
-    cost: 'quality depends on a few individuals and errors multiply during busy periods',
-    cliffhanger: 'Deep Scan will install training ladders, checklists, and handover discipline for stable output.'
-  }
-};
+// Duplicate removed
 
 export const METAL_QUIZ_COPY = {
   Operations: {

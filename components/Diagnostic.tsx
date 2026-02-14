@@ -12,6 +12,7 @@ import {
 import { Archetype, GeneratedReport, LeakIndices, BusinessProfile } from '../types';
 import { useLocalization } from '../contexts/LocalizationContext';
 import { generateStrategicReport, calculateLeakIndices, generateSignalBasedReport } from '../services/reportEngine';
+import { generateAdaptiveQuestionBank, AdaptiveQuestionBankResponse } from '../services/gemini';
 import { AGRO_PACK } from '../data/agro/index';
 import { AGRI_PACK } from '../data/agri';
 import { MINING_PACK } from '../data/mining';
@@ -66,6 +67,282 @@ interface ActiveQuestion {
    isGoalRelevant: boolean;
 }
 
+const LEGACY_PILLARS = ['Operations', 'Money', 'Market', 'Leadership', 'Innovation', 'Risk', 'People'] as const;
+type LegacyPillar = typeof LEGACY_PILLARS[number];
+type RoleFamilyId =
+   | 'executive'
+   | 'finance'
+   | 'hr'
+   | 'operations'
+   | 'quality'
+   | 'supply_chain'
+   | 'sales'
+   | 'engineering'
+   | 'pmo'
+   | 'it_data';
+
+const ADAPTIVE_PILLAR_TO_LEGACY: Record<string, typeof LEGACY_PILLARS[number]> = {
+   P1: 'Risk',
+   P2: 'Innovation',
+   P3: 'Market',
+   P4: 'Money',
+   P5: 'Operations',
+   P6: 'Leadership',
+   P7: 'People'
+};
+
+const PILLAR_NAME_ALIASES: Record<string, typeof LEGACY_PILLARS[number]> = {
+   engine: 'Operations',
+   fuel: 'Money',
+   voice: 'Market',
+   brain: 'Leadership',
+   pulse: 'Innovation',
+   shield: 'Risk',
+   tribe: 'People',
+   operations: 'Operations',
+   money: 'Money',
+   market: 'Market',
+   leadership: 'Leadership',
+   innovation: 'Innovation',
+   risk: 'Risk',
+   people: 'People',
+   'quality customer trust': 'Risk',
+   'engineering process design change control': 'Innovation',
+   'sales delivery customer experience': 'Market',
+   'finance pricing margin cashflow': 'Money',
+   'operations productivity flow': 'Operations',
+   'supply chain inventory vendor control': 'Leadership',
+   'people culture safety compliance continuous improvement': 'People'
+};
+
+const ROLE_ROUTING_RULES: Array<{ id: RoleFamilyId; titleKeywords: string[] }> = [
+   {
+      id: 'executive',
+      titleKeywords: [
+         'founder', 'co founder', 'owner', 'proprietor', 'managing director', 'ceo', 'chief executive',
+         'president', 'general manager', 'gm', 'business unit head', 'managing partner', 'chief of staff'
+      ]
+   },
+   {
+      id: 'finance',
+      titleKeywords: [
+         'cfo', 'chief financial', 'finance director', 'vp finance', 'controller', 'accountant', 'treasurer',
+         'fp a', 'financial analyst', 'credit manager', 'internal auditor', 'tax manager'
+      ]
+   },
+   {
+      id: 'hr',
+      titleKeywords: [
+         'chro', 'human resources', 'hr director', 'hr manager', 'head of people', 'people ops', 'talent acquisition',
+         'recruiter', 'learning and development', 'l and d', 'training manager', 'organizational development', 'hris'
+      ]
+   },
+   {
+      id: 'operations',
+      titleKeywords: [
+         'coo', 'chief operating', 'operations director', 'head of operations', 'plant manager', 'factory manager',
+         'production manager', 'production supervisor', 'shift lead', 'line leader', 'site manager'
+      ]
+   },
+   {
+      id: 'quality',
+      titleKeywords: [
+         'quality director', 'head of quality', 'quality manager', 'qa qc', 'quality assurance', 'quality control',
+         'regulatory affairs', 'compliance manager', 'qms manager', 'gmp manager', 'ehs', 'hse', 'safety officer'
+      ]
+   },
+   {
+      id: 'supply_chain',
+      titleKeywords: [
+         'cpo', 'chief procurement', 'supply chain director', 'head of supply chain', 'procurement manager',
+         'purchasing manager', 'buyer', 'sourcing specialist', 'supply planner', 'demand planner', 'logistics manager',
+         'warehouse manager', 'distribution manager', 'inventory controller'
+      ]
+   },
+   {
+      id: 'sales',
+      titleKeywords: [
+         'cro', 'chief revenue', 'sales director', 'vp sales', 'commercial director', 'head of sales', 'head of growth',
+         'business development', 'account manager', 'key account', 'channel manager', 'customer success', 'marketing manager'
+      ]
+   },
+   {
+      id: 'engineering',
+      titleKeywords: [
+         'cto', 'chief technology', 'engineering director', 'head of engineering', 'r and d', 'head of r and d',
+         'product director', 'engineering manager', 'process engineer', 'design engineer', 'test engineer', 'automation engineer'
+      ]
+   },
+   {
+      id: 'pmo',
+      titleKeywords: [
+         'program manager', 'project manager', 'pmo manager', 'delivery manager', 'implementation manager'
+      ]
+   },
+   {
+      id: 'it_data',
+      titleKeywords: [
+         'cio', 'it director', 'head of it', 'it manager', 'systems administrator', 'network engineer',
+         'cybersecurity', 'security analyst', 'data analyst', 'bi analyst', 'data engineer', 'erp administrator'
+      ]
+   }
+];
+
+const ROLE_PILLAR_WEIGHTS: Record<RoleFamilyId, Record<LegacyPillar, number>> = {
+   executive: { Operations: 3, Money: 3, Market: 3, Leadership: 3, Innovation: 3, Risk: 3, People: 3 },
+   finance: { Operations: 3, Money: 5, Market: 3, Leadership: 4, Innovation: 2, Risk: 2, People: 2 },
+   hr: { Operations: 4, Money: 2, Market: 2, Leadership: 2, Innovation: 3, Risk: 3, People: 5 },
+   operations: { Operations: 5, Money: 2, Market: 2, Leadership: 4, Innovation: 3, Risk: 4, People: 3 },
+   quality: { Operations: 4, Money: 2, Market: 2, Leadership: 3, Innovation: 4, Risk: 5, People: 3 },
+   supply_chain: { Operations: 3, Money: 4, Market: 2, Leadership: 5, Innovation: 2, Risk: 3, People: 2 },
+   sales: { Operations: 2, Money: 4, Market: 5, Leadership: 2, Innovation: 2, Risk: 3, People: 2 },
+   engineering: { Operations: 3, Money: 2, Market: 2, Leadership: 3, Innovation: 5, Risk: 4, People: 2 },
+   pmo: { Operations: 4, Money: 3, Market: 4, Leadership: 3, Innovation: 3, Risk: 3, People: 3 },
+   it_data: { Operations: 4, Money: 3, Market: 2, Leadership: 3, Innovation: 2, Risk: 2, People: 3 }
+};
+
+const normalizePillarKey = (value: string) =>
+   value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+const normalizeRoleText = (value: string) =>
+   value
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+const toLegacyPillar = (value: string): typeof LEGACY_PILLARS[number] => {
+   if (LEGACY_PILLARS.includes(value as any)) return value as typeof LEGACY_PILLARS[number];
+   const normalized = normalizePillarKey(value);
+   return PILLAR_NAME_ALIASES[normalized] || 'Operations';
+};
+
+const inferRoleFamilyFromTitle = (title: string): RoleFamilyId => {
+   const normalizedTitle = ` ${normalizeRoleText(title || '')} `;
+   if (!normalizedTitle.trim()) return 'executive';
+
+   let bestMatch: { id: RoleFamilyId; score: number } = { id: 'executive', score: 0 };
+   for (const family of ROLE_ROUTING_RULES) {
+      let score = 0;
+      for (const keyword of family.titleKeywords) {
+         const token = normalizeRoleText(keyword);
+         if (!token) continue;
+         if (normalizedTitle.includes(` ${token} `)) score += token.length > 5 ? 3 : 2;
+      }
+      if (score > bestMatch.score) {
+         bestMatch = { id: family.id, score };
+      }
+   }
+
+   return bestMatch.score > 0 ? bestMatch.id : 'executive';
+};
+
+const sequenceQuestionsByRole = (questions: ActiveQuestion[], userTitle: string): ActiveQuestion[] => {
+   const roleFamily = inferRoleFamilyFromTitle(userTitle);
+   const weights = ROLE_PILLAR_WEIGHTS[roleFamily] || ROLE_PILLAR_WEIGHTS.executive;
+
+   return questions
+      .map((question, index) => {
+         const mappedPillar = toLegacyPillar(question.pillar);
+         const roleWeight = weights[mappedPillar] || 1;
+         const goalWeight = question.isGoalRelevant ? 1 : 0;
+         return { question, index, roleWeight, goalWeight };
+      })
+      .sort((left, right) => {
+         if (right.roleWeight !== left.roleWeight) return right.roleWeight - left.roleWeight;
+         if (right.goalWeight !== left.goalWeight) return right.goalWeight - left.goalWeight;
+         return left.index - right.index;
+      })
+      .map((item) => item.question);
+};
+
+const buildAdaptiveVocabulary = (profile: BusinessProfile): string[] => {
+   const tokens: string[] = [];
+   const lexicon = INDUSTRY_LEXICONS[profile.industry] || INDUSTRY_LEXICONS.other;
+   if (lexicon) tokens.push(...Object.values(lexicon));
+   tokens.push(...(profile.subIndustry || '').split(/[^A-Za-z0-9]+/g));
+   tokens.push(...(profile.products || []));
+   tokens.push(...(profile.goals || []));
+
+   const seen = new Set<string>();
+   const cleaned: string[] = [];
+   for (const token of tokens) {
+      const trimmed = String(token || '').trim();
+      if (!trimmed || trimmed.length < 2) continue;
+      const key = trimmed.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      cleaned.push(trimmed);
+      if (cleaned.length >= 40) break;
+   }
+   return cleaned;
+};
+
+const parseAdaptiveQuickScan = (
+   response: AdaptiveQuestionBankResponse | null
+): { questions: ActiveQuestion[]; questionBank: BusinessProfile['adaptiveQuestionBank'] } | null => {
+   const pillars = response?.questionBank?.pillars;
+   if (!Array.isArray(pillars) || pillars.length === 0) return null;
+
+   const parsedPillars = pillars.map((pillar, pillarIdx) => {
+      const legacyPillar = toLegacyPillar(
+         pillar.legacyPillar || ADAPTIVE_PILLAR_TO_LEGACY[pillar.id] || pillar.name || 'Operations'
+      );
+
+      const qs4 = Array.isArray(pillar.qs4)
+         ? pillar.qs4
+            .filter((pair) => Boolean(pair?.textA) && Boolean(pair?.textB))
+            .map((pair, idx) => ({
+               id: pair.id || `${pillar.id}_QS_${idx + 1}`,
+               textA: pair.textA,
+               textB: pair.textB,
+               metadataTag: pair.metadataTag
+            }))
+         : [];
+
+      const deepScan = Array.isArray(pillar.deepScan)
+         ? pillar.deepScan
+            .filter((pair) => Boolean(pair?.textA) && Boolean(pair?.textB))
+            .map((pair, idx) => ({
+               id: pair.id || `${pillar.id}_DS_${idx + 1}`,
+               textA: pair.textA,
+               textB: pair.textB,
+               metadataTag: pair.metadataTag
+            }))
+         : [];
+
+      return {
+         id: pillar.id || `P${pillarIdx + 1}`,
+         name: pillar.name || `Pillar ${pillarIdx + 1}`,
+         legacyPillar,
+         whyItMatters: pillar.whyItMatters || '',
+         qs4,
+         deepScan
+      };
+   });
+
+   const questions: ActiveQuestion[] = [];
+   parsedPillars.forEach((pillar) => {
+      pillar.qs4.forEach((pair, idx) => {
+         questions.push({
+            id: pair.id || `${pillar.id}_QS_${idx + 1}`,
+            pillar: pillar.legacyPillar || 'Operations',
+            a: pair.textA,
+            b: pair.textB,
+            isSwapped: false,
+            isGoalRelevant: true
+         });
+      });
+   });
+
+   if (questions.length === 0) return null;
+   return {
+      questions,
+      questionBank: { pillars: parsedPillars }
+   };
+};
+
 // -- 5-Point Scale Definition --
 const LEANING_SCALE = [
    { value: 1, label: "Strongly A", color: "bg-indigo-600" },
@@ -118,6 +395,7 @@ const getIcon = (name: string) => {
 const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }) => {
    const { t, locale } = useLocalization();
    const [step, setStep] = useState<Step>('setup');
+   const stepRef = useRef<Step>('setup');
 
    // Assessment State
    const [questionIndex, setQuestionIndex] = useState(0);
@@ -153,6 +431,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
    // Logic Engine
    const [sessionQuestions, setSessionQuestions] = useState<ActiveQuestion[]>([]);
+   const [assessmentQuestionSource, setAssessmentQuestionSource] = useState<'static' | 'adaptive'>('static');
+   const [adaptiveQuestionBank, setAdaptiveQuestionBank] = useState<BusinessProfile['adaptiveQuestionBank'] | undefined>(undefined);
    const [results, setResults] = useState<{
       scores: Record<string, number>;
       archetype: Archetype;
@@ -166,6 +446,10 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    const [strengthsAnswers, setStrengthsAnswers] = useState<number[]>([]);
    const [strengthsIndex, setStrengthsIndex] = useState(0);
    const [strengthsSkipped, setStrengthsSkipped] = useState(false);
+
+   useEffect(() => {
+      stepRef.current = step;
+   }, [step]);
 
    useEffect(() => {
       setBusinessProfile(prev => {
@@ -193,6 +477,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    // -- Initialization --
    useEffect(() => {
       if (!businessProfile.industry) return;
+      let cancelled = false;
 
       // 1. Build Quick Scan Questions
       let quickScanQs: ActiveQuestion[] = [];
@@ -577,8 +862,60 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
          }).filter(Boolean) as ActiveQuestion[];
       }
 
-      setSessionQuestions(quickScanQs);
-   }, [businessProfile.industry, businessProfile.subIndustry, businessProfile.goals]);
+      setAssessmentQuestionSource('static');
+      setAdaptiveQuestionBank(undefined);
+      setSessionQuestions(sequenceQuestionsByRole(quickScanQs, businessProfile.userTitle || ''));
+      setQuestionIndex(0);
+      setAnswers([]);
+
+      const loadAdaptiveQuestions = async () => {
+         if (!businessProfile.goals.length) return;
+
+         const payload = {
+            industry: businessProfile.industry,
+            subIndustry: businessProfile.subIndustry,
+            responderTitle: businessProfile.userTitle || 'Owner',
+            department: '',
+            primaryPriority: businessProfile.goals[0] || 'Increase profit margin',
+            secondaryPriorities: businessProfile.goals.slice(1),
+            variant: businessProfile.model || 'both',
+            complianceMode: businessProfile.complianceLevel || 'none',
+            size: businessProfile.size || 'unknown',
+            region: [businessProfile.country, businessProfile.regionGroup].filter(Boolean).join(' / ') || 'global',
+            vocabularyList: buildAdaptiveVocabulary(businessProfile)
+         };
+
+         const adaptiveResponse = await generateAdaptiveQuestionBank(payload);
+         if (cancelled) return;
+
+         const parsed = parseAdaptiveQuickScan(adaptiveResponse);
+         if (!parsed) return;
+         if (!['setup', 'intro'].includes(stepRef.current)) return;
+
+         setSessionQuestions(sequenceQuestionsByRole(parsed.questions, businessProfile.userTitle || ''));
+         setAssessmentQuestionSource('adaptive');
+         setAdaptiveQuestionBank(parsed.questionBank);
+         setQuestionIndex(0);
+         setAnswers([]);
+      };
+
+      void loadAdaptiveQuestions();
+
+      return () => {
+         cancelled = true;
+      };
+   }, [
+      businessProfile.industry,
+      businessProfile.subIndustry,
+      businessProfile.goals,
+      businessProfile.userTitle,
+      businessProfile.model,
+      businessProfile.complianceLevel,
+      businessProfile.size,
+      businessProfile.country,
+      businessProfile.regionGroup,
+      businessProfile.products
+   ]);
 
    // -- Handlers --
 
@@ -700,7 +1037,22 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       const isElectronicsRetail = ind === 'retail' && sub.startsWith('Electronics');
       const isFmcgRetail = ind === 'retail' && (sub.startsWith('Supermarket') || sub.startsWith('FMCG'));
 
-      if (isAgroProcessing) {
+      const isAdaptiveFlow = assessmentQuestionSource === 'adaptive';
+
+      if (isAdaptiveFlow) {
+         const answerMap: Record<string, string> = {};
+         finalAnswers.forEach((ans, idx) => {
+            const q = sessionQuestions[idx];
+            const answerText = ans === 1 ? `Strongly A: ${q.a}`
+               : ans === 2 ? `Leaning A: ${q.a}`
+                  : ans === 3 ? `Neutral`
+                     : ans === 4 ? `Leaning B: ${q.b}`
+                        : `Strongly B: ${q.b}`;
+            answerMap[q.pillar + " Question " + (idx + 1)] = answerText;
+         });
+
+         report = await generateStrategicReport(finalScores, archetype, businessProfile, answerMap, strengthsSkipped ? undefined : strengthsAnswers);
+      } else if (isAgroProcessing) {
          const agroAnswers: Record<string, number> = {};
          sessionQuestions.forEach((q, idx) => {
             agroAnswers[q.id] = finalAnswers[idx] - 1; // Convert 1-5 to 0-4
@@ -873,7 +1225,11 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
       }
 
       if (report) {
-         report.profileContext = businessProfile;
+         report.profileContext = {
+            ...businessProfile,
+            assessmentQuestionSource,
+            adaptiveQuestionBank: assessmentQuestionSource === 'adaptive' ? adaptiveQuestionBank : undefined
+         };
       }
       setGeneratedReport(report);
 
@@ -1265,6 +1621,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
    }
 
    if (step === 'intro') {
+      const quickScanCount = sessionQuestions.length || 14;
       return (
          <div className="min-h-screen bg-[#FAFAFB] flex items-center justify-center p-6 font-sans">
             <div className="max-w-xl w-full bg-white p-10 rounded-3xl shadow-xl text-center border border-gray-100 animate-fade-in-up">
@@ -1280,7 +1637,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
                <div className="flex flex-col gap-4 text-sm text-slate-500 bg-slate-50 p-6 rounded-xl border border-slate-100 mb-8 text-left">
                   <div className="flex items-center gap-3">
-                     <Clock className="w-5 h-5 text-slate-400" /> Takes about 2 minutes (14 questions)
+                     <Clock className="w-5 h-5 text-slate-400" /> Takes about 2-4 minutes ({quickScanCount} questions)
                   </div>
                   <div className="flex items-center gap-3">
                      <ShieldCheck className="w-5 h-5 text-slate-400" /> Results are private to you
@@ -1292,7 +1649,8 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onComplete, variant = 'owner' }
 
                <button
                   onClick={() => setStep('assessment')}
-                  className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-black transition-all shadow-lg hover:-translate-y-1"
+                  disabled={sessionQuestions.length === 0}
+                  className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-black transition-all shadow-lg hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-40"
                >
                   Start Assessment
                </button>

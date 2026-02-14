@@ -1,10 +1,10 @@
 
 import { questions } from './questions';
-import { library } from './library';
-import { actions } from './actions';
+import { FURNITURE_LIBRARY, FURNITURE_MISSION_BRIEFS } from './library';
+import { FURNITURE_ACTIONS } from './actions';
 
 export const FURNITURE_PACK = {
   questions,
-  library,
-  actions: Object.values(actions)
+  library: [...FURNITURE_LIBRARY, ...FURNITURE_MISSION_BRIEFS],
+  actions: FURNITURE_ACTIONS
 };

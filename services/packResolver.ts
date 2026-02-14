@@ -33,6 +33,7 @@ import { BEVERAGES_PACK } from "../data/beverages";
 import { SNACKS_PACK } from "../data/snacks";
 import { BUTCHERY_PACK } from "../data/butchery";
 import { CHEMICAL_PACK } from "../data/chemical";
+import { PHARMACY_PACK } from "../data/pharmacy";
 import {
     FNB_SUB_INDUSTRIES,
     TEXTILE_SUB_INDUSTRIES,
@@ -45,11 +46,13 @@ import {
     CHEMICAL_SUB_INDUSTRIES,
     ASSEMBLY_SUB_INDUSTRIES
 } from '../data/manufacturingSubIndustries';
+import { RETAIL_PACK } from '../data/retail';
 import {
     ELECTRONICS_SHOP_SUB_INDUSTRIES,
     FASHION_SUB_INDUSTRIES,
     FMCG_SUB_INDUSTRIES,
     HARDWARE_SUB_INDUSTRIES,
+    PHARMACY_SUB_INDUSTRIES,
     SPARE_PARTS_SUB_INDUSTRIES,
     STATIONERY_SUB_INDUSTRIES
 } from '../data/retailSubIndustries';
@@ -64,11 +67,13 @@ export interface IndustryFlags {
     isBricksManufacturing: boolean;
     isWaterManufacturing: boolean;
     isChemicalManufacturing: boolean;
+    isRetail: boolean;
     isFashionRetail: boolean;
     isHardwareRetail: boolean;
     isElectronicsRetail: boolean;
     isFmcgRetail: boolean;
     isStationeryRetail: boolean;
+    isPharmacy: boolean;
     isSparePartsRetail: boolean;
     isAssemblyManufacturing: boolean;
     isPiggery: boolean;
@@ -95,11 +100,13 @@ export const resolveIndustryFlags = (profile: BusinessProfile): IndustryFlags =>
     isBricksManufacturing: profile.industry === 'manufacturing' && BRICKS_SUB_INDUSTRIES.includes(profile.subIndustry),
     isWaterManufacturing: profile.industry === 'manufacturing' && WATER_SUB_INDUSTRIES.includes(profile.subIndustry),
     isChemicalManufacturing: profile.industry === 'manufacturing' && CHEMICAL_SUB_INDUSTRIES.includes(profile.subIndustry),
+    isRetail: profile.industry === 'retail',
     isFashionRetail: profile.industry === 'retail' && FASHION_SUB_INDUSTRIES.includes(profile.subIndustry),
     isHardwareRetail: profile.industry === 'retail' && HARDWARE_SUB_INDUSTRIES.includes(profile.subIndustry),
     isElectronicsRetail: profile.industry === 'retail' && ELECTRONICS_SHOP_SUB_INDUSTRIES.includes(profile.subIndustry),
     isFmcgRetail: profile.industry === 'retail' && FMCG_SUB_INDUSTRIES.includes(profile.subIndustry),
     isStationeryRetail: profile.industry === 'retail' && STATIONERY_SUB_INDUSTRIES.includes(profile.subIndustry),
+    isPharmacy: profile.industry === 'retail' && PHARMACY_SUB_INDUSTRIES.includes(profile.subIndustry),
     isSparePartsRetail: profile.industry === 'retail' && SPARE_PARTS_SUB_INDUSTRIES.includes(profile.subIndustry),
     isAssemblyManufacturing: profile.industry === 'manufacturing' && ASSEMBLY_SUB_INDUSTRIES.includes(profile.subIndustry),
     isAgriInput: profile.industry === 'agriculture' && profile.subIndustry.startsWith('Input supplier'),
@@ -153,7 +160,6 @@ export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFla
     if (flags.isExportProduce) return EXPORT_PRODUCE_PACK;
     if (flags.isStorageWarehousing) return STORAGE_WAREHOUSING_PACK;
     if (flags.isForestry) return FORESTRY_PACK;
-    if (flags.isForestry) return FORESTRY_PACK;
 
     // MINING
     if (profile.industry === 'mining') {
@@ -198,11 +204,21 @@ export const resolveIndustryPack = (profile: BusinessProfile, flags: IndustryFla
     if (flags.isElectronicsRetail) return ELECTRONICS_PACK;
     if (flags.isFmcgRetail) return FMCG_PACK;
     if (flags.isStationeryRetail) return STATIONERY_PACK;
+    if (flags.isPharmacy) return PHARMACY_PACK;
     if (flags.isSparePartsRetail) return SPARE_PARTS_PACK;
     if (flags.isAssemblyManufacturing) return ASSEMBLY_PACK;
     if (flags.isPiggery) return PIGGERY_PACK;
     if (flags.isPoultry) return POULTRY_PACK;
     if (flags.isDairy) return DAIRY_PACK;
+
+    // RETAIL / SUPERMARKET (Catch-all for other retail or specific Supermarket)
+    if (flags.isRetail) {
+        const sub = profile.subIndustry?.toLowerCase() || '';
+        if (sub.includes('supermarket') || sub.includes('grocery') || sub.includes('mini-mart') || sub.includes('general store')) {
+            return RETAIL_PACK;
+        }
+    }
+
     return PACK_BY_BASE_INDUSTRY[profile.industry] || AGRO_PACK;
 };
 
@@ -259,5 +275,9 @@ export const getWhyItMatters = (profile: BusinessProfile, flags: IndustryFlags):
         return 'Forestry profitability is decided by harvest planning discipline, recovery control, and market-aligned sorting.';
     if (flags.isChemicalManufacturing)
         return 'Chemical margin is protected by formula discipline, regulatory compliance speed, and yield-safe filling control.';
+    if (flags.isRetail) {
+        if (flags.isPharmacy) return "Pharmacy profit is protected by clinical trust, inventory discipline, and claim accuracy.";
+        return 'Retail profitability is decided by availability, shelf-price integrity, and disciplined cash and stock control.';
+    }
     return 'Agro-processing requires tight control of yield and flow.';
 };

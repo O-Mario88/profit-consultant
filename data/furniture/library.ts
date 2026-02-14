@@ -1,152 +1,345 @@
 
 import { LibraryItem, PillarId, SignalTag } from '../../types';
 
-const furnitureRows = [
-  // P1: Quality, Compliance & Safety Trust
+export const FURNITURE_LIBRARY: LibraryItem[] = [
+  // P1: Risk (Quality/Safety)
   {
-    pillar: 'Risk' as PillarId,
-    leak: 'Quality depends on a few "master craftsmen," so consistency drops when they’re absent.',
-    strength: 'You build quality into the process: measurable standards for dimensions, squareness, gaps, finish consistency, and hardware alignment.',
-    hook: 'Warranty Factory',
-    kpi: 'First-Pass Fit %, Callback Rate %, Rework Hours',
-    signal_tags: ['warranty_factory', 'finish_rework_spiral', 'wood_movement_surprise_tax', 'fitment_roulette', 'dust_debt_hazard', 'callback_bleed', 'spec_drift', 'hardware_misalignment_churn', 'compliance_fog', 'last_day_panic_sanding'] as SignalTag[],
-    cost: 'Free repairs and site callbacks dependably eat your margin.',
-    cliffhanger: 'Deep Scan will build a "first-pass fit" gate that stops defects leaving the shop.'
+    id: 'furn_strength_perfect_finish',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Risk',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme', 'enterprise'],
+    signal_tags: [],
+    text: "Finishing is flawless and consistent; 'Golden Samples' set the standard."
   },
-  // P2: Design, Estimation & Job Readiness
   {
-    pillar: 'Innovation' as PillarId, // Mapping Design/Engineering to Innovation
-    leak: 'Estimates are optimistic; cutlists/BOMs miss hardware, edging, or finishing costs.',
-    strength: 'Drawings/specs are clear: dimensions, tolerances, joinery type, hardware, finish system, edge treatment.',
-    hook: 'Drawing Drift',
-    kpi: 'Quote Accuracy %, Material Readiness %, Yield %',
-    signal_tags: ['drawing_drift', 'site_surprise_rebuild', 'bom_blind_spot', 'nesting_waste_tax', 'revision_chaos', 'job_readiness_debt', 'hardware_shortfall_stalls', 'quote_optimism_trap', 'spec_ambiguity_premium', 'offcut_graveyard'] as SignalTag[],
-    cost: 'You pay for "site surprises" and missing materials with rush shipping and overtime.',
-    cliffhanger: 'Deep Scan will install a "Ready-to-Start" gate that prevents half-baked jobs from hitting the floor.'
+    id: 'furn_leak_finish_rework',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Risk',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['solo', 'small_team', 'sme'],
+    signal_tags: ['finish_redo_bleed', 'finish_rework_spiral'],
+    text: "Finishing is the bottleneck; rework frequency is high due to dust or prep failures."
   },
-  // P3: Sales, Pipeline & Customer Experience
   {
-    pillar: 'Market' as PillarId,
-    leak: 'Quotes are unclear; customers compare you to cheaper "apples to oranges."',
-    strength: 'You respond fast with clear quotes and options (good/better/best).',
-    hook: 'Quote Fog',
-    kpi: 'Quote-to-Win %, Lead Response Time, Average Order Value',
-    signal_tags: ['lead_leak', 'quote_fog', 'scope_creep_politely_killing_margin', 'follow_up_gap', 'discount_drift', 'expectation_mismatch_tax', 'callback_reputation_bleed', 'free_design_work_sink', 'bargain_buyer_trap', 'handover_confusion'] as SignalTag[],
-    cost: 'You win "bargain buyers" who drain your time, while premium jobs slip away.',
-    cliffhanger: 'Deep Scan will build a "Scope Shield" into your quotes.'
+    id: 'furn_hook_quality_tax',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Risk',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['solo', 'small_team', 'sme'],
+    signal_tags: ['callback_spiral'],
+    text: "Quality Drift Tax"
   },
-  // P4: Pricing, Costing & Commercial Terms
   {
-    pillar: 'Leadership' as PillarId, // Mapping Pricing/Strategy to Leadership
-    leak: '"Competitive pricing" becomes underpricing; your best jobs feel busy but broke.',
-    strength: 'Pricing is based on real drivers: material, labor hours by operation, finishing, hardware, install.',
-    hook: 'Busy-But-Broke Pricing',
-    kpi: 'Gross Margin %, Change Order Recovery %, Deposit Collection Rate',
-    signal_tags: ['busy_but_broke_pricing', 'free_change_syndrome', 'warranty_trap', 'margin_evaporation_at_sanding', 'deposit_weakness_penalty', 'scope_creep_tax', 'discount_creep', 'hours_variance_blind_spot', 'material_cash_lock', 'quote_optimism'] as SignalTag[],
-    cost: 'You are financing your customers projects with your own cash flow.',
-    cliffhanger: 'Deep Scan will install a "Margin Floor" and Change Order triggers.'
+    id: 'furn_kpi_redo_rate',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Risk',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme', 'enterprise'],
+    signal_tags: [],
+    text: "Rework / Redo Rate % (Components rejected internal or external)."
   },
-  // P5: Production Execution & Delivery
+
+  // P2: Innovation (Design/Engineering)
   {
-    pillar: 'Operations' as PillarId,
-    leak: 'WIP piles up; deadlines are met with overtime and quality drops.',
-    strength: 'Workflows are visible: job routing, WIP limits, daily plan vs actual.',
-    hook: 'WIP Swamp',
-    kpi: 'OTIF %, Scrap %, Tool Downtime',
-    signal_tags: ['wip_swamp', 'scrap_cascade', 'tool_downtime_theft', 'finish_bottleneck_choke', 'damage_in_transit_tax', 'jigless_variation', 'rework_second_factory', 'rush_overtime_burn', 'dirty_shop_drag', 'late_stage_surprises'] as SignalTag[],
-    cost: 'Scrap, rework, and overtime are the "invisible factory" stealing your profit.',
-    cliffhanger: 'Deep Scan will set WIP limits and tool maintenance routines to smooth flow.'
+    id: 'furn_strength_standard_lib',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Innovation',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "We use a standard library of construction details; we leverage parametric design."
   },
-  // P6: Finance, Inventory & Control
   {
-    pillar: 'Money' as PillarId,
-    leak: 'Money is trapped in inventory and WIP; cash feels tight even when sales are high.',
-    strength: 'Inventory is visible: sheets, boards, hardware, finishes, adhesives—stock accuracy is high.',
-    hook: 'Cash Locked in Wood',
-    kpi: 'Cash Runway, Inventory Accuracy, Stockout Incidents',
-    signal_tags: ['cash_locked_in_wood', 'hardware_stockout_stalls', 'invisible_shrink', 'wip_money_pit', 'profit_blind_quoting', 'slow_moving_inventory_graveyard', 'overdue_cash_choke', 'scrap_money_leak', 'emergency_buying_premium', 'ghost_margin'] as SignalTag[],
-    cost: 'Your cash is sitting on the shelf or hidden in sawdust.',
-    cliffhanger: 'Deep Scan will build a "Cash Control Dashboard" for materials and WIP.'
+    id: 'furn_leak_custom_chaos',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Innovation',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    signal_tags: ['prototype_pollution', 'spec_drift'],
+    text: "Every job is re-engineered from scratch; we prototype on the client's time."
   },
-  // P7: People, Culture & Continuous Improvement
   {
-    pillar: 'People' as PillarId,
-    leak: 'Output depends on a few experts; skill bottlenecks block growth.',
-    strength: 'Skill matrices exist (cutting, edging, assemby, finishing, install) with cross-training plans.',
-    hook: 'Skill Bottleneck',
-    kpi: 'Training Completion %, Rework per Worker, 5S Score',
-    signal_tags: ['skill_bottleneck', 'search_and_move_tax', 'sop_drift', 'training_debt', 'supervisor_lottery', 'hidden_time_loss', 'near_miss_silence', 'quality_variation_tax', 'improvement_drought', 'clutter_drag'] as SignalTag[],
-    cost: 'When your best person is away, your quality and speed drop by 50%.',
-    cliffhanger: 'Deep Scan will build a "Skill Matrix" to de-risk your talent pool.'
+    id: 'furn_hook_drawing_drift',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Innovation',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['small_team'],
+    signal_tags: ['drawing_to_floor_drift'],
+    text: "Drawing-to-Floor Drift"
+  },
+  {
+    id: 'furn_kpi_eng_time',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Innovation',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Engineering Hours per $10k Revenue."
+  },
+
+  // P3: Market (Sales/CX)
+  {
+    id: 'furn_strength_scope_lock',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Market',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Scope is locked with visual sign-offs before materials are ordered."
+  },
+  {
+    id: 'furn_leak_scope_creep',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Market',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    signal_tags: ['scope_creep_creep', 'quote_illusion'],
+    text: "We allow scope creep without change orders; 'while you are here' kills margin."
+  },
+  {
+    id: 'furn_hook_trust_erosion',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Market',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['small_team'],
+    signal_tags: ['trust_erosion_fee'],
+    text: "Trust Erosion Fee"
+  },
+  {
+    id: 'furn_kpi_win_rate',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Market',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Quote Win Rate % (Qualified)."
+  },
+
+  // P4: Leadership (Pricing/Strategy)
+  {
+    id: 'furn_strength_true_cost',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Leadership',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "We know our true fully-burdened hourly rate and price accordingly."
+  },
+  {
+    id: 'furn_leak_volume_trap',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Leadership',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    signal_tags: ['volume_trap', 'busy_but_broke_pricing'],
+    text: "We chase volume to keep guys busy, often taking low-margin work that clogs the shop."
+  },
+  {
+    id: 'furn_hook_unpriced_complexity',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Leadership',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['small_team'],
+    signal_tags: ['unpriced_complexity'],
+    text: "Unpriced Complexity"
+  },
+  {
+    id: 'furn_kpi_gross_margin',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Leadership',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Realized Gross Margin % per Job."
+  },
+
+  // P5: Operations (Flow/Production)
+  {
+    id: 'furn_strength_kitted_flow',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Operations',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Jobs don't start until hardware and materials are kitted; flow is continuous."
+  },
+  {
+    id: 'furn_leak_bottleneck_choke',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Operations',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    signal_tags: ['bottleneck_choke', 'search_and_carry_tax'],
+    text: "Work stops constantly to look for parts, tools, or clarification; 'Stop-Start' kills momentum."
+  },
+  {
+    id: 'furn_hook_dust_debt',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Operations',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['small_team'],
+    signal_tags: ['dust_debt'],
+    text: "Dust Debt"
+  },
+  {
+    id: 'furn_kpi_otif',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Operations',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "OTIF % (On Time In Full)."
+  },
+
+  // P6: Money (Supply Chain/Inventory)
+  {
+    id: 'furn_strength_lean_stock',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Money',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Inventory is lean; offcuts are managed aggressively; consumables are on Kanban."
+  },
+  {
+    id: 'furn_leak_offcut_graveyard',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Money',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    signal_tags: ['offcut_graveyard', 'hardware_choke'],
+    text: "We store too much 'firewood' (offcuts) and run out of critical hardware (screws/hinges)."
+  },
+  {
+    id: 'furn_hook_hardware_choke',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Money',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['small_team'],
+    signal_tags: ['hardware_choke'],
+    text: "Hardware Choke"
+  },
+  {
+    id: 'furn_kpi_material_yield',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Money',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Material Yield % (Purchase vs Billable)."
+  },
+
+  // P7: People (Safety/Skills)
+  {
+    id: 'furn_strength_cross_trained',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'People',
+    type: 'strength',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Team is cross-trained; safety is a culture, not a checklist."
+  },
+  {
+    id: 'furn_leak_hero_dependency',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'People',
+    type: 'leak',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    signal_tags: ['hero_dependency_risk', 'injury_downtime_tax'],
+    text: "Shop stops if the lead carpenter is sick; injuries are seen as 'part of the job'."
+  },
+  {
+    id: 'furn_hook_injury_tax',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'People',
+    type: 'hook',
+    severity_fit: ['Watch'],
+    business_size_fit: ['small_team'],
+    signal_tags: ['injury_downtime_tax'],
+    text: "Injury Downtime Tax"
+  },
+  {
+    id: 'furn_kpi_safety_incidents',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'People',
+    type: 'kpi',
+    severity_fit: ['Strong'],
+    business_size_fit: ['sme'],
+    signal_tags: [],
+    text: "Days Since Last Incident."
   }
 ];
 
-const expandRows = (rows: typeof furnitureRows, prefix: string): LibraryItem[] => {
-  return rows.flatMap(row => {
-    const idBase = `${prefix}_${row.pillar.toUpperCase()}`;
-    return [
-      {
-        id: `${idBase}_LEAK`,
-        industry: 'furniture',
-        line_type: ['Furniture & carpentry'],
-        pillar: row.pillar,
-        signal_tags: row.signal_tags,
-        text: row.leak,
-        type: 'leak',
-        severity_fit: ['Critical', 'Stable'],
-        business_size_fit: ['small', 'medium', 'enterprise']
-      },
-      {
-        id: `${idBase}_STRENGTH`,
-        industry: 'furniture',
-        line_type: ['Furniture & carpentry'],
-        pillar: row.pillar,
-        signal_tags: row.signal_tags,
-        text: row.strength,
-        type: 'strength',
-        severity_fit: ['Stable'],
-        business_size_fit: ['small', 'medium', 'enterprise']
-      },
-      {
-        id: `${idBase}_HOOK`,
-        industry: 'furniture',
-        line_type: ['Furniture & carpentry'],
-        pillar: row.pillar,
-        signal_tags: row.signal_tags,
-        text: row.hook,
-        type: 'hook',
-        severity_fit: ['Critical', 'Stable'],
-        business_size_fit: ['small', 'medium', 'enterprise']
-      },
-      {
-        id: `${idBase}_KPI`,
-        industry: 'furniture',
-        line_type: ['Furniture & carpentry'],
-        pillar: row.pillar,
-        signal_tags: row.signal_tags,
-        text: row.kpi,
-        type: 'kpi',
-        severity_fit: ['Critical', 'Stable'],
-        business_size_fit: ['small', 'medium', 'enterprise']
-      }
-    ] as LibraryItem[];
-  });
-};
-
-const missionBriefs: LibraryItem[] = furnitureRows.map(row => ({
-  id: `MB_FURNITURE_${row.pillar.toUpperCase()}`,
-  industry: 'furniture',
-  line_type: ['Furniture & carpentry'],
-  pillar: row.pillar,
-  signal_tags: row.signal_tags,
-  type: 'mission_brief',
-  text: `{hook}: {leak} This is costing you {cost} {cliffhanger}`,
-  severity_fit: ['Critical', 'Stable'],
-  business_size_fit: ['small', 'medium', 'enterprise'],
-  hook_text: row.hook,
-  cost_text: row.cost,
-  cliffhanger_text: row.cliffhanger,
-  kpi_text: row.kpi
-}));
-
-export const library: LibraryItem[] = [...expandRows(furnitureRows, 'LIB_FURNITURE'), ...missionBriefs];
+export const FURNITURE_MISSION_BRIEFS: LibraryItem[] = [
+  {
+    id: 'mb_furn_dust_debt',
+    industry: 'furniture',
+    line_type: ['Furniture & Carpentry'],
+    pillar: 'Operations',
+    signal_tags: ['dust_debt', 'finish_redo_bleed'],
+    type: 'mission_brief',
+    severity_fit: ['Critical'],
+    business_size_fit: ['small_team', 'sme'],
+    text: "Dust isn't just dirty; it's expensive. It kills finishes, fires equipment, and slows down every movement.",
+    hook_text: "The Invisible Tax of a Dirty Shop",
+    cost_text: "$5,000 - $15,000 / year in rework & efficiency loss",
+    cliffhanger_text: "Clean shops ship faster. Here is how to kill the dust debt in 7 days...",
+    kpi_text: "Cleaning time vs. Rework time",
+    fix_task_ids: ['furn_dust_down', 'furn_golden_samples']
+  }
+];

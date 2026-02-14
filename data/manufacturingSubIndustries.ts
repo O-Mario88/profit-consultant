@@ -91,17 +91,17 @@ export const CHEMICAL_SUB_INDUSTRIES = [
 
 export const ASSEMBLY_SUB_INDUSTRIES = [
   'Assembly / OEM',
-  'Assembly / OEM (electronics, components)',
+  'Cable harness & wiring',
+  'Box build / final assembly',
+  'Electronics repair / refurb',
+  'Components assembly (electromechanical)',
+  'Automotive tier (IATF 16949 mode)',
+  'Medical tier (ISO 13485 mode)',
   'EMS Contract Manufacturer (PCBA + Box Build)',
-  'PCBA-Only (SMT + Reflow + AOI + Test)',
-  'Cable / Harness / Connector Assembly',
   'High-Mix Low-Volume Custom Builds (Industrial, Lab, Prototypes)',
   'White-Label / Multi-Variant OEM (Many clients, similar products)',
-  'Repair / Refurb / Rework Center (Reverse Logistics)',
   'Precision Electronics / Medical / High-Compliance Assembly',
   'Contract Electronics Assembly (EMS) — boards & devices',
   'Component Assembly OEM (connectors, harnesses, modules)',
-  'Final Device Assembly (phones, gadgets, appliances sub-assemblies)',
-  'Private Label / White Label OEM (multiple variants for buyers)',
-  'High-Mix Low-Volume (custom builds)'
+  'Private Label / White Label OEM (multiple variants for buyers)'
 ];
